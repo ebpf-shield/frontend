@@ -1,35 +1,23 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { GlobalProvider } from "./contexts/GlobalProvider";
 
-function App() {
-  const [count, setCount] = useState(0)
+// Import the generated route tree
+import { routeTree } from "./routeTree.gen";
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+// Create a new router instance
+const router = createRouter({ routeTree, defaultPendingMinMs: 0, defaultPendingMs: 0 });
+
+// Register the router instance for type safety
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
 }
 
-export default App
+export const App = () => {
+  return (
+    <GlobalProvider>
+      <RouterProvider router={router} />
+    </GlobalProvider>
+  );
+};
