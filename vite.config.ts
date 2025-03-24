@@ -10,4 +10,16 @@ export default defineConfig({
     tailwindcss(),
     TanStackRouterVite({ target: "react", autoCodeSplitting: true }),
   ],
+  build: {
+    target: "ES2022",
+  },
+  esbuild: {
+    target: "es2022",
+    supported: {
+      "top-level-await": true,
+    },
+  },
+  optimizeDeps: {
+    exclude: ["bson"],
+  },
 });

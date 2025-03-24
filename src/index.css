@@ -5,6 +5,9 @@
   line-height: 1.5;
   font-weight: 400;
 
+  background-color: var(--color-gray-900);
+  color: var(--color-white);
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

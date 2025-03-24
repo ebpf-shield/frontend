@@ -5,10 +5,10 @@ export const Route = createRootRoute({
   component: () => (
     <>
       <div className="flex flex-col items-center justify-center h-screen">
-        שד
         <Outlet />
       </div>
       <TanStackRouterDevtools />
     </>
   ),
+  errorComponent: ({ error }) => <div>Error: {error.message}</div>,
 });

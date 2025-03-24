@@ -5,9 +5,8 @@ export default defineConfig({
   options: {
     baseDir: "./src/components",
     framework: Framework.REACT,
-    styling: Styling.SCSS,
     typescript: true,
-    createStylesFile: true,
+    createStylesFile: false,
     componentOptions: {
       declaration: "const",
       exportType: "named",

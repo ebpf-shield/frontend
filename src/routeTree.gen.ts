@@ -11,10 +11,24 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as AboutImport } from './routes/about'
+import { Route as AgentsRouteImport } from './routes/agents/route'
 import { Route as IndexImport } from './routes/index'
-import { Route as PostsIndexImport } from './routes/posts/index'
+import { Route as AgentsIndexImport } from './routes/agents/index'
 
 // Create/Update Routes
+
+const AboutRoute = AboutImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AgentsRouteRoute = AgentsRouteImport.update({
+  id: '/agents',
+  path: '/agents',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
@@ -22,10 +36,10 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const PostsIndexRoute = PostsIndexImport.update({
-  id: '/posts/',
-  path: '/posts/',
-  getParentRoute: () => rootRoute,
+const AgentsIndexRoute = AgentsIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AgentsRouteRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -39,51 +53,84 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/posts/': {
-      id: '/posts/'
-      path: '/posts'
-      fullPath: '/posts'
-      preLoaderRoute: typeof PostsIndexImport
+    '/agents': {
+      id: '/agents'
+      path: '/agents'
+      fullPath: '/agents'
+      preLoaderRoute: typeof AgentsRouteImport
       parentRoute: typeof rootRoute
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutImport
+      parentRoute: typeof rootRoute
+    }
+    '/agents/': {
+      id: '/agents/'
+      path: '/'
+      fullPath: '/agents/'
+      preLoaderRoute: typeof AgentsIndexImport
+      parentRoute: typeof AgentsRouteImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface AgentsRouteRouteChildren {
+  AgentsIndexRoute: typeof AgentsIndexRoute
+}
+
+const AgentsRouteRouteChildren: AgentsRouteRouteChildren = {
+  AgentsIndexRoute: AgentsIndexRoute,
+}
+
+const AgentsRouteRouteWithChildren = AgentsRouteRoute._addFileChildren(
+  AgentsRouteRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/posts': typeof PostsIndexRoute
+  '/agents': typeof AgentsRouteRouteWithChildren
+  '/about': typeof AboutRoute
+  '/agents/': typeof AgentsIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/posts': typeof PostsIndexRoute
+  '/about': typeof AboutRoute
+  '/agents': typeof AgentsIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/posts/': typeof PostsIndexRoute
+  '/agents': typeof AgentsRouteRouteWithChildren
+  '/about': typeof AboutRoute
+  '/agents/': typeof AgentsIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/posts'
+  fullPaths: '/' | '/agents' | '/about' | '/agents/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/posts'
-  id: '__root__' | '/' | '/posts/'
+  to: '/' | '/about' | '/agents'
+  id: '__root__' | '/' | '/agents' | '/about' | '/agents/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  PostsIndexRoute: typeof PostsIndexRoute
+  AgentsRouteRoute: typeof AgentsRouteRouteWithChildren
+  AboutRoute: typeof AboutRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  PostsIndexRoute: PostsIndexRoute,
+  AgentsRouteRoute: AgentsRouteRouteWithChildren,
+  AboutRoute: AboutRoute,
 }
 
 export const routeTree = rootRoute
@@ -97,14 +144,25 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/posts/"
+        "/agents",
+        "/about"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/posts/": {
-      "filePath": "posts/index.tsx"
+    "/agents": {
+      "filePath": "agents/route.tsx",
+      "children": [
+        "/agents/"
+      ]
+    },
+    "/about": {
+      "filePath": "about.tsx"
+    },
+    "/agents/": {
+      "filePath": "agents/index.tsx",
+      "parent": "/agents"
     }
   }
 }
