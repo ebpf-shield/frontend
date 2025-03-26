@@ -15,6 +15,9 @@ import { Route as AboutImport } from './routes/about'
 import { Route as AgentsRouteImport } from './routes/agents/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as AgentsIndexImport } from './routes/agents/index'
+import { Route as AgentsAgentIdImport } from './routes/agents/$agentId'
+import { Route as AgentsProccessesRouteImport } from './routes/agents/proccesses/route'
+import { Route as AgentsProccessesIndexImport } from './routes/agents/proccesses/index'
 
 // Create/Update Routes
 
@@ -42,6 +45,24 @@ const AgentsIndexRoute = AgentsIndexImport.update({
   getParentRoute: () => AgentsRouteRoute,
 } as any)
 
+const AgentsAgentIdRoute = AgentsAgentIdImport.update({
+  id: '/$agentId',
+  path: '/$agentId',
+  getParentRoute: () => AgentsRouteRoute,
+} as any)
+
+const AgentsProccessesRouteRoute = AgentsProccessesRouteImport.update({
+  id: '/proccesses',
+  path: '/proccesses',
+  getParentRoute: () => AgentsRouteRoute,
+} as any)
+
+const AgentsProccessesIndexRoute = AgentsProccessesIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AgentsProccessesRouteRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -67,6 +88,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
+    '/agents/proccesses': {
+      id: '/agents/proccesses'
+      path: '/proccesses'
+      fullPath: '/agents/proccesses'
+      preLoaderRoute: typeof AgentsProccessesRouteImport
+      parentRoute: typeof AgentsRouteImport
+    }
+    '/agents/$agentId': {
+      id: '/agents/$agentId'
+      path: '/$agentId'
+      fullPath: '/agents/$agentId'
+      preLoaderRoute: typeof AgentsAgentIdImport
+      parentRoute: typeof AgentsRouteImport
+    }
     '/agents/': {
       id: '/agents/'
       path: '/'
@@ -74,16 +109,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentsIndexImport
       parentRoute: typeof AgentsRouteImport
     }
+    '/agents/proccesses/': {
+      id: '/agents/proccesses/'
+      path: '/'
+      fullPath: '/agents/proccesses/'
+      preLoaderRoute: typeof AgentsProccessesIndexImport
+      parentRoute: typeof AgentsProccessesRouteImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface AgentsProccessesRouteRouteChildren {
+  AgentsProccessesIndexRoute: typeof AgentsProccessesIndexRoute
+}
+
+const AgentsProccessesRouteRouteChildren: AgentsProccessesRouteRouteChildren = {
+  AgentsProccessesIndexRoute: AgentsProccessesIndexRoute,
+}
+
+const AgentsProccessesRouteRouteWithChildren =
+  AgentsProccessesRouteRoute._addFileChildren(
+    AgentsProccessesRouteRouteChildren,
+  )
+
 interface AgentsRouteRouteChildren {
+  AgentsProccessesRouteRoute: typeof AgentsProccessesRouteRouteWithChildren
+  AgentsAgentIdRoute: typeof AgentsAgentIdRoute
   AgentsIndexRoute: typeof AgentsIndexRoute
 }
 
 const AgentsRouteRouteChildren: AgentsRouteRouteChildren = {
+  AgentsProccessesRouteRoute: AgentsProccessesRouteRouteWithChildren,
+  AgentsAgentIdRoute: AgentsAgentIdRoute,
   AgentsIndexRoute: AgentsIndexRoute,
 }
 
@@ -95,13 +154,18 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agents': typeof AgentsRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/agents/proccesses': typeof AgentsProccessesRouteRouteWithChildren
+  '/agents/$agentId': typeof AgentsAgentIdRoute
   '/agents/': typeof AgentsIndexRoute
+  '/agents/proccesses/': typeof AgentsProccessesIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/agents/$agentId': typeof AgentsAgentIdRoute
   '/agents': typeof AgentsIndexRoute
+  '/agents/proccesses': typeof AgentsProccessesIndexRoute
 }
 
 export interface FileRoutesById {
@@ -109,15 +173,33 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/agents': typeof AgentsRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/agents/proccesses': typeof AgentsProccessesRouteRouteWithChildren
+  '/agents/$agentId': typeof AgentsAgentIdRoute
   '/agents/': typeof AgentsIndexRoute
+  '/agents/proccesses/': typeof AgentsProccessesIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/agents' | '/about' | '/agents/'
+  fullPaths:
+    | '/'
+    | '/agents'
+    | '/about'
+    | '/agents/proccesses'
+    | '/agents/$agentId'
+    | '/agents/'
+    | '/agents/proccesses/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/agents'
-  id: '__root__' | '/' | '/agents' | '/about' | '/agents/'
+  to: '/' | '/about' | '/agents/$agentId' | '/agents' | '/agents/proccesses'
+  id:
+    | '__root__'
+    | '/'
+    | '/agents'
+    | '/about'
+    | '/agents/proccesses'
+    | '/agents/$agentId'
+    | '/agents/'
+    | '/agents/proccesses/'
   fileRoutesById: FileRoutesById
 }
 
@@ -154,15 +236,32 @@ export const routeTree = rootRoute
     "/agents": {
       "filePath": "agents/route.tsx",
       "children": [
+        "/agents/proccesses",
+        "/agents/$agentId",
         "/agents/"
       ]
     },
     "/about": {
       "filePath": "about.tsx"
     },
+    "/agents/proccesses": {
+      "filePath": "agents/proccesses/route.tsx",
+      "parent": "/agents",
+      "children": [
+        "/agents/proccesses/"
+      ]
+    },
+    "/agents/$agentId": {
+      "filePath": "agents/$agentId.tsx",
+      "parent": "/agents"
+    },
     "/agents/": {
       "filePath": "agents/index.tsx",
       "parent": "/agents"
+    },
+    "/agents/proccesses/": {
+      "filePath": "agents/proccesses/index.tsx",
+      "parent": "/agents/proccesses"
     }
   }
 }

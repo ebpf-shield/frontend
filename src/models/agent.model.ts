@@ -11,3 +11,5 @@ export const agentSchema = z.object({
   rules: z.array(ruleSchema).optional(),
   processes: z.array(processSchema).optional(),
 });
+
+export type Agent = z.infer<typeof agentSchema>;

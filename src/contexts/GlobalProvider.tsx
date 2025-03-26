@@ -1,13 +1,14 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { PropsWithChildren } from "react";
+import { RouterProvider } from "./RouterProvider";
+import { ThemeProvider } from "./theme/ThemeProvider";
+import { QueryClientProvider } from "./query/QueryClientProvider";
 
-const queryClient = new QueryClient();
-
-export const GlobalProvider = ({ children }: PropsWithChildren) => {
+export const GlobalProvider = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      {children}
+    <QueryClientProvider>
+      <ThemeProvider>
+        <RouterProvider />
+      </ThemeProvider>
       {import.meta.env.DEV && <ReactQueryDevtools />}
     </QueryClientProvider>
   );

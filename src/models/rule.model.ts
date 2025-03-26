@@ -45,3 +45,5 @@ export const ruleSchema = z.object({
   process_id: customValidation.ObjectId,
   agent_id: customValidation.ObjectId,
 });
+
+export type Rule = z.infer<typeof ruleSchema>;

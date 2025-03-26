@@ -15,3 +15,5 @@ export const processSchema = z.object({
   agentId: customValidation.ObjectId,
   pid: z.number().int().min(0).max(65535),
 });
+
+export type Process = z.infer<typeof processSchema>;
