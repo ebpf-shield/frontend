@@ -15,6 +15,10 @@ import { Route as AboutImport } from './routes/about'
 import { Route as AgentsRouteImport } from './routes/agents/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as AgentsIndexImport } from './routes/agents/index'
+import { Route as AgentsAgentIdImport } from './routes/agents/$agentId'
+import { Route as AgentsProcessesRouteImport } from './routes/agents/processes/route'
+import { Route as AgentsProcessesIndexImport } from './routes/agents/processes/index'
+import { Route as AgentsProcessesProcessIdImport } from './routes/agents/processes/$processId'
 
 // Create/Update Routes
 
@@ -42,6 +46,30 @@ const AgentsIndexRoute = AgentsIndexImport.update({
   getParentRoute: () => AgentsRouteRoute,
 } as any)
 
+const AgentsAgentIdRoute = AgentsAgentIdImport.update({
+  id: '/$agentId',
+  path: '/$agentId',
+  getParentRoute: () => AgentsRouteRoute,
+} as any)
+
+const AgentsProcessesRouteRoute = AgentsProcessesRouteImport.update({
+  id: '/processes',
+  path: '/processes',
+  getParentRoute: () => AgentsRouteRoute,
+} as any)
+
+const AgentsProcessesIndexRoute = AgentsProcessesIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AgentsProcessesRouteRoute,
+} as any)
+
+const AgentsProcessesProcessIdRoute = AgentsProcessesProcessIdImport.update({
+  id: '/$processId',
+  path: '/$processId',
+  getParentRoute: () => AgentsProcessesRouteRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -67,6 +95,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
+    '/agents/processes': {
+      id: '/agents/processes'
+      path: '/processes'
+      fullPath: '/agents/processes'
+      preLoaderRoute: typeof AgentsProcessesRouteImport
+      parentRoute: typeof AgentsRouteImport
+    }
+    '/agents/$agentId': {
+      id: '/agents/$agentId'
+      path: '/$agentId'
+      fullPath: '/agents/$agentId'
+      preLoaderRoute: typeof AgentsAgentIdImport
+      parentRoute: typeof AgentsRouteImport
+    }
     '/agents/': {
       id: '/agents/'
       path: '/'
@@ -74,16 +116,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentsIndexImport
       parentRoute: typeof AgentsRouteImport
     }
+    '/agents/processes/$processId': {
+      id: '/agents/processes/$processId'
+      path: '/$processId'
+      fullPath: '/agents/processes/$processId'
+      preLoaderRoute: typeof AgentsProcessesProcessIdImport
+      parentRoute: typeof AgentsProcessesRouteImport
+    }
+    '/agents/processes/': {
+      id: '/agents/processes/'
+      path: '/'
+      fullPath: '/agents/processes/'
+      preLoaderRoute: typeof AgentsProcessesIndexImport
+      parentRoute: typeof AgentsProcessesRouteImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface AgentsProcessesRouteRouteChildren {
+  AgentsProcessesProcessIdRoute: typeof AgentsProcessesProcessIdRoute
+  AgentsProcessesIndexRoute: typeof AgentsProcessesIndexRoute
+}
+
+const AgentsProcessesRouteRouteChildren: AgentsProcessesRouteRouteChildren = {
+  AgentsProcessesProcessIdRoute: AgentsProcessesProcessIdRoute,
+  AgentsProcessesIndexRoute: AgentsProcessesIndexRoute,
+}
+
+const AgentsProcessesRouteRouteWithChildren =
+  AgentsProcessesRouteRoute._addFileChildren(AgentsProcessesRouteRouteChildren)
+
 interface AgentsRouteRouteChildren {
+  AgentsProcessesRouteRoute: typeof AgentsProcessesRouteRouteWithChildren
+  AgentsAgentIdRoute: typeof AgentsAgentIdRoute
   AgentsIndexRoute: typeof AgentsIndexRoute
 }
 
 const AgentsRouteRouteChildren: AgentsRouteRouteChildren = {
+  AgentsProcessesRouteRoute: AgentsProcessesRouteRouteWithChildren,
+  AgentsAgentIdRoute: AgentsAgentIdRoute,
   AgentsIndexRoute: AgentsIndexRoute,
 }
 
@@ -95,13 +168,20 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agents': typeof AgentsRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/agents/processes': typeof AgentsProcessesRouteRouteWithChildren
+  '/agents/$agentId': typeof AgentsAgentIdRoute
   '/agents/': typeof AgentsIndexRoute
+  '/agents/processes/$processId': typeof AgentsProcessesProcessIdRoute
+  '/agents/processes/': typeof AgentsProcessesIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/agents/$agentId': typeof AgentsAgentIdRoute
   '/agents': typeof AgentsIndexRoute
+  '/agents/processes/$processId': typeof AgentsProcessesProcessIdRoute
+  '/agents/processes': typeof AgentsProcessesIndexRoute
 }
 
 export interface FileRoutesById {
@@ -109,15 +189,42 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/agents': typeof AgentsRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/agents/processes': typeof AgentsProcessesRouteRouteWithChildren
+  '/agents/$agentId': typeof AgentsAgentIdRoute
   '/agents/': typeof AgentsIndexRoute
+  '/agents/processes/$processId': typeof AgentsProcessesProcessIdRoute
+  '/agents/processes/': typeof AgentsProcessesIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/agents' | '/about' | '/agents/'
+  fullPaths:
+    | '/'
+    | '/agents'
+    | '/about'
+    | '/agents/processes'
+    | '/agents/$agentId'
+    | '/agents/'
+    | '/agents/processes/$processId'
+    | '/agents/processes/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/agents'
-  id: '__root__' | '/' | '/agents' | '/about' | '/agents/'
+  to:
+    | '/'
+    | '/about'
+    | '/agents/$agentId'
+    | '/agents'
+    | '/agents/processes/$processId'
+    | '/agents/processes'
+  id:
+    | '__root__'
+    | '/'
+    | '/agents'
+    | '/about'
+    | '/agents/processes'
+    | '/agents/$agentId'
+    | '/agents/'
+    | '/agents/processes/$processId'
+    | '/agents/processes/'
   fileRoutesById: FileRoutesById
 }
 
@@ -154,15 +261,37 @@ export const routeTree = rootRoute
     "/agents": {
       "filePath": "agents/route.tsx",
       "children": [
+        "/agents/processes",
+        "/agents/$agentId",
         "/agents/"
       ]
     },
     "/about": {
       "filePath": "about.tsx"
     },
+    "/agents/processes": {
+      "filePath": "agents/processes/route.tsx",
+      "parent": "/agents",
+      "children": [
+        "/agents/processes/$processId",
+        "/agents/processes/"
+      ]
+    },
+    "/agents/$agentId": {
+      "filePath": "agents/$agentId.tsx",
+      "parent": "/agents"
+    },
     "/agents/": {
       "filePath": "agents/index.tsx",
       "parent": "/agents"
+    },
+    "/agents/processes/$processId": {
+      "filePath": "agents/processes/$processId.tsx",
+      "parent": "/agents/processes"
+    },
+    "/agents/processes/": {
+      "filePath": "agents/processes/index.tsx",
+      "parent": "/agents/processes"
     }
   }
 }
