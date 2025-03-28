@@ -1,25 +1,3 @@
-/**
- *     id: Optional[PydanticObjectId] = Field(alias="_id")
-    saddr: Optional[IPvAnyAddress]
-    daddr: Optional[IPvAnyAddress]
-    sport: int = Field(ge=0, le=65535)
-    dport: int = Field(ge=0, le=65535)
-    protocol: Optional[str]
-    action: Optional[Action] = Field(default=Action.ACCEPT)
-    chain: Optional[Chain] = Field(default=Chain.INPUT)
-    priority: int = Field(ge=0, le=100000)
-    comment: Optional[str] = Field(max_length=255)
-    created_at: datetime.datetime = Field(
-        default_factory=datetime.datetime.now, alias="createdAt"
-    )
-    updated_at: datetime.datetime = Field(
-        default_factory=datetime.datetime.now, alias="updatedAt"
-    )
-    process_id: PydanticObjectId
-    # I'm not sure we need these field
-    agent_id: PydanticObjectId
- */
-
 import { z } from "zod";
 import { customValidation, stringSchema } from "../utils/zod.util";
 
@@ -43,7 +21,6 @@ export const ruleSchema = z.object({
   created_at: customValidation.dateLikeToDate.optional(),
   updated_at: customValidation.dateLikeToDate.optional(),
   process_id: customValidation.ObjectId,
-  agent_id: customValidation.ObjectId,
 });
 
 export type Rule = z.infer<typeof ruleSchema>;

@@ -2,18 +2,33 @@ import { agentService } from "@/services/agent.service";
 import { queryOptions } from "@tanstack/react-query";
 import { ObjectId } from "bson";
 
-export const keys = {
-  getAgents: ["agents"],
-  getAgentById: (id: string) => ["agents", id],
-};
+class AgentQuery {
+  keys = {
+    getAll: ["agents"],
+    getById: (id: string) => ["agents", id],
+    getByIdWithProcesses: (id: string) => ["agents", id, "processes"],
+  };
 
-export const getAgentsQueryOptions = queryOptions({
-  queryKey: keys.getAgents,
-  queryFn: agentService.getAgents,
-});
+  getAllQueryOptions = () => {
+    return queryOptions({
+      queryKey: this.keys.getAll,
+      queryFn: agentService.getAll,
+    });
+  };
 
-export const getAgentByIdQueryOptions = (agentId: ObjectId) =>
-  queryOptions({
-    queryKey: keys.getAgentById(agentId.toString()),
-    queryFn: () => agentService.getAgentById(agentId),
-  });
+  getByIdQueryOptions = (agentId: ObjectId) => {
+    return queryOptions({
+      queryKey: this.keys.getById(agentId.toString()),
+      queryFn: () => agentService.getById(agentId),
+    });
+  };
+
+  getByIdWithProcessesQueryOptions = (agentId: ObjectId) => {
+    return queryOptions({
+      queryKey: this.keys.getByIdWithProcesses(agentId.toString()),
+      queryFn: () => agentService.getByIdWithProcesses(agentId),
+    });
+  };
+}
+
+export const agentQuery = new AgentQuery();

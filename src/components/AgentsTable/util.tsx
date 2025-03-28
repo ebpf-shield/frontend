@@ -18,7 +18,7 @@ export const columns = [
     header: "Updated At",
   }),
   columnHelper.display({
-    id: "actions",
+    id: "go-to-agent",
     cell(props) {
       return (
         <Link
