@@ -20,7 +20,7 @@ export const ruleSchema = z.object({
   comment: stringSchema.optional(),
   created_at: customValidation.dateLikeToDate.optional(),
   updated_at: customValidation.dateLikeToDate.optional(),
-  process_id: customValidation.ObjectId,
+  processId: customValidation.ObjectId,
 });
 
 export type Rule = z.infer<typeof ruleSchema>;

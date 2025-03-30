@@ -1,20 +1,8 @@
+import { Process } from "@/models/process.model";
+import { processQuery } from "@/queries/process.query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import {
-  ArrowLeft,
-  Download,
-  Ellipsis,
-  Power,
-  RefreshCw,
-  Server,
-  Settings,
-  Terminal,
-  Trash2,
-  Upload,
-} from "lucide-react";
-import { Badge } from "../ui/badge";
-import { AgentWithProcesses } from "@/models/agent.model";
-import clsx from "clsx";
-import { Button } from "../ui/button";
+import { ArrowLeft, Ellipsis, ExternalLink, RefreshCw, Terminal, Trash2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,6 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
+import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,39 +23,40 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { useQueryClient } from "@tanstack/react-query";
-import { agentQuery } from "@/queries/agent.query";
 
-export interface AgentDetailHeaderProps {
-  agent: AgentWithProcesses;
+export interface ProcessHeaderProps {
+  process: Process;
 }
 
-export const AgentDetailHeader = ({ agent }: AgentDetailHeaderProps) => {
+export const ProcessHeader = ({ process }: ProcessHeaderProps) => {
   const queryClient = useQueryClient();
 
   return (
     <header className="sticky top-0 z-10 w-full border-b border-gray-700 bg-gray-900/80 backdrop-blur-sm">
       <div className="container mx-auto px-4 py-3">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <Link to="/agents" className="text-gray-400 hover:text-white">
+          <div className="flex items-center gap-2">
+            <Link
+              to="/agents/$agentId"
+              params={{ agentId: process.agentId }}
+              className="text-gray-400 hover:text-white"
+            >
               <ArrowLeft className="h-5 w-5" />
             </Link>
             <div>
               <div className="flex items-center gap-2">
-                <Server className="h-5 w-5 text-purple-400" />
-                <h1 className="text-xl font-bold text-white">{agent.name}</h1>
-                <Badge
-                  className={clsx(
-                    `ml-2 text-white border-none ${
-                      agent.online
-                        ? "bg-gradient-to-r from-green-500 to-emerald-500"
-                        : "bg-gradient-to-r from-red-500 to-rose-500"
-                    }`
-                  )}
+                <Terminal className="h-5 w-5 text-purple-400" />
+                <h1
+                  className="text-xl font-bold text-white truncate max-w-[300px]"
+                  title={process.command}
                 >
-                  {agent.online ? "Online" : "Offline"}
-                </Badge>
+                  {process.command.length > 30
+                    ? `${process.command.substring(0, 30)}...`
+                    : process.command}
+                </h1>
+              </div>
+              <div className="text-sm text-gray-400 flex items-center gap-1">
+                <span>PID: {process.pid}</span>
               </div>
             </div>
           </div>
@@ -75,11 +65,11 @@ export const AgentDetailHeader = ({ agent }: AgentDetailHeaderProps) => {
             <Button
               variant="outline"
               size="sm"
-              className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
+              className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
               onClick={() =>
                 queryClient.refetchQueries({
                   exact: true,
-                  queryKey: agentQuery.keys.getByIdWithProcesses(agent._id.toString()),
+                  queryKey: processQuery.keys.getById(process._id),
                 })
               }
             >
@@ -90,38 +80,26 @@ export const AgentDetailHeader = ({ agent }: AgentDetailHeaderProps) => {
             <Button
               variant="outline"
               size="sm"
-              className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
+              className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
               asChild
             >
               <div>
                 <Terminal className="h-4 w-4" />
-                <span className="hidden sm:inline">Terminal</span>
+                <span className="hidden sm:inline">Logs</span>
               </div>
             </Button>
 
-            <Button
+            {/* <Button
               variant="outline"
               size="sm"
-              className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
+              className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
               asChild
             >
-              <div>
-                <Settings className="h-4 w-4" />
-                <span className="hidden sm:inline">Settings</span>
-              </div>
-            </Button>
-
-            <Button
-              size="sm"
-              className={`h-9 gap-1 ${
-                agent.online
-                  ? "bg-amber-600 hover:bg-amber-700"
-                  : "bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
-              } text-white`}
-            >
-              <Power className="h-4 w-4" />
-              <span>{agent.online ? "Shutdown" : "Start"}</span>
-            </Button>
+              <Button type="button">
+                <Shield className="h-4 w-4" />
+                <span className="hidden sm:inline">Add Rule</span>
+              </Button>
+            </Button> */}
 
             <AlertDialog>
               <AlertDialogTrigger asChild>
@@ -137,8 +115,8 @@ export const AgentDetailHeader = ({ agent }: AgentDetailHeaderProps) => {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                   <AlertDialogDescription className="text-gray-400">
-                    This will permanently delete this agent and all associated processes. This
-                    action cannot be undone.
+                    This will permanently delete this process and all associated rules. This action
+                    cannot be undone.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -164,24 +142,20 @@ export const AgentDetailHeader = ({ agent }: AgentDetailHeaderProps) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-gray-800 border-gray-700 text-white">
-                <DropdownMenuLabel>Agent Actions</DropdownMenuLabel>
+                <DropdownMenuLabel>Process Actions</DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-gray-700" />
                 <DropdownMenuItem className="hover:bg-gray-700 cursor-pointer">
-                  <Download className="h-4 w-4 mr-2" />
-                  <span>Download Logs</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="hover:bg-gray-700 cursor-pointer">
-                  <Upload className="h-4 w-4 mr-2" />
-                  <span>Upload Config</span>
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  <span>View in Terminal</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="hover:bg-gray-700 cursor-pointer">
                   <RefreshCw className="h-4 w-4 mr-2" />
-                  <span>Restart Agent</span>
+                  <span>Restart Process</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-gray-700" />
                 <DropdownMenuItem className="text-red-400 hover:bg-red-900/20 hover:text-red-300 cursor-pointer">
                   <Trash2 className="h-4 w-4 mr-2" />
-                  <span>Delete Agent</span>
+                  <span>Delete Process</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

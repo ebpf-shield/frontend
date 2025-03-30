@@ -5,6 +5,7 @@ import { ObjectId } from "bson";
 class AgentQuery {
   keys = {
     getAll: ["agents"],
+    getAllWithProcesses: ["agents", "processes"],
     getById: (id: string) => ["agents", id],
     getByIdWithProcesses: (id: string) => ["agents", id, "processes"],
   };
@@ -18,7 +19,7 @@ class AgentQuery {
 
   getAllWithProcessesQueryOptions = () => {
     return queryOptions({
-      queryKey: this.keys.getAll,
+      queryKey: this.keys.getAllWithProcesses,
       queryFn: () => agentService.getAllWithProcesses(),
     });
   };
