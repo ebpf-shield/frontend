@@ -1,14 +1,18 @@
 import { Rule } from "@/models/rule.model";
 import { ruleService } from "@/services/rule.service";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ObjectId } from "bson";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { processQuery } from "./process.query";
 
 interface UseCreateRuleProps {
   processId: ObjectId;
+  setIsAddDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const useCreateRule = ({ processId }: UseCreateRuleProps) => {
+export const useCreateRule = ({ processId, setIsAddDialogOpen }: UseCreateRuleProps) => {
+  const queryClient = useQueryClient();
+
   const methods = useForm<Rule>({
     defaultValues: {
       _id: new ObjectId(),
@@ -34,6 +38,11 @@ export const useCreateRule = ({ processId }: UseCreateRuleProps) => {
     onSuccess: () => {
       // Invalidate and refetch
       methods.reset();
+      queryClient.invalidateQueries({
+        exact: true,
+        queryKey: processQuery.keys.getByIdWithRules(processId),
+      });
+      setIsAddDialogOpen(false);
     },
   });
 

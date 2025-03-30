@@ -60,6 +60,7 @@ function ProcessComponent() {
 
   const { methods, onSubmit } = useCreateRule({
     processId: process._id,
+    setIsAddDialogOpen: setIsAddDialogOpen,
   });
 
   return (

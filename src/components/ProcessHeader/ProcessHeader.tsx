@@ -69,7 +69,7 @@ export const ProcessHeader = ({ process }: ProcessHeaderProps) => {
               onClick={() =>
                 queryClient.refetchQueries({
                   exact: true,
-                  queryKey: processQuery.keys.getById(process._id),
+                  queryKey: processQuery.keys.getByIdWithRules(process._id),
                 })
               }
             >
