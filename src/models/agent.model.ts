@@ -7,6 +7,7 @@ export const agentSchema = z.object({
   name: stringSchema,
   createdAt: customValidation.dateLikeToDate,
   updatedAt: customValidation.dateLikeToDate,
+  online: z.boolean(),
 });
 
 export type Agent = z.infer<typeof agentSchema>;

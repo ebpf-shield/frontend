@@ -5,33 +5,53 @@ import { axiosInstance } from "./index.service";
 const PREFIX = "agent" as const;
 
 export class AgentService {
-  async getAll() {
-    const agents = await axiosInstance.get(`${PREFIX}`);
+  async getAll(embed_processes: boolean = false) {
+    const res = await axiosInstance.get(`${PREFIX}?embed_processes=${embed_processes}`);
 
     try {
-      return agentSchema.array().parse(agents.data);
+      if (embed_processes) {
+        return agentWithProcessesSchema.array().parse(res.data);
+      }
+
+      return agentSchema.array().parse(res.data);
     } catch (error) {
       console.error(error);
       throw new Error("Failed to parse agents");
     }
   }
 
-  async getById(id: ObjectId) {
-    const agent = await axiosInstance.get(`${PREFIX}/${id.toString()}`);
-
+  async getAllWithProcesses() {
+    const res = await axiosInstance.get(`${PREFIX}?embed_processes=true`);
     try {
-      return agentSchema.parse(agent.data);
+      return agentWithProcessesSchema.array().parse(res.data);
     } catch (error) {
       console.error(error);
-      throw new Error("Failed to parse agent");
+      throw new Error("Failed to parse agents with processes");
+    }
+  }
+
+  async getById(id: ObjectId, embed_processes: boolean = false) {
+    const res = await axiosInstance.get(
+      `${PREFIX}/${id.toString()}?embed_processes=${embed_processes}`
+    );
+
+    try {
+      if (embed_processes) {
+        return agentWithProcessesSchema.parse(res.data);
+      }
+
+      return agentSchema.parse(res.data);
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to parse agent with processes");
     }
   }
 
   async getByIdWithProcesses(id: ObjectId) {
-    const agent = await axiosInstance.get(`${PREFIX}/${id.toString()}?embed_processes=true`);
+    const res = await axiosInstance.get(`${PREFIX}/${id.toString()}?embed_processes=true`);
 
     try {
-      return agentWithProcessesSchema.parse(agent.data);
+      return agentWithProcessesSchema.parse(res.data);
     } catch (error) {
       console.error(error);
       throw new Error("Failed to parse agent with processes");

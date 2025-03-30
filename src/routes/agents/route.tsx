@@ -6,8 +6,10 @@ export const Route = createFileRoute("/agents")({
 
 function AgentLayoutComponent() {
   return (
-    <div className="flex flex-col items-center justify-start h-screen w-screen pt-8">
-      <Outlet />
-    </div>
+    <>
+      <div className="flex flex-col items-center justify-start h-screen w-screen">
+        <Outlet />
+      </div>
+    </>
   );
 }

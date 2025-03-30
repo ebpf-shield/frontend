@@ -1,13 +1,10 @@
-import { ProcessesTable } from "@/components/ProcessesTable";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { DATE_LOCALS, DATE_OPTIONS } from "@/constants/date.constants";
+import { AgentDetailHeader } from "@/components/AgentDetailHeader";
+import { AgentProcessesPanel } from "@/components/AgentProcessesPanel";
+import { Separator } from "@/components/ui/separator";
 import { agentQuery } from "@/queries/agent.query";
 import { customValidation } from "@/utils/zod.util";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
 
 export const Route = createFileRoute("/agents/$agentId")({
   component: AgentComponent,
@@ -40,47 +37,24 @@ function AgentComponent() {
     agentQuery.getByIdWithProcessesQueryOptions(params.agentId)
   );
   const agent = getAgentByIdQuery.data;
-  const [showProcesses, setShowProcesses] = useState(true);
 
   return (
-    <>
-      <h2 className="text-2xl">Agent {agent.name}</h2>
-      <div className="container mx-auto p-6 space-y-8">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-3xl font-bold">{agent.name}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-500">
-              Created: {agent.createdAt.toLocaleString(DATE_LOCALS, DATE_OPTIONS)}
-            </p>
-            <p className="text-gray-500">
-              Updated: {agent.updatedAt.toLocaleString(DATE_LOCALS, DATE_OPTIONS)}
-            </p>
-          </CardContent>
-        </Card>
+    <div className="h-screen w-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      <AgentDetailHeader agent={agent} />
 
-        {agent.processes.length > 0 ? (
-          <Button variant="outline" onClick={() => setShowProcesses((prev) => !prev)}>
-            {showProcesses ? "Hide Processes" : "Show Processes"}
-          </Button>
-        ) : (
-          <p>No processes found</p>
-        )}
-
-        {showProcesses && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-3xl font-bold">Processes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="rounded-md border">
-                <ProcessesTable data={agent.processes} />
-              </ScrollArea>
-            </CardContent>
-          </Card>
-        )}
+      <div className="container mx-auto py-6 px-4">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-white mb-2">Agent Details</h1>
+          <p className="text-gray-400">Manage and monitor this agent and its processes</p>
+          <Separator className="mt-4 bg-gray-700" />
+        </div>
       </div>
-    </>
+
+      <div className="grid lg:grid-cols-12">
+        <div className="lg:col-span-8 lg:col-start-3">
+          <AgentProcessesPanel agent={agent} />
+        </div>
+      </div>
+    </div>
   );
 }

@@ -9,16 +9,23 @@ class AgentQuery {
     getByIdWithProcesses: (id: string) => ["agents", id, "processes"],
   };
 
-  getAllQueryOptions = () => {
+  getAllQueryOptions = (embed_processes: boolean) => {
     return queryOptions({
       queryKey: this.keys.getAll,
-      queryFn: agentService.getAll,
+      queryFn: () => agentService.getAll(embed_processes),
+    });
+  };
+
+  getAllWithProcessesQueryOptions = () => {
+    return queryOptions({
+      queryKey: this.keys.getAll,
+      queryFn: () => agentService.getAllWithProcesses(),
     });
   };
 
   getByIdQueryOptions = (agentId: ObjectId) => {
     return queryOptions({
-      queryKey: this.keys.getById(agentId.toString()),
+      queryKey: this.keys.getByIdWithProcesses(agentId.toString()),
       queryFn: () => agentService.getById(agentId),
     });
   };
