@@ -14,15 +14,15 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { RULE_ACTION, RULE_CHAIN } from "@/models/rule.model";
 import { processQuery } from "@/queries/process.query";
+import { useCreateRule } from "@/queries/useCreateRule";
 import { customValidation } from "@/utils/zod.util";
-import { SelectTrigger } from "@radix-ui/react-select";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Plus, Search, Shield } from "lucide-react";
 import { useState } from "react";
+import { FormProvider } from "react-hook-form";
 
 export const Route = createFileRoute("/agents/processes/$processId")({
   params: {
@@ -58,6 +58,10 @@ function ProcessComponent() {
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
+  const { methods, onSubmit } = useCreateRule({
+    processId: process._id,
+  });
+
   return (
     <div className="min-h-screen w-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <ProcessHeader process={getProcessByIdQuery.data} />
@@ -90,159 +94,172 @@ function ProcessComponent() {
                   />
                 </div>
 
-                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="gap-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white">
-                      <Plus className="h-4 w-4" />
-                      <span>Add Rule</span>
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[550px] bg-gray-800 border-gray-700 text-white">
-                    <DialogHeader>
-                      <DialogTitle>Add New Firewall Rule</DialogTitle>
-                      <DialogDescription className="text-gray-400">
-                        Create a new rule for this process
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="grid gap-2">
-                          <Label htmlFor="saddr" className="text-gray-300">
-                            Source Address
-                          </Label>
-                          <Input
-                            id="saddr"
-                            placeholder="e.g. 192.168.1.1"
-                            className="bg-gray-700 border-gray-600 text-white"
-                          />
-                        </div>
-                        <div className="grid gap-2">
-                          <Label htmlFor="daddr" className="text-gray-300">
-                            Destination Address
-                          </Label>
-                          <Input
-                            id="daddr"
-                            placeholder="e.g. 10.0.0.1"
-                            className="bg-gray-700 border-gray-600 text-white"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="grid gap-2">
-                          <Label htmlFor="sport" className="text-gray-300">
-                            Source Port
-                          </Label>
-                          <Input
-                            id="sport"
-                            type="number"
-                            placeholder="e.g. 8080"
-                            className="bg-gray-700 border-gray-600 text-white"
-                          />
-                        </div>
-                        <div className="grid gap-2">
-                          <Label htmlFor="dport" className="text-gray-300">
-                            Destination Port
-                          </Label>
-                          <Input
-                            id="dport"
-                            type="number"
-                            placeholder="e.g. 3000"
-                            className="bg-gray-700 border-gray-600 text-white"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="grid gap-2">
-                          <Label htmlFor="protocol" className="text-gray-300">
-                            Protocol
-                          </Label>
-                          <Select>
-                            <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                              <SelectValue placeholder="Select protocol" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                              <SelectItem value="TCP">TCP</SelectItem>
-                              <SelectItem value="UDP">UDP</SelectItem>
-                              <SelectItem value="ICMP">ICMP</SelectItem>
-                              <SelectItem value="ALL">ALL</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="grid gap-2">
-                          <Label htmlFor="action" className="text-gray-300">
-                            Action
-                          </Label>
-                          <Select>
-                            <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                              <SelectValue placeholder="Select action" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                              {RULE_ACTION.map((action) => (
-                                <SelectItem key={action} value={action}>
-                                  {action}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="grid gap-2">
-                          <Label htmlFor="chain" className="text-gray-300">
-                            Chain
-                          </Label>
-                          <Select>
-                            <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                              <SelectValue placeholder="Select chain" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                              {RULE_CHAIN.map((chain) => (
-                                <SelectItem key={chain} value={chain}>
-                                  {chain}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="grid gap-2">
-                          <Label htmlFor="priority" className="text-gray-300">
-                            Priority
-                          </Label>
-                          <Input
-                            id="priority"
-                            type="number"
-                            placeholder="e.g. 100"
-                            className="bg-gray-700 border-gray-600 text-white"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid gap-2">
-                        <Label htmlFor="comment" className="text-gray-300">
-                          Comment
-                        </Label>
-                        <Input
-                          id="comment"
-                          placeholder="Rule description"
-                          className="bg-gray-700 border-gray-600 text-white"
-                        />
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button
-                        onClick={() => {
-                          setIsAddDialogOpen(false);
-                        }}
-                        className="bg-purple-600 hover:bg-purple-700 text-white"
-                      >
-                        Add Rule
+                <FormProvider {...methods}>
+                  <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="gap-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white">
+                        <Plus className="h-4 w-4" />
+                        <span>Add Rule</span>
                       </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[550px] bg-gray-800 border-gray-700 text-white">
+                      <DialogHeader>
+                        <DialogTitle>Add New Firewall Rule</DialogTitle>
+                        <DialogDescription className="text-gray-400">
+                          Create a new rule for this process
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div>
+                        <form onSubmit={methods.handleSubmit(onSubmit)} className="grid gap-4 py-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-2">
+                              <Label htmlFor="saddr" className="text-gray-300">
+                                Source Address
+                              </Label>
+                              <Input
+                                {...methods.register("saddr")}
+                                id="saddr"
+                                placeholder="e.g. 192.168.1.1"
+                                className="bg-gray-700 border-gray-600 text-white"
+                              />
+                            </div>
+                            <div className="grid gap-2">
+                              <Label htmlFor="daddr" className="text-gray-300">
+                                Destination Address
+                              </Label>
+                              <Input
+                                {...methods.register("daddr")}
+                                id="daddr"
+                                placeholder="e.g. 10.0.0.1"
+                                className="bg-gray-700 border-gray-600 text-white"
+                              />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-2">
+                              <Label htmlFor="sport" className="text-gray-300">
+                                Source Port
+                              </Label>
+                              <Input
+                                {...methods.register("sport")}
+                                id="sport"
+                                type="number"
+                                placeholder="e.g. 8080"
+                                className="bg-gray-700 border-gray-600 text-white"
+                              />
+                            </div>
+                            <div className="grid gap-2">
+                              <Label htmlFor="dport" className="text-gray-300">
+                                Destination Port
+                              </Label>
+                              <Input
+                                {...methods.register("dport")}
+                                id="dport"
+                                type="number"
+                                placeholder="e.g. 3000"
+                                className="bg-gray-700 border-gray-600 text-white"
+                              />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-2">
+                              <Label htmlFor="protocol" className="text-gray-300">
+                                Protocol
+                              </Label>
+                              <select
+                                id="protocol"
+                                {...methods.register("protocol")}
+                                className="bg-gray-700 border-gray-600 text-white px-3 py-2 rounded"
+                                defaultValue=""
+                              >
+                                <option value="" disabled>
+                                  Select protocol
+                                </option>
+                                <option value="TCP">TCP</option>
+                                <option value="UDP">UDP</option>
+                                <option value="ICMP">ICMP</option>
+                                <option value="ALL">ALL</option>
+                              </select>
+                            </div>
+                            <div className="grid gap-2">
+                              <Label htmlFor="action" className="text-gray-300">
+                                Action
+                              </Label>
+                              <select
+                                id="action"
+                                {...methods.register("action")}
+                                className="bg-gray-700 border-gray-600 text-white px-3 py-2 rounded"
+                                defaultValue=""
+                              >
+                                <option value="" disabled>
+                                  Select action
+                                </option>
+                                {RULE_ACTION.map((action) => (
+                                  <option key={action} value={action}>
+                                    {action}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-2">
+                              <Label htmlFor="chain" className="text-gray-300">
+                                Chain
+                              </Label>
+                              <select
+                                id="chain"
+                                {...methods.register("chain")}
+                                className="bg-gray-700 border-gray-600 text-white px-3 py-2 rounded"
+                                defaultValue=""
+                              >
+                                <option value="" disabled>
+                                  Select chain
+                                </option>
+                                {RULE_CHAIN.map((chain) => (
+                                  <option key={chain} value={chain}>
+                                    {chain}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="grid gap-2">
+                              <Label htmlFor="priority" className="text-gray-300">
+                                Priority
+                              </Label>
+                              <Input
+                                {...methods.register("priority")}
+                                id="priority"
+                                type="number"
+                                placeholder="e.g. 100"
+                                className="bg-gray-700 border-gray-600 text-white"
+                              />
+                            </div>
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="comment" className="text-gray-300">
+                              Comment
+                            </Label>
+                            <Input
+                              {...methods.register("comment")}
+                              id="comment"
+                              placeholder="Rule description"
+                              className="bg-gray-700 border-gray-600 text-white"
+                            />
+                          </div>
+
+                          <Button
+                            type="submit"
+                            className="bg-purple-600 hover:bg-purple-700 text-white"
+                          >
+                            Add Rule
+                          </Button>
+                        </form>
+                      </div>
+                      <DialogFooter></DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </FormProvider>
               </div>
 
               <div className="py-4">
