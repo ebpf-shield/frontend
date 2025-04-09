@@ -1,14 +1,15 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/agents")({
-  component: AgentLayout,
+  component: AgentLayoutComponent,
 });
 
-function AgentLayout() {
+function AgentLayoutComponent() {
   return (
-    <div>
-      שדג
-      <Outlet />
-    </div>
+    <>
+      <div className="flex flex-col items-center justify-start h-screen w-screen">
+        <Outlet />
+      </div>
+    </>
   );
 }

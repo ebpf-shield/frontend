@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig, Framework, Styling } from "agrippa";
+import { defineConfig, Framework } from "agrippa";
 
 export default defineConfig({
   options: {

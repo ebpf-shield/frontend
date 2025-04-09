@@ -1,9 +1,28 @@
+import { AgentCard } from "@/components/AgentCard";
+import { AgentHeader } from "@/components/AgentHeader";
+import { agentQuery } from "@/queries/agent.query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/agents/")({
-  component: Index,
+  component: AgentsIndexComponent,
+  loader({ context: { queryClient } }) {
+    queryClient.ensureQueryData(agentQuery.getAllWithProcessesQueryOptions());
+  },
 });
 
-function Index() {
-  return <div>Hello "/posts/"!</div>;
+function AgentsIndexComponent() {
+  const getAgentsQeury = useSuspenseQuery(agentQuery.getAllWithProcessesQueryOptions());
+  return (
+    <>
+      <AgentHeader />
+      <div className="container mx-auto py-8 px-4">
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
+          {getAgentsQeury.data.map((agent) => (
+            <AgentCard agent={agent} />
+          ))}
+        </div>
+      </div>
+    </>
+  );
 }
