@@ -7,6 +7,9 @@ export type RuleChain = (typeof RULE_CHAIN)[number];
 export const RULE_ACTION = ["ACCEPT", "DROP", "REJECT"] as const;
 export type RuleAction = (typeof RULE_ACTION)[number];
 
+export const RULE_PROTOCOL = ["TCP", "UDP", "ICMP"] as const;
+export type RuleProtocol = (typeof RULE_PROTOCOL)[number];
+
 export const ruleSchema = z.object({
   _id: customValidation.ObjectId,
   saddr: stringSchema.ip().optional(),

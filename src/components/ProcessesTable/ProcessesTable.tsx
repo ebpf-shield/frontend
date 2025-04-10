@@ -2,7 +2,7 @@ import { Process } from "@/models/process.model";
 import { useReactTable, getCoreRowModel, flexRender } from "@tanstack/react-table";
 import { columns } from "./utils";
 import clsx from "clsx";
-import { ScrollArea } from "../ui/scroll-area";
+import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 
 export interface ProcessesTableProps {
   data: Process[];
@@ -16,7 +16,7 @@ export const ProcessesTable = ({ data }: ProcessesTableProps) => {
   });
 
   return (
-    <ScrollArea className="rounded-md border overflow-x-auto">
+    <ScrollArea className="rounded-md border outline-2 h-[500px]">
       <table className="w-full table-auto border-collapse">
         <thead className="bg-muted text-muted-foreground">
           {table.getHeaderGroups().map((headerGroup) => (
@@ -69,6 +69,8 @@ export const ProcessesTable = ({ data }: ProcessesTableProps) => {
           ))}
         </tfoot>
       </table>
+      <ScrollBar orientation="horizontal" />
+      <ScrollBar orientation="vertical" />
     </ScrollArea>
   );
 };

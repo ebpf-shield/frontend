@@ -3,7 +3,7 @@ import { ruleService } from "@/services/rule.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ObjectId } from "bson";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { processQuery } from "./process.query";
+import { processQuery } from "../../queries/process.query";
 
 interface UseCreateRuleProps {
   processId: ObjectId;
@@ -23,7 +23,7 @@ export const useCreateRule = ({ processId, setIsAddDialogOpen }: UseCreateRulePr
       sport: 0,
       daddr: "",
       dport: 0,
-      protocol: "tcp",
+      protocol: "TCP",
       processId,
     },
   });

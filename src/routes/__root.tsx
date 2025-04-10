@@ -9,14 +9,14 @@ interface RootContext {
 export const Route = createRootRouteWithContext<RootContext>()({
   component: () => (
     <>
-      <div className="flex flex-col items-center justify-center h-screen">
+      <div className="flex flex-col items-center justify-center size-full">
         <Outlet />
       </div>
       <TanStackRouterDevtools />
     </>
   ),
   errorComponent: ({ error }) => (
-    <div className="flex flex-col items-center justify-center h-screen">Error: {error.message}</div>
+    <div className="flex flex-col items-center justify-center h-full">Error: {error.message}</div>
   ),
   notFoundComponent: () => {
     return (

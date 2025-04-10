@@ -13,7 +13,7 @@ export interface AgentCardProps {
 
 export const AgentCard = ({ agent }: AgentCardProps) => {
   return (
-    <Card className="overflow-hidden border-gray-700 bg-gray-800/50 backdrop-blur-sm hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300">
+    <Card className="border-gray-700 bg-gray-800/50 backdrop-blur-sm hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300">
       <CardHeader className="pb-2 border-b border-gray-700">
         <div className="flex justify-between items-start">
           <div>
@@ -41,7 +41,7 @@ export const AgentCard = ({ agent }: AgentCardProps) => {
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="pt-4">
+      <CardContent className="pt-4 h-full">
         <ProcessesTable data={agent.processes} />
       </CardContent>
       <CardFooter className="border-t border-gray-700 flex justify-between">

@@ -1,10 +1,23 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { PlusCircle, Search, RefreshCw, Settings, Server, LayoutGrid } from "lucide-react";
-import { useState } from "react";
+import { getRouteApi } from "@tanstack/react-router";
+import { LayoutGrid, PlusCircle, RefreshCw, Search, Server, Settings } from "lucide-react";
+
+const routeApi = getRouteApi("/agents/");
 
 export function AgentHeader() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const { filter } = routeApi.useSearch();
+  const navigate = routeApi.useNavigate();
+
+  const onSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === "") {
+      navigate({ to: ".", search: {} });
+      return;
+    }
+
+    navigate({ to: ".", search: { filter: value } });
+  };
 
   return (
     <header className="sticky top-0 z-10 w-full border-b border-gray-700 bg-gray-900/80 backdrop-blur-sm">
@@ -22,8 +35,8 @@ export function AgentHeader() {
                 type="search"
                 placeholder="Search agents..."
                 className="w-full bg-gray-800 border-gray-700 pl-8 text-white"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={filter ?? ""}
+                onChange={onSearchInputChange}
               />
             </div>
           </div>

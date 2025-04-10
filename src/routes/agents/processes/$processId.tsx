@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RULE_ACTION, RULE_CHAIN } from "@/models/rule.model";
 import { processQuery } from "@/queries/process.query";
-import { useCreateRule } from "@/queries/useCreateRule";
+import { useCreateRule } from "@/components/CreateRuleForm/useCreateRule";
 import { customValidation } from "@/utils/zod.util";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
@@ -64,7 +64,7 @@ function ProcessComponent() {
   });
 
   return (
-    <div className="min-h-screen w-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div className="min-h-full w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 overflow-x-auto">
       <ProcessHeader process={getProcessByIdQuery.data} />
 
       <div className="container mx-auto py-6 px-4">
