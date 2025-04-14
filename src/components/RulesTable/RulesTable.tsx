@@ -66,6 +66,7 @@ export const RulesTable = ({ data }: RulesTableProps) => {
         </tfoot>
       </table>
       <ScrollBar orientation="horizontal" />
+      <ScrollBar orientation="vertical" />
     </ScrollArea>
   );
 };

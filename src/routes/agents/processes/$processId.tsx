@@ -42,22 +42,23 @@ function ProcessComponent() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
-    <div className="min-h-full w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 overflow-x-auto">
-      <ProcessHeader setIsDialogOpen={setIsDialogOpen} process={getProcessByIdQuery.data} />
+    <>
+      <div className="min-h-full w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 overflow-x-auto">
+        <ProcessHeader setIsDialogOpen={setIsDialogOpen} process={getProcessByIdQuery.data} />
 
-      <div className="container mx-auto py-6 px-4">
-        <div className="grid lg:grid-cols-12">
-          <div className="lg:col-span-9 lg:col-start-2">
-            <ProcessFirewallRulesCard
-              process={process}
-              isDialogOpen={isDialogOpen}
-              setIsDialogOpen={setIsDialogOpen}
-            />
+        <div className="container mx-auto py-6 px-4">
+          <div className="grid lg:grid-cols-12">
+            <div className="lg:col-span-9 lg:col-start-2">
+              <ProcessFirewallRulesCard
+                process={process}
+                isDialogOpen={isDialogOpen}
+                setIsDialogOpen={setIsDialogOpen}
+              />
+            </div>
           </div>
         </div>
       </div>
-
       <FirewallRuleDialog isDialogOpen={isDialogOpen} setIsDialogOpen={setIsDialogOpen} />
-    </div>
+    </>
   );
 }

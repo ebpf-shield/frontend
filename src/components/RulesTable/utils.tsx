@@ -1,6 +1,9 @@
-import { RuleSchema, RuleAction, RuleChain } from "@/models/rule.model";
+import { RuleAction, RuleChain, RuleSchema } from "@/models/rule.model";
 import { createColumnHelper } from "@tanstack/react-table";
+import { Edit } from "lucide-react";
 import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { DeleteFirewallRuleDialog } from "./DeleteFirewallRuleDialog";
 
 const columnHelper = createColumnHelper<RuleSchema>();
 
@@ -76,5 +79,26 @@ export const columns = [
   columnHelper.accessor("comment", {
     header: "Comment",
     cell: (info) => info.getValue(),
+  }),
+  columnHelper.display({
+    id: "actions",
+    header: "Actions",
+    cell: (column) => {
+      const rowData = column.row.original;
+
+      return (
+        <>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-8 w-8 text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
+            aria-label="Edit"
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+          <DeleteFirewallRuleDialog ruleId={rowData._id} processId={rowData.processId} />
+        </>
+      );
+    },
   }),
 ];

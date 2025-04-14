@@ -6,9 +6,8 @@ const PREFIX = "process" as const;
 
 class ProcessService {
   async getByAgentId(agentId: ObjectId) {
-    const res = await axiosInstance.get(`${PREFIX}/agent/${agentId.toString()}`);
-
     try {
+      const res = await axiosInstance.get(`${PREFIX}/agent/${agentId.toString()}`);
       return processSchema.array().parse(res.data);
     } catch (error) {
       console.error(error);
@@ -17,9 +16,8 @@ class ProcessService {
   }
 
   async getById(processId: ObjectId) {
-    const res = await axiosInstance.get(`${PREFIX}/${processId.toString()}`);
-
     try {
+      const res = await axiosInstance.get(`${PREFIX}/${processId.toString()}`);
       return processSchema.parse(res.data);
     } catch (error) {
       console.error(error);
@@ -28,9 +26,8 @@ class ProcessService {
   }
 
   async getByIdWithRules(processId: ObjectId) {
-    const res = await axiosInstance.get(`${PREFIX}/${processId.toString()}?embed_rules=true`);
-
     try {
+      const res = await axiosInstance.get(`${PREFIX}/${processId.toString()}?embed_rules=true`);
       return processWithRulesSchema.parse(res.data);
     } catch (error) {
       console.error(error);
