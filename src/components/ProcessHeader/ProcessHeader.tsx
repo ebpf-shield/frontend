@@ -2,7 +2,15 @@ import { Process } from "@/models/process.model";
 import { processQuery } from "@/queries/process.query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, Ellipsis, ExternalLink, RefreshCw, Terminal, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  Ellipsis,
+  ExternalLink,
+  RefreshCw,
+  Shield,
+  Terminal,
+  Trash2,
+} from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,12 +31,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { Dispatch, SetStateAction } from "react";
 
 export interface ProcessHeaderProps {
   process: Process;
+  setIsDialogOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export const ProcessHeader = ({ process }: ProcessHeaderProps) => {
+export const ProcessHeader = ({ process, setIsDialogOpen }: ProcessHeaderProps) => {
   const queryClient = useQueryClient();
 
   return (
@@ -89,17 +99,17 @@ export const ProcessHeader = ({ process }: ProcessHeaderProps) => {
               </div>
             </Button>
 
-            {/* <Button
+            <Button
               variant="outline"
               size="sm"
               className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
               asChild
             >
-              <Button type="button">
+              <Button onClick={() => setIsDialogOpen(true)} type="button">
                 <Shield className="h-4 w-4" />
                 <span className="hidden sm:inline">Add Rule</span>
               </Button>
-            </Button> */}
+            </Button>
 
             <AlertDialog>
               <AlertDialogTrigger asChild>

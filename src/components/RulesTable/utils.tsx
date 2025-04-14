@@ -1,8 +1,8 @@
-import { Rule, RuleAction, RuleChain } from "@/models/rule.model";
+import { RuleSchema, RuleAction, RuleChain } from "@/models/rule.model";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Badge } from "../ui/badge";
 
-const columnHelper = createColumnHelper<Rule>();
+const columnHelper = createColumnHelper<RuleSchema>();
 
 const getChainColor = (chain?: RuleChain) => {
   switch (chain) {

@@ -1,15 +1,15 @@
-import { Rule } from "@/models/rule.model";
+import { RuleSchema } from "@/models/rule.model";
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { columns } from "./utils";
 import clsx from "clsx";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 
 export interface RulesTableProps {
-  data: Rule[];
+  data: RuleSchema[];
 }
 
 export const RulesTable = ({ data }: RulesTableProps) => {
-  const table = useReactTable<Rule>({
+  const table = useReactTable<RuleSchema>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
