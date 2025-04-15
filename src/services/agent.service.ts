@@ -6,9 +6,9 @@ const PREFIX = "agent" as const;
 
 export class AgentService {
   async getAll(embed_processes: boolean = false) {
-    const res = await axiosInstance.get(`${PREFIX}?embed_processes=${embed_processes}`);
-
     try {
+      const res = await axiosInstance.get(`${PREFIX}?embed_processes=${embed_processes}`);
+
       if (embed_processes) {
         return agentWithProcessesSchema.array().parse(res.data);
       }
@@ -21,8 +21,9 @@ export class AgentService {
   }
 
   async getAllWithProcesses() {
-    const res = await axiosInstance.get(`${PREFIX}?embed_processes=true`);
     try {
+      const res = await axiosInstance.get(`${PREFIX}?embed_processes=true`);
+
       return agentWithProcessesSchema.array().parse(res.data);
     } catch (error) {
       console.error(error);
@@ -31,11 +32,11 @@ export class AgentService {
   }
 
   async getById(id: ObjectId, embed_processes: boolean = false) {
-    const res = await axiosInstance.get(
-      `${PREFIX}/${id.toString()}?embed_processes=${embed_processes}`
-    );
-
     try {
+      const res = await axiosInstance.get(
+        `${PREFIX}/${id.toString()}?embed_processes=${embed_processes}`
+      );
+
       if (embed_processes) {
         return agentWithProcessesSchema.parse(res.data);
       }
@@ -48,9 +49,8 @@ export class AgentService {
   }
 
   async getByIdWithProcesses(id: ObjectId) {
-    const res = await axiosInstance.get(`${PREFIX}/${id.toString()}?embed_processes=true`);
-
     try {
+      const res = await axiosInstance.get(`${PREFIX}/${id.toString()}?embed_processes=true`);
       return agentWithProcessesSchema.parse(res.data);
     } catch (error) {
       console.error(error);

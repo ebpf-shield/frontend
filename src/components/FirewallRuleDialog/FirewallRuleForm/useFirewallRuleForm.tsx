@@ -1,36 +1,37 @@
-import { Rule } from "@/models/rule.model";
 import { ruleService } from "@/services/rule.service";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ObjectId } from "bson";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { processQuery } from "./process.query";
+import { processQuery } from "../../../queries/process.query";
+import { RuleSchemaWithoutId, ruleSchemaWithoutId } from "@/models/rule.model";
 
 interface UseCreateRuleProps {
   processId: ObjectId;
   setIsAddDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const useCreateRule = ({ processId, setIsAddDialogOpen }: UseCreateRuleProps) => {
+export const useFirewallRuleForm = ({ processId, setIsAddDialogOpen }: UseCreateRuleProps) => {
   const queryClient = useQueryClient();
 
-  const methods = useForm<Rule>({
+  const methods = useForm({
     defaultValues: {
-      _id: new ObjectId(),
-      chain: "INPUT",
       action: "ACCEPT",
-      priority: 0,
-      saddr: "",
-      sport: 0,
+      chain: "INPUT",
       daddr: "",
       dport: 0,
-      protocol: "tcp",
-      processId,
+      protocol: "TCP",
+      saddr: "",
+      sport: 0,
+      comment: "",
+      processId: processId,
+      priority: 0,
     },
+    resolver: zodResolver(ruleSchemaWithoutId),
   });
 
   const mutation = useMutation({
-    mutationFn: async (data: Rule) => {
-      // Assuming ruleService.create is a function that creates a rule
+    mutationFn: async (data: RuleSchemaWithoutId) => {
       const res = await ruleService.create(data);
       return res;
     },
@@ -46,7 +47,7 @@ export const useCreateRule = ({ processId, setIsAddDialogOpen }: UseCreateRulePr
     },
   });
 
-  const onSubmit: SubmitHandler<Rule> = async (data) => {
+  const onSubmit: SubmitHandler<RuleSchemaWithoutId> = async (data) => {
     try {
       await mutation.mutateAsync(data);
     } catch (error) {

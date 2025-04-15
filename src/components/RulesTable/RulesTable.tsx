@@ -1,15 +1,15 @@
-import { Rule } from "@/models/rule.model";
+import { RuleSchema } from "@/models/rule.model";
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { columns } from "./utils";
 import clsx from "clsx";
-import { ScrollArea } from "../ui/scroll-area";
+import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 
 export interface RulesTableProps {
-  data: Rule[];
+  data: RuleSchema[];
 }
 
 export const RulesTable = ({ data }: RulesTableProps) => {
-  const table = useReactTable<Rule>({
+  const table = useReactTable<RuleSchema>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
@@ -54,7 +54,7 @@ export const RulesTable = ({ data }: RulesTableProps) => {
               {footerGroup.headers.map((header) => (
                 <th
                   key={header.id}
-                  className="px-2 py-2 text-left font-medium border-t border-muted"
+                  className="px-2 py-2 text-left font-medium border-t border-muted text-wrap"
                 >
                   {header.isPlaceholder
                     ? null
@@ -65,6 +65,8 @@ export const RulesTable = ({ data }: RulesTableProps) => {
           ))}
         </tfoot>
       </table>
+      <ScrollBar orientation="horizontal" />
+      <ScrollBar orientation="vertical" />
     </ScrollArea>
   );
 };

@@ -1,5 +1,6 @@
 import { AgentDetailHeader } from "@/components/AgentDetailHeader";
 import { AgentProcessesPanel } from "@/components/AgentProcessesPanel";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { agentQuery } from "@/queries/agent.query";
 import { customValidation } from "@/utils/zod.util";
@@ -39,7 +40,7 @@ function AgentComponent() {
   const agent = getAgentByIdQuery.data;
 
   return (
-    <div className="h-screen w-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <ScrollArea className="size-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 overflow-auto">
       <AgentDetailHeader agent={agent} />
 
       <div className="container mx-auto py-6 px-4">
@@ -51,10 +52,14 @@ function AgentComponent() {
       </div>
 
       <div className="grid lg:grid-cols-12">
-        <div className="lg:col-span-8 lg:col-start-3">
+        <div className="lg:col-start-3 lg:col-span-8">
           <AgentProcessesPanel agent={agent} />
         </div>
       </div>
-    </div>
+      <ScrollBar
+        className="flex touch-none select-none bg-blackA3 p-0.5 transition-colors duration-[160ms] ease-out hover:bg-blackA5 data-[orientation=horizontal]:h-2.5 data-[orientation=vertical]:w-2.5 data-[orientation=horizontal]:flex-col z-20"
+        orientation="vertical"
+      />
+    </ScrollArea>
   );
 }

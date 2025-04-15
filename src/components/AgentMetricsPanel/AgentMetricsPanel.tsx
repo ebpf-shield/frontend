@@ -1,8 +1,3 @@
-export interface AgentMetricsPanelProps {}
-
-export const AgentMetricsPanel = (props: AgentMetricsPanelProps) => {
-	
-	return (
-		<div></div>
-	);
+export const AgentMetricsPanel = () => {
+  return <div></div>;
 };

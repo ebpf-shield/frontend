@@ -104,16 +104,13 @@ export const customValidation = {
   longText: textAreaSchema.regex(validRegex, errorMessages.text),
 
   ObjectId: z.preprocess(
-    (arg) => {
+    (arg: unknown) => {
       if (typeof arg === "string" && arg.length === 24) {
         return new ObjectId(arg);
       } else if (arg instanceof ObjectId) {
         return arg;
       } else if (typeof arg === "number") {
         return ObjectId.createFromTime(arg);
-      } else {
-        // throw new Error("Not a valid ObjectId");
-        return undefined;
       }
     },
     z.instanceof(ObjectId),
@@ -139,9 +136,9 @@ const CustomErrorMap: ZodErrorMap = (error, ctx) => {
     case z.ZodIssueCode.invalid_enum_value:
       return { message: errorMessages.enumOption };
     case z.ZodIssueCode.too_big:
-      return { message: errorMessages.maxNumber };
+      return { message: `${errorMessages.maxNumber} ${error.maximum}` };
     case z.ZodIssueCode.too_small:
-      return { message: errorMessages.minNumber };
+      return { message: `${errorMessages.minNumber} ${error.minimum}` };
   }
 
   // fall back to default message!

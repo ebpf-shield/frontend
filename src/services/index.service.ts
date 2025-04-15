@@ -4,7 +4,7 @@ import { env } from "../utils/env.util.ts";
 const { VITE_BACKEND_URL: BACKEND_URL } = env;
 
 export const axiosInstance = axios.create({
-  baseURL: `${BACKEND_URL}/api`,
+  baseURL: `${BACKEND_URL}/api/ui`,
 });
 
 export const authenticatedInstance = axios.create({
