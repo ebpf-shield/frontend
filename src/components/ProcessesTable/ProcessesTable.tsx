@@ -87,7 +87,6 @@ export const ProcessesTable = ({ data }: ProcessesTableProps) => {
           ))}
         </tfoot>
       </table>
-
       <ScrollBar orientation="horizontal" />
       <ScrollBar orientation="vertical" />
     </ScrollArea>
