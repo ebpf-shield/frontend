@@ -8,7 +8,7 @@ export type ProcessStatus = (typeof PROCESS_STATUS)[number];
 export const processSchema = z.object({
   _id: customValidation.ObjectId,
   command: stringSchema.max(1000),
-  pid: z.number().int().min(0).max(65535),
+  pid: z.number().int().min(0).max(1_000_000),
   agentId: customValidation.ObjectId,
   createdAt: customValidation.dateLikeToDate,
   status: z.enum(PROCESS_STATUS),

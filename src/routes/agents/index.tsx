@@ -36,7 +36,7 @@ function AgentsIndexComponent() {
 
   const agents = getAgentsQeury.data
     .filter(filterByName)
-    .map((agent) => <AgentCard agent={agent} />);
+    .map((agent) => <AgentCard key={agent._id.toHexString()} agent={agent} />);
 
   return (
     <div

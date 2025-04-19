@@ -33,6 +33,7 @@ export const columns = [
   columnHelper.accessor("command", {
     cell: (info) => info.getValue(),
     header: "Command",
+    enableGlobalFilter: true,
   }),
   columnHelper.accessor("pid", {
     cell: (info) => info.getValue(),
