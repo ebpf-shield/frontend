@@ -1,22 +1,39 @@
 import { Process } from "@/models/process.model";
-import { useReactTable, getCoreRowModel, flexRender } from "@tanstack/react-table";
-import { columns } from "./utils";
+import { flexRender } from "@tanstack/react-table";
 import clsx from "clsx";
+import { Search } from "lucide-react";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
+import { useProcessTable } from "./useProcessTable";
+import { DebounceInput } from "../DebounceInput";
 
 export interface ProcessesTableProps {
   data: Process[];
 }
 
 export const ProcessesTable = ({ data }: ProcessesTableProps) => {
-  const table = useReactTable<Process>({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
+  const { table, globalFilter, setGlobalFilter } = useProcessTable(data);
 
-  return (
-    <ScrollArea className="rounded-md border outline-2 h-[500px]">
+  const searchComp = (
+    <section>
+      <div>
+        <div className="relative flex-1">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
+          <DebounceInput
+            type="search"
+            placeholder="Search processes..."
+            className="w-full bg-gray-800 border-gray-700 pl-8 text-white"
+            value={globalFilter ?? ""}
+            onChange={(e) => setGlobalFilter(String(e.target.value))}
+          />
+        </div>
+      </div>
+    </section>
+  );
+
+  const tableComp = (
+    <ScrollArea className="rounded-md border outline-2 h-[400px]">
       <table className="w-full table-auto border-collapse">
         <thead className="bg-muted text-muted-foreground">
           {table.getHeaderGroups().map((headerGroup) => (
@@ -72,5 +89,72 @@ export const ProcessesTable = ({ data }: ProcessesTableProps) => {
       <ScrollBar orientation="horizontal" />
       <ScrollBar orientation="vertical" />
     </ScrollArea>
+  );
+
+  const paginationComp = (
+    <section className="flex items-center gap-2">
+      <Button
+        variant="outline"
+        onClick={() => table.firstPage()}
+        disabled={!table.getCanPreviousPage()}
+      >
+        {"<<"}
+      </Button>
+      <Button
+        variant="outline"
+        onClick={() => table.previousPage()}
+        disabled={!table.getCanPreviousPage()}
+      >
+        {"<"}
+      </Button>
+      <Button variant="outline" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+        {">"}
+      </Button>
+      <Button variant="outline" onClick={() => table.lastPage()} disabled={!table.getCanNextPage()}>
+        {">>"}
+      </Button>
+
+      <span className="flex items-center gap-1">
+        <div>Page</div>
+        <strong>
+          {table.getState().pagination.pageIndex + 1} of {table.getPageCount().toLocaleString()}
+        </strong>
+      </span>
+      <span className="flex items-center gap-1">
+        | Go to page:
+        <Input
+          type="number"
+          min="1"
+          max={table.getPageCount()}
+          defaultValue={table.getState().pagination.pageIndex + 1}
+          onChange={(e) => {
+            const page = e.target.value ? Number(e.target.value) - 1 : 0;
+            table.setPageIndex(page);
+          }}
+          className="border p-1 rounded w-16"
+        />
+      </span>
+      <select
+        className="bg-gray-700 border-gray-600 text-white px-3 py-2 rounded"
+        value={table.getState().pagination.pageSize}
+        onChange={(e) => {
+          table.setPageSize(Number(e.target.value));
+        }}
+      >
+        {[10, 20, 30, 40, 50].map((pageSize) => (
+          <option key={pageSize} value={pageSize}>
+            {pageSize}
+          </option>
+        ))}
+      </select>
+    </section>
+  );
+
+  return (
+    <section className="flex flex-col gap-4">
+      {searchComp}
+      {tableComp}
+      {paginationComp}
+    </section>
   );
 };

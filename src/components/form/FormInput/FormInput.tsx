@@ -1,4 +1,4 @@
-import { FormErrorHelperText } from "@/components/FormErrorHelperText";
+import { FormErrorHelperText } from "@/components/form/FormErrorHelperText";
 import { Input, InputProps } from "@/components/ui/input";
 import { Label, LabelProps } from "@/components/ui/label";
 import clsx from "clsx";
