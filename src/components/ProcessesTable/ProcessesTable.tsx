@@ -1,37 +1,36 @@
 import { Process } from "@/models/process.model";
-import {
-  flexRender,
-  getCoreRowModel,
-  getPaginationRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+import { flexRender } from "@tanstack/react-table";
 import clsx from "clsx";
-import { useState } from "react";
-import { ScrollArea, ScrollBar } from "../ui/scroll-area";
-import { columns } from "./utils";
+import { Search } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { ScrollArea, ScrollBar } from "../ui/scroll-area";
+import { useProcessTable } from "./useProcessTable";
+import { DebounceInput } from "../DebounceInput";
 
 export interface ProcessesTableProps {
   data: Process[];
 }
 
 export const ProcessesTable = ({ data }: ProcessesTableProps) => {
-  const [pagination, setPagination] = useState({
-    pageIndex: 0, //initial page index
-    pageSize: 10, //default page size
-  });
+  const { table, globalFilter, setGlobalFilter } = useProcessTable(data);
 
-  const table = useReactTable<Process>({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    onPaginationChange: setPagination,
-    state: {
-      pagination,
-    },
-  });
+  const searchComp = (
+    <section>
+      <div>
+        <div className="relative flex-1">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
+          <DebounceInput
+            type="search"
+            placeholder="Search processes..."
+            className="w-full bg-gray-800 border-gray-700 pl-8 text-white"
+            value={globalFilter ?? ""}
+            onChange={(e) => setGlobalFilter(String(e.target.value))}
+          />
+        </div>
+      </div>
+    </section>
+  );
 
   const tableComp = (
     <ScrollArea className="rounded-md border outline-2 h-[400px]">
@@ -153,6 +152,7 @@ export const ProcessesTable = ({ data }: ProcessesTableProps) => {
 
   return (
     <section className="flex flex-col gap-4">
+      {searchComp}
       {tableComp}
       {paginationComp}
     </section>

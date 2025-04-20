@@ -1,11 +1,11 @@
+import { DATE_LOCALS } from "@/constants/date.constants";
 import { AgentWithProcesses } from "@/models/agent.model";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
+import { Link } from "@tanstack/react-router";
+import clsx from "clsx";
 import { Activity, Clock, Server, SquareArrowOutUpRight } from "lucide-react";
 import { Badge } from "../ui/badge";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { ProcessesTable } from "../ProcessesTable";
-import { DATE_LOCALS } from "@/constants/date.constants";
-import clsx from "clsx";
-import { Link } from "@tanstack/react-router";
 
 export interface AgentCardProps {
   agent: AgentWithProcesses;

@@ -1,8 +1,8 @@
 import { AgentWithProcesses } from "@/models/agent.model";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Terminal } from "lucide-react";
-import { Badge } from "../ui/badge";
 import { ProcessesTable } from "../ProcessesTable";
+import { Badge } from "../ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 export interface AgentProcessesPanelProps {
   agent: AgentWithProcesses;
