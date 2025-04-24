@@ -66,7 +66,7 @@ export const ProcessHeader = ({ process, setIsDialogOpen }: ProcessHeaderProps) 
                 </h1>
               </div>
               <div className="text-sm text-gray-400 flex items-center gap-1">
-                <span>PID: {process.pid}</span>
+                <span>Count: {process.count}</span>
               </div>
             </div>
           </div>
