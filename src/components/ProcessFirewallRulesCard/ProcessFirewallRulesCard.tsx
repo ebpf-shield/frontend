@@ -1,6 +1,6 @@
+import { useFirewallRuleFormDialogContext } from "@/contexts/FirewallRuleFormDialog/useProvider";
 import { ProcessWithRules } from "@/models/process.model";
 import { Plus, Search, Shield } from "lucide-react";
-import { Dispatch, SetStateAction } from "react";
 import { RulesTable } from "../RulesTable";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -9,14 +9,11 @@ import { Input } from "../ui/input";
 
 export interface ProcessFirewallRulesCardProps {
   process: ProcessWithRules;
-  isDialogOpen: boolean;
-  setIsDialogOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export const ProcessFirewallRulesCard = ({
-  process,
-  setIsDialogOpen,
-}: ProcessFirewallRulesCardProps) => {
+export const ProcessFirewallRulesCard = ({ process }: ProcessFirewallRulesCardProps) => {
+  const { setIsDialogOpen } = useFirewallRuleFormDialogContext();
+
   const handleOpenDialog = () => {
     setIsDialogOpen(true);
   };

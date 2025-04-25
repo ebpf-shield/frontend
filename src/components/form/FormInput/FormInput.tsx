@@ -63,7 +63,7 @@ export const FormInput = ({ name, labelProps, inputProps }: FormInputProps) => {
 
 export const FormInputNumber = ({ name, labelProps, inputProps }: FormInputProps) => {
   const {
-    formState: { isSubmitting, defaultValues },
+    formState: { isSubmitting },
   } = useFormContext();
 
   const {
@@ -74,12 +74,15 @@ export const FormInputNumber = ({ name, labelProps, inputProps }: FormInputProps
   });
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-    if (!e.target.value) {
-      if (defaultValues) {
-        field.onChange(defaultValues[name]);
-        return;
-      }
-      field.onChange(0);
+    if (!e.target.value || isNaN(Number(e.target.value))) {
+      // TODO: Please check if we are want to set to empty string
+      // if (defaultValues) {
+      //   field.onChange(defaultValues[name]);
+      //   return;
+      // }
+
+      // field.onChange(0);
+      field.onChange("");
       return;
     }
 

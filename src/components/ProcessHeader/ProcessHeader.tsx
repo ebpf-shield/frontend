@@ -31,15 +31,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Dispatch, SetStateAction } from "react";
+import { useFirewallRuleFormDialogContext } from "@/contexts/FirewallRuleFormDialog/useProvider";
 
 export interface ProcessHeaderProps {
   process: Process;
-  setIsDialogOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export const ProcessHeader = ({ process, setIsDialogOpen }: ProcessHeaderProps) => {
+export const ProcessHeader = ({ process }: ProcessHeaderProps) => {
   const queryClient = useQueryClient();
+  const { setIsDialogOpen } = useFirewallRuleFormDialogContext();
 
   return (
     <header className="sticky top-0 z-10 w-full border-b border-gray-700 bg-gray-900/80 backdrop-blur-sm">

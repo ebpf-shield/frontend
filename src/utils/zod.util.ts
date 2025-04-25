@@ -1,6 +1,6 @@
 import { ObjectId } from "bson";
 import validator from "validator";
-import { ZodErrorMap, z } from "zod";
+import { TransformEffect, z, ZodErrorMap } from "zod";
 
 export const errorMessages = {
   url: "כתובת ה-URL מכילה נתיב לא חוקי",
@@ -146,3 +146,23 @@ const CustomErrorMap: ZodErrorMap = (error, ctx) => {
 };
 
 z.setErrorMap(CustomErrorMap);
+
+export const numberZeroValueToUndefined: TransformEffect<number | undefined> = {
+  type: "transform",
+  transform: (value) => {
+    if (value === 0) {
+      return undefined;
+    }
+    return value;
+  },
+};
+
+export const stringZeroValueToUndefined: TransformEffect<string | undefined> = {
+  type: "transform",
+  transform: (value) => {
+    if (value === "") {
+      return undefined;
+    }
+    return value;
+  },
+};
