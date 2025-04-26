@@ -29,7 +29,7 @@ export const outputRuleFormSchemaWithoutId = outputRuleSchemaWithoutId.extend({
   comment: outputRuleSchema.shape.comment.transform(stringZeroValueToUndefined),
 });
 
-export type OutputRuleFormSchemaWithoutId = z.infer<typeof outputRuleSchemaWithoutId>;
+export type OutputRuleFormSchemaWithoutId = z.infer<typeof outputRuleFormSchemaWithoutId>;
 
 export const inputRuleFormSchemaWithoutId = inputRuleSchemaWithoutId.extend({
   sport: baseRuleSchema.shape.sport.nullish(),
@@ -39,6 +39,6 @@ export const inputRuleFormSchemaWithoutId = inputRuleSchemaWithoutId.extend({
   comment: inputRuleSchema.shape.comment.transform(stringZeroValueToUndefined),
 });
 
-export type InputRuleFormSchemaWithoutId = z.infer<typeof inputRuleSchemaWithoutId>;
+export type InputRuleFormSchemaWithoutId = z.infer<typeof inputRuleFormSchemaWithoutId>;
 
 export type RuleFormSchemaWithoutId = InputRuleFormSchemaWithoutId | OutputRuleFormSchemaWithoutId;
