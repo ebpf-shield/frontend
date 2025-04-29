@@ -1,28 +1,22 @@
-import { FormInput, FormInputNumber } from "@/components/form/FormInput";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  RULE_ACTION,
-  RULE_CHAIN,
-  RULE_MAX_PORT_RANGE,
-  RULE_MIN_PORT_RANGE,
-} from "@/models/rule.model";
-import { debugLog } from "@/utils/log.util";
+import { useFirewallRuleFormDialogContext } from "@/contexts/FirewallRuleFormDialog/useProvider";
 import { getRouteApi } from "@tanstack/react-router";
-import { Dispatch, FormEventHandler, SetStateAction } from "react";
+import { useFirewallRuleForm } from "../useFirewallRuleForm";
+import { FormEventHandler } from "react";
+import { debugLog } from "@/utils/log.util";
 import { FormProvider } from "react-hook-form";
-import { useFirewallRuleForm } from "./useFirewallRuleForm";
+import { FormInput, FormInputNumber } from "@/components/form/FormInput";
+import { RULE_ACTION, RULE_MAX_PORT_RANGE, RULE_MIN_PORT_RANGE } from "@/models/rule.model";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const routeApi = getRouteApi("/agents/processes/$processId");
 
-export interface FirewallRuleFormProps {
-  setIsDialogOpen: Dispatch<SetStateAction<boolean>>;
-}
-
-export const FirewallRuleForm = ({ setIsDialogOpen }: FirewallRuleFormProps) => {
+export const OutputFirewallRuleForm = () => {
   const { processId } = routeApi.useParams();
-  const { methods, onSubmit } = useFirewallRuleForm({
+  const { setIsDialogOpen } = useFirewallRuleFormDialogContext();
+
+  const { outputRuleFormMethods: methods, outputOnSubmit: onSubmit } = useFirewallRuleForm({
     processId: processId,
     setIsAddDialogOpen: setIsDialogOpen,
   });
@@ -46,19 +40,6 @@ export const FirewallRuleForm = ({ setIsDialogOpen }: FirewallRuleFormProps) => 
     <FormProvider {...methods}>
       <form onSubmit={(e) => handleOnSubmit(e)} className="grid gap-4 py-4">
         <div className={gridRowClasses}>
-          <div className="grid gap-2 ">
-            <FormInput
-              name="saddr"
-              labelProps={{
-                children: "Source Address",
-                className: labelClasses,
-              }}
-              inputProps={{
-                className: inputClasses,
-                placeholder: "e.g. 192.168.1.1",
-              }}
-            />
-          </div>
           <div className="grid gap-2">
             <FormInput
               name="daddr"
@@ -69,23 +50,6 @@ export const FirewallRuleForm = ({ setIsDialogOpen }: FirewallRuleFormProps) => 
               inputProps={{
                 className: inputClasses,
                 placeholder: "e.g. 10.0.0.1",
-              }}
-            />
-          </div>
-        </div>
-        <div className={gridRowClasses}>
-          <div className="grid gap-2">
-            <FormInputNumber
-              name={"sport"}
-              labelProps={{
-                children: "Source Port",
-                className: labelClasses,
-              }}
-              inputProps={{
-                className: inputClasses,
-                placeholder: "e.g. 8080",
-                min: RULE_MIN_PORT_RANGE,
-                max: RULE_MAX_PORT_RANGE,
               }}
             />
           </div>
@@ -148,35 +112,16 @@ export const FirewallRuleForm = ({ setIsDialogOpen }: FirewallRuleFormProps) => 
         </div>
         <div className={gridRowClasses}>
           <div className="grid gap-2">
-            <Label htmlFor="chain" className="text-gray-300">
-              Chain
-            </Label>
-            <select
-              id="chain"
-              {...methods.register("chain")}
-              className="bg-gray-700 border-gray-600 text-white px-3 py-2 rounded"
-              defaultValue=""
-            >
-              <option value="" disabled>
-                Select chain
-              </option>
-              {RULE_CHAIN.map((chain) => (
-                <option key={chain} value={chain}>
-                  {chain}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="priority" className="text-gray-300">
-              Priority
-            </Label>
-            <Input
-              {...methods.register("priority")}
-              id="priority"
-              type="number"
-              placeholder="e.g. 100"
-              className={inputClasses}
+            <FormInput
+              name="priority"
+              labelProps={{
+                children: "Priority",
+                className: labelClasses,
+              }}
+              inputProps={{
+                className: inputClasses,
+                placeholder: "e.g. 100",
+              }}
             />
           </div>
         </div>
@@ -191,7 +136,6 @@ export const FirewallRuleForm = ({ setIsDialogOpen }: FirewallRuleFormProps) => 
             className={inputClasses}
           />
         </div>
-
         <Button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white">
           Add Rule
         </Button>

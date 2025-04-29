@@ -31,15 +31,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Dispatch, SetStateAction } from "react";
+import { useFirewallRuleFormDialogContext } from "@/contexts/FirewallRuleFormDialog/useProvider";
 
 export interface ProcessHeaderProps {
   process: Process;
-  setIsDialogOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export const ProcessHeader = ({ process, setIsDialogOpen }: ProcessHeaderProps) => {
+export const ProcessHeader = ({ process }: ProcessHeaderProps) => {
   const queryClient = useQueryClient();
+  const { setIsDialogOpen } = useFirewallRuleFormDialogContext();
+
+  const handleRefresh = () =>
+    queryClient.refetchQueries({
+      exact: true,
+      queryKey: processQuery.keys.getByIdWithRules(process._id),
+    });
 
   return (
     <header className="sticky top-0 z-10 w-full border-b border-gray-700 bg-gray-900/80 backdrop-blur-sm">
@@ -66,7 +72,7 @@ export const ProcessHeader = ({ process, setIsDialogOpen }: ProcessHeaderProps) 
                 </h1>
               </div>
               <div className="text-sm text-gray-400 flex items-center gap-1">
-                <span>PID: {process.pid}</span>
+                <span>Count: {process.count}</span>
               </div>
             </div>
           </div>
@@ -76,12 +82,7 @@ export const ProcessHeader = ({ process, setIsDialogOpen }: ProcessHeaderProps) 
               variant="outline"
               size="sm"
               className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
-              onClick={() =>
-                queryClient.refetchQueries({
-                  exact: true,
-                  queryKey: processQuery.keys.getByIdWithRules(process._id),
-                })
-              }
+              onClick={handleRefresh}
             >
               <RefreshCw className="h-4 w-4" />
               <span className="hidden sm:inline">Refresh</span>

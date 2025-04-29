@@ -36,9 +36,9 @@ export const columns = [
     filterFn: "fuzzy",
     enableGlobalFilter: true,
   }),
-  columnHelper.accessor("pid", {
+  columnHelper.accessor("count", {
     cell: (info) => info.getValue(),
-    header: "PID",
+    header: "Count",
   }),
   columnHelper.display({
     id: "go-to-process",

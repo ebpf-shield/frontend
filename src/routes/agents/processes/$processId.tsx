@@ -1,11 +1,11 @@
 import { FirewallRuleDialog } from "@/components/FirewallRuleDialog";
 import { ProcessFirewallRulesCard } from "@/components/ProcessFirewallRulesCard";
 import { ProcessHeader } from "@/components/ProcessHeader";
+import { FirewallRuleFormDialogContextProvider } from "@/contexts/FirewallRuleFormDialog/provider";
 import { processQuery } from "@/queries/process.query";
 import { customValidation } from "@/utils/zod.util";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
 
 export const Route = createFileRoute("/agents/processes/$processId")({
   params: {
@@ -39,26 +39,20 @@ function ProcessComponent() {
   );
   const process = getProcessByIdQuery.data;
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
   return (
-    <>
+    <FirewallRuleFormDialogContextProvider>
       <div className="min-h-full w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 overflow-x-auto">
-        <ProcessHeader setIsDialogOpen={setIsDialogOpen} process={getProcessByIdQuery.data} />
+        <ProcessHeader process={getProcessByIdQuery.data} />
 
         <div className="container mx-auto py-6 px-4">
           <div className="grid lg:grid-cols-12">
             <div className="lg:col-span-9 lg:col-start-2">
-              <ProcessFirewallRulesCard
-                process={process}
-                isDialogOpen={isDialogOpen}
-                setIsDialogOpen={setIsDialogOpen}
-              />
+              <ProcessFirewallRulesCard process={process} />
             </div>
           </div>
         </div>
       </div>
-      <FirewallRuleDialog isDialogOpen={isDialogOpen} setIsDialogOpen={setIsDialogOpen} />
-    </>
+      <FirewallRuleDialog />
+    </FirewallRuleFormDialogContextProvider>
   );
 }

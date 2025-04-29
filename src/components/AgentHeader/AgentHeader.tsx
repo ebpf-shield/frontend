@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { agentQuery } from "@/queries/agent.query";
+import { useQueryClient } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { LayoutGrid, PlusCircle, RefreshCw, Search, Server, Settings } from "lucide-react";
 
@@ -8,6 +10,7 @@ const routeApi = getRouteApi("/agents/");
 export function AgentHeader() {
   const { filter } = routeApi.useSearch();
   const navigate = routeApi.useNavigate();
+  const queryClient = useQueryClient();
 
   const onSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -18,6 +21,12 @@ export function AgentHeader() {
 
     navigate({ to: ".", search: { filter: value } });
   };
+
+  const handleRefresh = () =>
+    queryClient.refetchQueries({
+      exact: true,
+      queryKey: agentQuery.keys.getAllWithProcesses,
+    });
 
   return (
     <header className="sticky top-0 z-10 w-full border-b border-gray-700 bg-gray-900/80 backdrop-blur-sm">
@@ -46,6 +55,7 @@ export function AgentHeader() {
               variant="outline"
               size="sm"
               className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
+              onClick={handleRefresh}
             >
               <RefreshCw className="h-4 w-4" />
               <span className="hidden sm:inline">Refresh</span>
