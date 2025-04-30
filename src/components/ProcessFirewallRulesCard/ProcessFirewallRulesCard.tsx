@@ -12,11 +12,7 @@ export interface ProcessFirewallRulesCardProps {
 }
 
 export const ProcessFirewallRulesCard = ({ process }: ProcessFirewallRulesCardProps) => {
-  const { setIsDialogOpen } = useFirewallRuleFormDialogContext();
-
-  const handleOpenDialog = () => {
-    setIsDialogOpen(true);
-  };
+  const { handleOpenCreateModel } = useFirewallRuleFormDialogContext();
 
   return (
     <Card className=" border-gray-700 bg-gray-800/50 backdrop-blur-sm">
@@ -45,7 +41,7 @@ export const ProcessFirewallRulesCard = ({ process }: ProcessFirewallRulesCardPr
             />
           </div>
           <Button
-            onClick={handleOpenDialog}
+            onClick={handleOpenCreateModel}
             className="gap-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
           >
             <Plus className="h-4 w-4" />

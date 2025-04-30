@@ -26,10 +26,10 @@ export const baseRuleSchema = z.object({
   protocol: z.enum(RULE_PROTOCOL),
   action: z.enum(RULE_ACTION),
   chain: z.nativeEnum(RULE_CHAIN),
-  priority: z.number().int().min(0).max(100000).nullish(),
+  priority: z.number().int().min(0).max(100000).optional(),
   comment: stringSchema.nullish(),
-  createdAt: customValidation.dateLikeToDate.nullish(),
-  updatedAt: customValidation.dateLikeToDate.nullish(),
+  createdAt: customValidation.dateLikeToDate.optional(),
+  updatedAt: customValidation.dateLikeToDate.optional(),
   processId: customValidation.ObjectId,
 });
 

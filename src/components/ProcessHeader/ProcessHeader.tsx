@@ -1,3 +1,4 @@
+import { useFirewallRuleFormDialogContext } from "@/contexts/FirewallRuleFormDialog/useProvider";
 import { Process } from "@/models/process.model";
 import { processQuery } from "@/queries/process.query";
 import { useQueryClient } from "@tanstack/react-query";
@@ -31,7 +32,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { useFirewallRuleFormDialogContext } from "@/contexts/FirewallRuleFormDialog/useProvider";
 
 export interface ProcessHeaderProps {
   process: Process;
@@ -39,7 +39,7 @@ export interface ProcessHeaderProps {
 
 export const ProcessHeader = ({ process }: ProcessHeaderProps) => {
   const queryClient = useQueryClient();
-  const { setIsDialogOpen } = useFirewallRuleFormDialogContext();
+  const { handleOpenCreateModel } = useFirewallRuleFormDialogContext();
 
   const handleRefresh = () =>
     queryClient.refetchQueries({
@@ -106,7 +106,7 @@ export const ProcessHeader = ({ process }: ProcessHeaderProps) => {
               className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
               asChild
             >
-              <Button onClick={() => setIsDialogOpen(true)} type="button">
+              <Button onClick={handleOpenCreateModel} type="button">
                 <Shield className="h-4 w-4" />
                 <span className="hidden sm:inline">Add Rule</span>
               </Button>

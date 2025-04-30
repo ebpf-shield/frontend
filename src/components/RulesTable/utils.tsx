@@ -4,6 +4,7 @@ import { Edit } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { DeleteFirewallRuleDialog } from "./DeleteFirewallRuleDialog";
+import { useFirewallRuleFormDialogContext } from "@/contexts/FirewallRuleFormDialog/useProvider";
 
 const columnHelper = createColumnHelper<RuleSchema>();
 
@@ -83,8 +84,14 @@ export const columns = [
   columnHelper.display({
     id: "actions",
     header: "Actions",
-    cell: (column) => {
-      const rowData = column.row.original;
+    cell: function CellComponent({ row }) {
+      const rowData = row.original;
+      const { handleOpenEditModal, setDefaultRule: setRule } = useFirewallRuleFormDialogContext();
+
+      const handleEditRule = () => {
+        setRule(rowData);
+        handleOpenEditModal();
+      };
 
       return (
         <>
@@ -93,6 +100,7 @@ export const columns = [
             variant="ghost"
             className="h-8 w-8 text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
             aria-label="Edit"
+            onClick={handleEditRule}
           >
             <Edit className="h-4 w-4" />
           </Button>

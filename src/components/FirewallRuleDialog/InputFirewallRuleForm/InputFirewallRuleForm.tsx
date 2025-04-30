@@ -1,25 +1,25 @@
-import { useFirewallRuleFormDialogContext } from "@/contexts/FirewallRuleFormDialog/useProvider";
-import { getRouteApi } from "@tanstack/react-router";
-import { useFirewallRuleForm } from "../useFirewallRuleForm";
-import { FormEventHandler } from "react";
-import { debugLog } from "@/utils/log.util";
-import { FormProvider } from "react-hook-form";
 import { FormInput, FormInputNumber } from "@/components/form/FormInput";
-import { RULE_ACTION, RULE_MAX_PORT_RANGE, RULE_MIN_PORT_RANGE } from "@/models/rule.model";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RULE_ACTION, RULE_MAX_PORT_RANGE, RULE_MIN_PORT_RANGE } from "@/models/rule.model";
+import { debugLog } from "@/utils/log.util";
+import { getRouteApi } from "@tanstack/react-router";
+import { FormEventHandler } from "react";
+import { FormProvider } from "react-hook-form";
+import { useFirewallRuleForm } from "../FirewallRuleFormTabs/useFirewallRuleForm";
+import { useFirewallRuleFormDialogContext } from "@/contexts/FirewallRuleFormDialog/useProvider";
 
 const routeApi = getRouteApi("/agents/processes/$processId");
 
-export const OutputFirewallRuleForm = () => {
+export const InputFirewallRuleForm = () => {
   const { processId } = routeApi.useParams();
-  const { setIsDialogOpen } = useFirewallRuleFormDialogContext();
 
-  const { outputRuleFormMethods: methods, outputOnSubmit: onSubmit } = useFirewallRuleForm({
+  const { inputRuleFormMethods: methods, inputOnSubmit: onSubmit } = useFirewallRuleForm({
     processId: processId,
-    setIsAddDialogOpen: setIsDialogOpen,
   });
+
+  const { isEdit } = useFirewallRuleFormDialogContext();
 
   const { isValid, errors } = methods.formState;
 
@@ -42,27 +42,27 @@ export const OutputFirewallRuleForm = () => {
         <div className={gridRowClasses}>
           <div className="grid gap-2">
             <FormInput
-              name="daddr"
+              name="saddr"
               labelProps={{
-                children: "Destination Address",
+                children: "Source Address",
                 className: labelClasses,
               }}
               inputProps={{
                 className: inputClasses,
-                placeholder: "e.g. 10.0.0.1",
+                placeholder: "e.g. 192.168.1.1",
               }}
             />
           </div>
           <div className="grid gap-2">
             <FormInputNumber
-              name="dport"
+              name="sport"
               labelProps={{
-                children: "Destination Port",
+                children: "Source Port",
                 className: labelClasses,
               }}
               inputProps={{
                 className: inputClasses,
-                placeholder: "e.g. 3000",
+                placeholder: "e.g. 433",
                 min: RULE_MIN_PORT_RANGE,
                 max: RULE_MAX_PORT_RANGE,
               }}
@@ -137,7 +137,7 @@ export const OutputFirewallRuleForm = () => {
           />
         </div>
         <Button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white">
-          Add Rule
+          {isEdit ? "Update Rule" : "Create Rule"}
         </Button>
       </form>
     </FormProvider>

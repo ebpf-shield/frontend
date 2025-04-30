@@ -25,6 +25,16 @@ export class RuleService {
       throw new Error("Failed to delete rule");
     }
   }
+
+  async update(ruleId: ObjectId, rule: RuleFormSchemaWithoutId) {
+    try {
+      const res = await axiosInstance.patch(`${PREFIX}/${ruleId.toString()}`, rule);
+      return res;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to update rule");
+    }
+  }
 }
 
 export const ruleService = new RuleService();

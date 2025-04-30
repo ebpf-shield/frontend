@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { OutputFirewallRuleForm } from "./OutputFirewallRuleForm";
-import { InputFirewallRuleForm } from "./InputFirewallRuleForm";
+import { OutputFirewallRuleForm } from "../OutputFirewallRuleForm";
+import { InputFirewallRuleForm } from "../InputFirewallRuleForm";
 
 export const FirewallRuleFormTabs = () => {
   return (
