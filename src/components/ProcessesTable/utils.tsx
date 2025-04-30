@@ -1,8 +1,20 @@
 import { Process, ProcessStatus } from "@/models/process.model";
+import { rankItem } from "@tanstack/match-sorter-utils";
 import { Link } from "@tanstack/react-router";
-import { createColumnHelper } from "@tanstack/react-table";
-import { Badge } from "../ui/badge";
+import { createColumnHelper, FilterFn } from "@tanstack/react-table";
 import clsx from "clsx";
+import { Badge } from "../ui/badge";
+
+export const processFuzzyFilter: FilterFn<Process> = (row, columnId, value, addMeta) => {
+  // Rank the item
+  const itemRank = rankItem(row.getValue(columnId), value);
+
+  // Store the itemRank info
+  addMeta({ itemRank });
+
+  // Return if the item should be filtered in/out
+  return itemRank.passed;
+};
 
 const columnHelper = createColumnHelper<Process>();
 
@@ -33,7 +45,7 @@ export const columns = [
   columnHelper.accessor("command", {
     cell: (info) => info.getValue(),
     header: "Command",
-    filterFn: "fuzzy",
+    filterFn: processFuzzyFilter,
     enableGlobalFilter: true,
   }),
   columnHelper.accessor("count", {

@@ -1,9 +1,9 @@
+import { useFirewallRuleFormDialogContext } from "@/contexts/FirewallRuleFormDialog/useProvider";
 import { ruleService } from "@/services/rule.service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ObjectId } from "bson";
-import { Dispatch, SetStateAction } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { processQuery } from "../../../queries/process.query";
 import {
   InputRuleFormSchemaWithoutId,
@@ -15,47 +15,66 @@ import {
 
 interface UseFirewallRuleProps {
   processId: ObjectId;
-  setIsAddDialogOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export const useFirewallRuleForm = ({ processId, setIsAddDialogOpen }: UseFirewallRuleProps) => {
+export const useFirewallRuleForm = ({ processId }: UseFirewallRuleProps) => {
   const queryClient = useQueryClient();
+  const { isEdit, defaultRule: rule, setIsDialogOpen } = useFirewallRuleFormDialogContext();
 
-  const outputRuleFormMethods = useForm({
-    defaultValues: {
-      action: "ACCEPT",
-      chain: "OUTPUT",
-      daddr: "",
-      dport: 0,
-      protocol: "TCP",
-      comment: "",
-      processId: processId,
-      priority: 0,
-    },
+  let inputRule: InputRuleFormSchemaWithoutId | null = null;
+  let outputRule: OutputRuleFormSchemaWithoutId | null = null;
+
+  if (isEdit) {
+    if (!rule) {
+      throw new Error("If editing 'rule' must be defined");
+    }
+    if (rule.chain === "INPUT") {
+      inputRule = rule;
+    }
+    if (rule.chain === "OUTPUT") {
+      outputRule = rule;
+    }
+  }
+
+  const outputRuleFormDefaultValues: OutputRuleFormSchemaWithoutId = {
+    action: "ACCEPT",
+    chain: "OUTPUT",
+    daddr: "",
+    dport: 0,
+    protocol: "TCP",
+    comment: "",
+    processId: processId,
+    priority: 0,
+  } as const;
+
+  const outputRuleFormMethods = useForm<OutputRuleFormSchemaWithoutId>({
+    defaultValues: isEdit && outputRule ? outputRule : outputRuleFormDefaultValues,
     resolver: zodResolver(outputRuleFormSchemaWithoutId),
   });
 
-  const inputRuleFormMethods = useForm({
-    defaultValues: {
-      action: "ACCEPT",
-      chain: "INPUT",
-      saddr: "",
-      sport: 0,
-      protocol: "TCP",
-      comment: "",
-      processId: processId,
-      priority: 0,
-    },
+  const inputRuleFormDefaultValues: InputRuleFormSchemaWithoutId = {
+    action: "ACCEPT",
+    chain: "INPUT",
+    saddr: "",
+    sport: 0,
+    protocol: "TCP",
+    comment: "",
+    processId: processId,
+    priority: 0,
+  } as const;
+
+  const inputRuleFormMethods = useForm<InputRuleFormSchemaWithoutId>({
+    defaultValues: isEdit && inputRule ? inputRule : inputRuleFormDefaultValues,
     resolver: zodResolver(inputRuleFormSchemaWithoutId),
   });
 
-  const mutation = useMutation({
+  const createMutation = useMutation({
     mutationFn: async (data: RuleFormSchemaWithoutId) => {
       const res = await ruleService.create(data);
       return res;
     },
 
-    onSuccess: () => {
+    onSuccess: async () => {
       // Invalidate and refetch
       outputRuleFormMethods.reset();
       inputRuleFormMethods.reset();
@@ -63,22 +82,41 @@ export const useFirewallRuleForm = ({ processId, setIsAddDialogOpen }: UseFirewa
         exact: true,
         queryKey: processQuery.keys.getByIdWithRules(processId),
       });
-      setIsAddDialogOpen(false);
+      setIsDialogOpen(false);
     },
   });
 
-  // Maybe combine these two functions into one - with the same type
-  const outputOnSubmit: SubmitHandler<OutputRuleFormSchemaWithoutId> = async (data) => {
-    try {
-      await mutation.mutateAsync(data);
-    } catch (error) {
-      console.error("Error creating rule:", error);
-    }
-  };
+  const editMutation = useMutation({
+    mutationFn: async (data: { rule: RuleFormSchemaWithoutId; ruleId: ObjectId }) => {
+      const res = await ruleService.update(data.ruleId, data.rule);
+      return res;
+    },
+    async onSuccess() {
+      setIsDialogOpen(false);
+      await queryClient.invalidateQueries({
+        exact: true,
+        queryKey: processQuery.keys.getByIdWithRules(processId),
+      });
+    },
+  });
 
-  const inputOnSubmit: SubmitHandler<InputRuleFormSchemaWithoutId> = async (data) => {
+  const onSubmit = async (data: RuleFormSchemaWithoutId) => {
     try {
-      await mutation.mutateAsync(data);
+      if (isEdit) {
+        if (!rule) {
+          throw new Error("If editing 'rule' must be defined");
+        } else if (!rule._id) {
+          throw new Error("If editing 'rule' must have '_id'");
+        }
+
+        await editMutation.mutateAsync({
+          rule: data,
+          ruleId: rule._id,
+        });
+
+        return;
+      }
+      await createMutation.mutateAsync(data);
     } catch (error) {
       console.error("Error creating rule:", error);
     }
@@ -87,7 +125,7 @@ export const useFirewallRuleForm = ({ processId, setIsAddDialogOpen }: UseFirewa
   return {
     outputRuleFormMethods,
     inputRuleFormMethods,
-    outputOnSubmit,
-    inputOnSubmit,
+    outputOnSubmit: onSubmit,
+    inputOnSubmit: onSubmit,
   };
 };
