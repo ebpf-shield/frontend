@@ -6,7 +6,7 @@ export const FirewallRuleEditForm = () => {
   const { defaultRule: rule } = useFirewallRuleFormDialogContext();
 
   if (!rule) {
-    throw new Error("Rule must be defined when ediing rule");
+    throw new Error("Rule must be defined when editing rule");
   }
 
   if (rule.chain === "OUTPUT") {
