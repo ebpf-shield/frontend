@@ -12,6 +12,7 @@ export interface ProcessesTableProps {
   data: Process[];
 }
 
+// TODO? We may need to refactor this specific component.
 export const ProcessesTable = ({ data }: ProcessesTableProps) => {
   const { table, globalFilter, setGlobalFilter } = useProcessTable(data);
 

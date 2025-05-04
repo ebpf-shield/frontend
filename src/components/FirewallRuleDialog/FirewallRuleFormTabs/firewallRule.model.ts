@@ -7,14 +7,17 @@ import {
 } from "@/models/rule.model";
 import { z } from "zod";
 
-const stringZeroValueToUndefined = (val: string | null | undefined) => {
+const stringZeroValueToUndefinedOrNull = (val: string | null | undefined) => {
+  if (val === null) {
+    return null;
+  }
   if (!val) {
     return undefined;
   }
   return val;
 };
 
-const numberZeroValueToUndefined = (val: number | null | undefined) => {
+const numberZeroValueToUndefined = (val: number | undefined) => {
   if (!val) {
     return undefined;
   }
@@ -26,7 +29,7 @@ export const outputRuleFormSchemaWithoutId = outputRuleSchemaWithoutId.extend({
 
   priority: outputRuleSchema.shape.priority.transform(numberZeroValueToUndefined),
 
-  comment: outputRuleSchema.shape.comment.transform(stringZeroValueToUndefined),
+  comment: outputRuleSchema.shape.comment.transform(stringZeroValueToUndefinedOrNull),
 });
 
 export type OutputRuleFormSchemaWithoutId = z.infer<typeof outputRuleFormSchemaWithoutId>;
@@ -36,7 +39,7 @@ export const inputRuleFormSchemaWithoutId = inputRuleSchemaWithoutId.extend({
 
   priority: inputRuleSchema.shape.priority.transform(numberZeroValueToUndefined),
 
-  comment: inputRuleSchema.shape.comment.transform(stringZeroValueToUndefined),
+  comment: inputRuleSchema.shape.comment.transform(stringZeroValueToUndefinedOrNull),
 });
 
 export type InputRuleFormSchemaWithoutId = z.infer<typeof inputRuleFormSchemaWithoutId>;
