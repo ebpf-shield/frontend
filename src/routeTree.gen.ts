@@ -12,8 +12,10 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as AboutImport } from './routes/about'
+import { Route as DashboardsRouteImport } from './routes/dashboards/route'
 import { Route as AgentsRouteImport } from './routes/agents/route'
 import { Route as IndexImport } from './routes/index'
+import { Route as DashboardsIndexImport } from './routes/dashboards/index'
 import { Route as AgentsIndexImport } from './routes/agents/index'
 import { Route as AgentsAgentIdImport } from './routes/agents/$agentId'
 import { Route as AgentsProcessesProcessIdImport } from './routes/agents/processes/$processId'
@@ -23,6 +25,12 @@ import { Route as AgentsProcessesProcessIdImport } from './routes/agents/process
 const AboutRoute = AboutImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const DashboardsRouteRoute = DashboardsRouteImport.update({
+  id: '/dashboards',
+  path: '/dashboards',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -36,6 +44,12 @@ const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const DashboardsIndexRoute = DashboardsIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardsRouteRoute,
 } as any)
 
 const AgentsIndexRoute = AgentsIndexImport.update({
@@ -74,6 +88,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentsRouteImport
       parentRoute: typeof rootRoute
     }
+    '/dashboards': {
+      id: '/dashboards'
+      path: '/dashboards'
+      fullPath: '/dashboards'
+      preLoaderRoute: typeof DashboardsRouteImport
+      parentRoute: typeof rootRoute
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -94,6 +115,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/agents/'
       preLoaderRoute: typeof AgentsIndexImport
       parentRoute: typeof AgentsRouteImport
+    }
+    '/dashboards/': {
+      id: '/dashboards/'
+      path: '/'
+      fullPath: '/dashboards/'
+      preLoaderRoute: typeof DashboardsIndexImport
+      parentRoute: typeof DashboardsRouteImport
     }
     '/agents/processes/$processId': {
       id: '/agents/processes/$processId'
@@ -123,12 +151,26 @@ const AgentsRouteRouteWithChildren = AgentsRouteRoute._addFileChildren(
   AgentsRouteRouteChildren,
 )
 
+interface DashboardsRouteRouteChildren {
+  DashboardsIndexRoute: typeof DashboardsIndexRoute
+}
+
+const DashboardsRouteRouteChildren: DashboardsRouteRouteChildren = {
+  DashboardsIndexRoute: DashboardsIndexRoute,
+}
+
+const DashboardsRouteRouteWithChildren = DashboardsRouteRoute._addFileChildren(
+  DashboardsRouteRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agents': typeof AgentsRouteRouteWithChildren
+  '/dashboards': typeof DashboardsRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/agents/$agentId': typeof AgentsAgentIdRoute
   '/agents/': typeof AgentsIndexRoute
+  '/dashboards/': typeof DashboardsIndexRoute
   '/agents/processes/$processId': typeof AgentsProcessesProcessIdRoute
 }
 
@@ -137,6 +179,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/agents/$agentId': typeof AgentsAgentIdRoute
   '/agents': typeof AgentsIndexRoute
+  '/dashboards': typeof DashboardsIndexRoute
   '/agents/processes/$processId': typeof AgentsProcessesProcessIdRoute
 }
 
@@ -144,9 +187,11 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/agents': typeof AgentsRouteRouteWithChildren
+  '/dashboards': typeof DashboardsRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/agents/$agentId': typeof AgentsAgentIdRoute
   '/agents/': typeof AgentsIndexRoute
+  '/dashboards/': typeof DashboardsIndexRoute
   '/agents/processes/$processId': typeof AgentsProcessesProcessIdRoute
 }
 
@@ -155,9 +200,11 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/agents'
+    | '/dashboards'
     | '/about'
     | '/agents/$agentId'
     | '/agents/'
+    | '/dashboards/'
     | '/agents/processes/$processId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -165,14 +212,17 @@ export interface FileRouteTypes {
     | '/about'
     | '/agents/$agentId'
     | '/agents'
+    | '/dashboards'
     | '/agents/processes/$processId'
   id:
     | '__root__'
     | '/'
     | '/agents'
+    | '/dashboards'
     | '/about'
     | '/agents/$agentId'
     | '/agents/'
+    | '/dashboards/'
     | '/agents/processes/$processId'
   fileRoutesById: FileRoutesById
 }
@@ -180,12 +230,14 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AgentsRouteRoute: typeof AgentsRouteRouteWithChildren
+  DashboardsRouteRoute: typeof DashboardsRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AgentsRouteRoute: AgentsRouteRouteWithChildren,
+  DashboardsRouteRoute: DashboardsRouteRouteWithChildren,
   AboutRoute: AboutRoute,
 }
 
@@ -201,6 +253,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/agents",
+        "/dashboards",
         "/about"
       ]
     },
@@ -215,6 +268,12 @@ export const routeTree = rootRoute
         "/agents/processes/$processId"
       ]
     },
+    "/dashboards": {
+      "filePath": "dashboards/route.tsx",
+      "children": [
+        "/dashboards/"
+      ]
+    },
     "/about": {
       "filePath": "about.tsx"
     },
@@ -225,6 +284,10 @@ export const routeTree = rootRoute
     "/agents/": {
       "filePath": "agents/index.tsx",
       "parent": "/agents"
+    },
+    "/dashboards/": {
+      "filePath": "dashboards/index.tsx",
+      "parent": "/dashboards"
     },
     "/agents/processes/$processId": {
       "filePath": "agents/processes/$processId.tsx",

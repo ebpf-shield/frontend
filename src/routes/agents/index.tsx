@@ -1,11 +1,11 @@
 import { AgentCard } from "@/components/AgentCard";
 import { AgentHeader } from "@/components/AgentHeader";
-import { agentQuery } from "@/queries/agent.query";
-import { zodValidator } from "@tanstack/zod-adapter";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, getRouteApi } from "@tanstack/react-router";
-import { z } from "zod";
 import { AgentWithProcesses } from "@/models/agent.model";
+import { agentQuery } from "@/queries/agent.query";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { zodValidator } from "@tanstack/zod-adapter";
+import { z } from "zod";
 
 const agentSearchParams = z.object({
   filter: z.string().optional(),
@@ -19,11 +19,9 @@ export const Route = createFileRoute("/agents/")({
   },
 });
 
-const routeApi = getRouteApi("/agents/");
-
 function AgentsIndexComponent() {
   const getAgentsQeury = useSuspenseQuery(agentQuery.getAllWithProcessesQueryOptions());
-  const { filter } = routeApi.useSearch();
+  const { filter } = Route.useSearch();
 
   const filterByName = (agent: AgentWithProcesses) => {
     if (!filter) return true;
@@ -39,10 +37,7 @@ function AgentsIndexComponent() {
     .map((agent) => <AgentCard key={agent._id.toHexString()} agent={agent} />);
 
   return (
-    <div
-      className="flex flex-col items-center justify-start h-full w-full overflow-auto"
-      style={{ outline: "red 1px solid" }}
-    >
+    <div className="flex flex-col items-center justify-start h-full w-full overflow-auto">
       <AgentHeader />
       <div className="container mx-auto py-8 px-4 ">
         <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-2">{agents}</div>

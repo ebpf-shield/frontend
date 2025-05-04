@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { agentQuery } from "@/queries/agent.query";
 import { useQueryClient } from "@tanstack/react-query";
-import { getRouteApi } from "@tanstack/react-router";
+import { getRouteApi, Link } from "@tanstack/react-router";
 import { LayoutGrid, PlusCircle, RefreshCw, Search, Server, Settings } from "lucide-react";
 
 const routeApi = getRouteApi("/agents/");
@@ -61,14 +61,16 @@ export function AgentHeader() {
               <span className="hidden sm:inline">Refresh</span>
             </Button>
 
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
-            >
-              <LayoutGrid className="h-4 w-4" />
-              <span className="hidden sm:inline">Dashboard</span>
-            </Button>
+            <Link to="/dashboards">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
+              >
+                <LayoutGrid className="h-4 w-4" />
+                <span className="hidden sm:inline">Dashboard</span>
+              </Button>
+            </Link>
 
             <Button
               variant="outline"
