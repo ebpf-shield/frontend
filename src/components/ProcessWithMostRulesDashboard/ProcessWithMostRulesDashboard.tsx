@@ -8,12 +8,13 @@ import {
   ChartTooltipContent,
 } from "../ui/chart";
 import { dashboardService } from "@/services/dashboard.service";
-import { XAxis, Bar, BarChart } from "recharts";
+import { XAxis, Bar, BarChart, CartesianGrid } from "recharts";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 
 const chartConfig = {
   count: {
     label: "Count",
-    color: "hsl(210, 70%, 50%)",
+    color: "var(--chart-1)",
   },
 } satisfies ChartConfig;
 
@@ -37,21 +38,30 @@ export const ProcessesWithMostRulesDashboard = () => {
   const data = processesWithMostRules.data;
 
   return (
-    <section className="flex flex-col justify-center items-center gap-4">
-      <ChartContainer config={chartConfig} className="min-h-[200px] w-[70%]">
-        <BarChart accessibilityLayer data={data}>
-          <XAxis
-            dataKey="name"
-            tickLine={false}
-            tickMargin={10}
-            axisLine={false}
-            tickFormatter={(value) => value.slice(0, 10)}
-          />
-          <ChartTooltip content={<ChartTooltipContent />} />
-          <ChartLegend content={<ChartLegendContent />} />
-          <Bar dataKey="rulesCount" fill="var(--color-count)" radius={4} />
-        </BarChart>
-      </ChartContainer>
-    </section>
+    <Card>
+      <CardHeader>
+        <CardTitle>Processes with most rules</CardTitle>
+        <CardDescription>Processes that have the most rules applied to them</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <section className="flex flex-col justify-center items-center gap-4">
+          <ChartContainer config={chartConfig} className="min-h-[200px] w-[70%]">
+            <BarChart accessibilityLayer data={data}>
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="name"
+                tickLine={false}
+                tickMargin={10}
+                axisLine={false}
+                tickFormatter={(value) => value.slice(0, 10)}
+              />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <ChartLegend content={<ChartLegendContent />} />
+              <Bar dataKey="rulesCount" fill="var(--color-count)" radius={4} />
+            </BarChart>
+          </ChartContainer>
+        </section>
+      </CardContent>
+    </Card>
   );
 };

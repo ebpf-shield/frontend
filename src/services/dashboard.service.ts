@@ -36,6 +36,22 @@ export class DashboardService {
       throw new Error("Failed to parse processes with most rules");
     }
   }
+
+  async rulesByChain() {
+    const rulesByChainSchema = z.object({
+      _id: stringSchema,
+      count: z.number().int().min(0).max(1_000_000),
+    });
+
+    try {
+      const res = await axiosInstance.get(`${PREFIX}/rules-by-chain`);
+      const parsedData = z.array(rulesByChainSchema).parse(res.data);
+      return parsedData;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to parse rules by chain");
+    }
+  }
 }
 
 export const dashboardService = new DashboardService();
