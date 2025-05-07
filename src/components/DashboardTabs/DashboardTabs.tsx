@@ -1,6 +1,6 @@
-import { CommonProcessesDashboard } from "../CommonProcessesDashboard";
-import { ProcessesWithMostRulesDashboard } from "../ProcessWithMostRulesDashboard";
-import { RulesByChainDashboard } from "../RulesByChainDashboard";
+import { CommonProcessesDashboard } from "../dashboard/CommonProcessesDashboard";
+import { ProcessesWithMostRulesDashboard } from "../dashboard/ProcessWithMostRulesDashboard";
+import { RulesByChainDashboard } from "../dashboard/RulesByChainDashboard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 const TABS = {

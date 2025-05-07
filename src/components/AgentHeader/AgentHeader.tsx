@@ -54,7 +54,7 @@ export function AgentHeader() {
             <Button
               variant="outline"
               size="sm"
-              className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
+              className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
               onClick={handleRefresh}
             >
               <RefreshCw className="h-4 w-4" />
@@ -65,7 +65,7 @@ export function AgentHeader() {
               <Button
                 variant="outline"
                 size="sm"
-                className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
+                className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
               >
                 <LayoutGrid className="h-4 w-4" />
                 <span className="hidden sm:inline">Dashboard</span>
@@ -75,7 +75,7 @@ export function AgentHeader() {
             <Button
               variant="outline"
               size="sm"
-              className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
+              className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
             >
               <Settings className="h-4 w-4" />
               <span className="hidden sm:inline">Settings</span>

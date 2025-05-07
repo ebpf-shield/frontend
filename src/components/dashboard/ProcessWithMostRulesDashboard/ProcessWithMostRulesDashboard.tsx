@@ -1,6 +1,7 @@
-import { dashboardService } from "@/services/dashboard.service";
+import { dashboardQuery } from "@/queries/dashboard.query";
 import { useQuery } from "@tanstack/react-query";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card";
 import {
   ChartConfig,
   ChartContainer,
@@ -8,8 +9,7 @@ import {
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from "../ui/chart";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+} from "../../ui/chart";
 
 const chartConfig = {
   count: {
@@ -18,36 +18,28 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export const CommonProcessesDashboard = () => {
-  const commonProcesses = useQuery({
-    queryKey: ["dashboard", "common-processes"],
-    queryFn: () => {
-      return dashboardService.commonProcesses();
-    },
-    refetchInterval: 1000 * 5, // 5 seconds
-  });
+export const ProcessesWithMostRulesDashboard = () => {
+  const processesWithMostRules = useQuery(dashboardQuery.processesWithMostRulesQueryOptions());
 
-  if (commonProcesses.isPending) {
+  if (processesWithMostRules.isPending) {
     return <p>Loading...</p>;
   }
 
-  if (commonProcesses.isError) {
-    return <p>Error: {commonProcesses.error.message}</p>;
+  if (processesWithMostRules.isError) {
+    return <p>Error: {processesWithMostRules.error.message}</p>;
   }
 
-  const data = commonProcesses.data;
+  const data = processesWithMostRules.data;
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Most Common Processes</CardTitle>
-        <CardDescription>
-          Processes that appear most frequently across selected agents
-        </CardDescription>
+        <CardTitle>Processes with most rules</CardTitle>
+        <CardDescription>Processes that have the most rules applied to them</CardDescription>
       </CardHeader>
       <CardContent>
         <section className="flex flex-col justify-center items-center gap-4">
-          <ChartContainer config={chartConfig} className="min-h-[200px] w-[70%]">
+          <ChartContainer config={chartConfig} className="min-h-[250px] w-auto">
             <BarChart accessibilityLayer data={data}>
               <CartesianGrid vertical={false} />
               <XAxis
@@ -59,7 +51,7 @@ export const CommonProcessesDashboard = () => {
               />
               <ChartTooltip content={<ChartTooltipContent />} />
               <ChartLegend content={<ChartLegendContent />} />
-              <Bar dataKey="count" fill="var(--color-count)" radius={4} />
+              <Bar dataKey="rulesCount" fill="var(--color-count)" radius={4} />
             </BarChart>
           </ChartContainer>
         </section>
