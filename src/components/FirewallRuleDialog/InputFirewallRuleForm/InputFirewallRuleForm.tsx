@@ -10,7 +10,7 @@ import { FormProvider } from "react-hook-form";
 import { useFirewallRuleForm } from "../FirewallRuleFormTabs/useFirewallRuleForm";
 import { useFirewallRuleFormDialogContext } from "@/contexts/FirewallRuleFormDialog/useProvider";
 
-const routeApi = getRouteApi("/agents/processes/$processId");
+const routeApi = getRouteApi("/_auth/agents/processes/$processId");
 
 export const InputFirewallRuleForm = () => {
   const { processId } = routeApi.useParams();

@@ -1,2 +1,2 @@
-# .eslintignore
+.eslintignore
 src/routeTree.gen.ts

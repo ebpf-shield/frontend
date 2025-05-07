@@ -12,14 +12,16 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as AboutImport } from './routes/about'
-import { Route as DashboardsRouteImport } from './routes/dashboards/route'
-import { Route as AgentsRouteImport } from './routes/agents/route'
+import { Route as AuthRouteImport } from './routes/_auth/route'
 import { Route as IndexImport } from './routes/index'
-import { Route as DashboardsIndexImport } from './routes/dashboards/index'
-import { Route as AgentsIndexImport } from './routes/agents/index'
-import { Route as AgentsAgentIdImport } from './routes/agents/$agentId'
-import { Route as DashboardsAgentsIndexImport } from './routes/dashboards/agents/index'
-import { Route as AgentsProcessesProcessIdImport } from './routes/agents/processes/$processId'
+import { Route as authLoginImport } from './routes/(auth)/login'
+import { Route as AuthDashboardsRouteImport } from './routes/_auth/dashboards/route'
+import { Route as AuthAgentsRouteImport } from './routes/_auth/agents/route'
+import { Route as AuthDashboardsIndexImport } from './routes/_auth/dashboards/index'
+import { Route as AuthAgentsIndexImport } from './routes/_auth/agents/index'
+import { Route as AuthAgentsAgentIdImport } from './routes/_auth/agents/$agentId'
+import { Route as AuthDashboardsAgentsIndexImport } from './routes/_auth/dashboards/agents/index'
+import { Route as AuthAgentsProcessesProcessIdImport } from './routes/_auth/agents/processes/$processId'
 
 // Create/Update Routes
 
@@ -29,15 +31,8 @@ const AboutRoute = AboutImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const DashboardsRouteRoute = DashboardsRouteImport.update({
-  id: '/dashboards',
-  path: '/dashboards',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const AgentsRouteRoute = AgentsRouteImport.update({
-  id: '/agents',
-  path: '/agents',
+const AuthRouteRoute = AuthRouteImport.update({
+  id: '/_auth',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -47,35 +42,54 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const DashboardsIndexRoute = DashboardsIndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => DashboardsRouteRoute,
+const authLoginRoute = authLoginImport.update({
+  id: '/(auth)/login',
+  path: '/login',
+  getParentRoute: () => rootRoute,
 } as any)
 
-const AgentsIndexRoute = AgentsIndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AgentsRouteRoute,
+const AuthDashboardsRouteRoute = AuthDashboardsRouteImport.update({
+  id: '/dashboards',
+  path: '/dashboards',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 
-const AgentsAgentIdRoute = AgentsAgentIdImport.update({
+const AuthAgentsRouteRoute = AuthAgentsRouteImport.update({
+  id: '/agents',
+  path: '/agents',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+
+const AuthDashboardsIndexRoute = AuthDashboardsIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthDashboardsRouteRoute,
+} as any)
+
+const AuthAgentsIndexRoute = AuthAgentsIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthAgentsRouteRoute,
+} as any)
+
+const AuthAgentsAgentIdRoute = AuthAgentsAgentIdImport.update({
   id: '/$agentId',
   path: '/$agentId',
-  getParentRoute: () => AgentsRouteRoute,
+  getParentRoute: () => AuthAgentsRouteRoute,
 } as any)
 
-const DashboardsAgentsIndexRoute = DashboardsAgentsIndexImport.update({
+const AuthDashboardsAgentsIndexRoute = AuthDashboardsAgentsIndexImport.update({
   id: '/agents/',
   path: '/agents/',
-  getParentRoute: () => DashboardsRouteRoute,
+  getParentRoute: () => AuthDashboardsRouteRoute,
 } as any)
 
-const AgentsProcessesProcessIdRoute = AgentsProcessesProcessIdImport.update({
-  id: '/processes/$processId',
-  path: '/processes/$processId',
-  getParentRoute: () => AgentsRouteRoute,
-} as any)
+const AuthAgentsProcessesProcessIdRoute =
+  AuthAgentsProcessesProcessIdImport.update({
+    id: '/processes/$processId',
+    path: '/processes/$processId',
+    getParentRoute: () => AuthAgentsRouteRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -88,18 +102,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/agents': {
-      id: '/agents'
-      path: '/agents'
-      fullPath: '/agents'
-      preLoaderRoute: typeof AgentsRouteImport
-      parentRoute: typeof rootRoute
-    }
-    '/dashboards': {
-      id: '/dashboards'
-      path: '/dashboards'
-      fullPath: '/dashboards'
-      preLoaderRoute: typeof DashboardsRouteImport
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRoute
     }
     '/about': {
@@ -109,118 +116,160 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
-    '/agents/$agentId': {
-      id: '/agents/$agentId'
+    '/_auth/agents': {
+      id: '/_auth/agents'
+      path: '/agents'
+      fullPath: '/agents'
+      preLoaderRoute: typeof AuthAgentsRouteImport
+      parentRoute: typeof AuthRouteImport
+    }
+    '/_auth/dashboards': {
+      id: '/_auth/dashboards'
+      path: '/dashboards'
+      fullPath: '/dashboards'
+      preLoaderRoute: typeof AuthDashboardsRouteImport
+      parentRoute: typeof AuthRouteImport
+    }
+    '/(auth)/login': {
+      id: '/(auth)/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof authLoginImport
+      parentRoute: typeof rootRoute
+    }
+    '/_auth/agents/$agentId': {
+      id: '/_auth/agents/$agentId'
       path: '/$agentId'
       fullPath: '/agents/$agentId'
-      preLoaderRoute: typeof AgentsAgentIdImport
-      parentRoute: typeof AgentsRouteImport
+      preLoaderRoute: typeof AuthAgentsAgentIdImport
+      parentRoute: typeof AuthAgentsRouteImport
     }
-    '/agents/': {
-      id: '/agents/'
+    '/_auth/agents/': {
+      id: '/_auth/agents/'
       path: '/'
       fullPath: '/agents/'
-      preLoaderRoute: typeof AgentsIndexImport
-      parentRoute: typeof AgentsRouteImport
+      preLoaderRoute: typeof AuthAgentsIndexImport
+      parentRoute: typeof AuthAgentsRouteImport
     }
-    '/dashboards/': {
-      id: '/dashboards/'
+    '/_auth/dashboards/': {
+      id: '/_auth/dashboards/'
       path: '/'
       fullPath: '/dashboards/'
-      preLoaderRoute: typeof DashboardsIndexImport
-      parentRoute: typeof DashboardsRouteImport
+      preLoaderRoute: typeof AuthDashboardsIndexImport
+      parentRoute: typeof AuthDashboardsRouteImport
     }
-    '/agents/processes/$processId': {
-      id: '/agents/processes/$processId'
+    '/_auth/agents/processes/$processId': {
+      id: '/_auth/agents/processes/$processId'
       path: '/processes/$processId'
       fullPath: '/agents/processes/$processId'
-      preLoaderRoute: typeof AgentsProcessesProcessIdImport
-      parentRoute: typeof AgentsRouteImport
+      preLoaderRoute: typeof AuthAgentsProcessesProcessIdImport
+      parentRoute: typeof AuthAgentsRouteImport
     }
-    '/dashboards/agents/': {
-      id: '/dashboards/agents/'
+    '/_auth/dashboards/agents/': {
+      id: '/_auth/dashboards/agents/'
       path: '/agents'
       fullPath: '/dashboards/agents'
-      preLoaderRoute: typeof DashboardsAgentsIndexImport
-      parentRoute: typeof DashboardsRouteImport
+      preLoaderRoute: typeof AuthDashboardsAgentsIndexImport
+      parentRoute: typeof AuthDashboardsRouteImport
     }
   }
 }
 
 // Create and export the route tree
 
-interface AgentsRouteRouteChildren {
-  AgentsAgentIdRoute: typeof AgentsAgentIdRoute
-  AgentsIndexRoute: typeof AgentsIndexRoute
-  AgentsProcessesProcessIdRoute: typeof AgentsProcessesProcessIdRoute
+interface AuthAgentsRouteRouteChildren {
+  AuthAgentsAgentIdRoute: typeof AuthAgentsAgentIdRoute
+  AuthAgentsIndexRoute: typeof AuthAgentsIndexRoute
+  AuthAgentsProcessesProcessIdRoute: typeof AuthAgentsProcessesProcessIdRoute
 }
 
-const AgentsRouteRouteChildren: AgentsRouteRouteChildren = {
-  AgentsAgentIdRoute: AgentsAgentIdRoute,
-  AgentsIndexRoute: AgentsIndexRoute,
-  AgentsProcessesProcessIdRoute: AgentsProcessesProcessIdRoute,
+const AuthAgentsRouteRouteChildren: AuthAgentsRouteRouteChildren = {
+  AuthAgentsAgentIdRoute: AuthAgentsAgentIdRoute,
+  AuthAgentsIndexRoute: AuthAgentsIndexRoute,
+  AuthAgentsProcessesProcessIdRoute: AuthAgentsProcessesProcessIdRoute,
 }
 
-const AgentsRouteRouteWithChildren = AgentsRouteRoute._addFileChildren(
-  AgentsRouteRouteChildren,
+const AuthAgentsRouteRouteWithChildren = AuthAgentsRouteRoute._addFileChildren(
+  AuthAgentsRouteRouteChildren,
 )
 
-interface DashboardsRouteRouteChildren {
-  DashboardsIndexRoute: typeof DashboardsIndexRoute
-  DashboardsAgentsIndexRoute: typeof DashboardsAgentsIndexRoute
+interface AuthDashboardsRouteRouteChildren {
+  AuthDashboardsIndexRoute: typeof AuthDashboardsIndexRoute
+  AuthDashboardsAgentsIndexRoute: typeof AuthDashboardsAgentsIndexRoute
 }
 
-const DashboardsRouteRouteChildren: DashboardsRouteRouteChildren = {
-  DashboardsIndexRoute: DashboardsIndexRoute,
-  DashboardsAgentsIndexRoute: DashboardsAgentsIndexRoute,
+const AuthDashboardsRouteRouteChildren: AuthDashboardsRouteRouteChildren = {
+  AuthDashboardsIndexRoute: AuthDashboardsIndexRoute,
+  AuthDashboardsAgentsIndexRoute: AuthDashboardsAgentsIndexRoute,
 }
 
-const DashboardsRouteRouteWithChildren = DashboardsRouteRoute._addFileChildren(
-  DashboardsRouteRouteChildren,
+const AuthDashboardsRouteRouteWithChildren =
+  AuthDashboardsRouteRoute._addFileChildren(AuthDashboardsRouteRouteChildren)
+
+interface AuthRouteRouteChildren {
+  AuthAgentsRouteRoute: typeof AuthAgentsRouteRouteWithChildren
+  AuthDashboardsRouteRoute: typeof AuthDashboardsRouteRouteWithChildren
+}
+
+const AuthRouteRouteChildren: AuthRouteRouteChildren = {
+  AuthAgentsRouteRoute: AuthAgentsRouteRouteWithChildren,
+  AuthDashboardsRouteRoute: AuthDashboardsRouteRouteWithChildren,
+}
+
+const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
+  AuthRouteRouteChildren,
 )
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/agents': typeof AgentsRouteRouteWithChildren
-  '/dashboards': typeof DashboardsRouteRouteWithChildren
+  '': typeof AuthRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/agents/$agentId': typeof AgentsAgentIdRoute
-  '/agents/': typeof AgentsIndexRoute
-  '/dashboards/': typeof DashboardsIndexRoute
-  '/agents/processes/$processId': typeof AgentsProcessesProcessIdRoute
-  '/dashboards/agents': typeof DashboardsAgentsIndexRoute
+  '/agents': typeof AuthAgentsRouteRouteWithChildren
+  '/dashboards': typeof AuthDashboardsRouteRouteWithChildren
+  '/login': typeof authLoginRoute
+  '/agents/$agentId': typeof AuthAgentsAgentIdRoute
+  '/agents/': typeof AuthAgentsIndexRoute
+  '/dashboards/': typeof AuthDashboardsIndexRoute
+  '/agents/processes/$processId': typeof AuthAgentsProcessesProcessIdRoute
+  '/dashboards/agents': typeof AuthDashboardsAgentsIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '': typeof AuthRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/agents/$agentId': typeof AgentsAgentIdRoute
-  '/agents': typeof AgentsIndexRoute
-  '/dashboards': typeof DashboardsIndexRoute
-  '/agents/processes/$processId': typeof AgentsProcessesProcessIdRoute
-  '/dashboards/agents': typeof DashboardsAgentsIndexRoute
+  '/login': typeof authLoginRoute
+  '/agents/$agentId': typeof AuthAgentsAgentIdRoute
+  '/agents': typeof AuthAgentsIndexRoute
+  '/dashboards': typeof AuthDashboardsIndexRoute
+  '/agents/processes/$processId': typeof AuthAgentsProcessesProcessIdRoute
+  '/dashboards/agents': typeof AuthDashboardsAgentsIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/agents': typeof AgentsRouteRouteWithChildren
-  '/dashboards': typeof DashboardsRouteRouteWithChildren
+  '/_auth': typeof AuthRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/agents/$agentId': typeof AgentsAgentIdRoute
-  '/agents/': typeof AgentsIndexRoute
-  '/dashboards/': typeof DashboardsIndexRoute
-  '/agents/processes/$processId': typeof AgentsProcessesProcessIdRoute
-  '/dashboards/agents/': typeof DashboardsAgentsIndexRoute
+  '/_auth/agents': typeof AuthAgentsRouteRouteWithChildren
+  '/_auth/dashboards': typeof AuthDashboardsRouteRouteWithChildren
+  '/(auth)/login': typeof authLoginRoute
+  '/_auth/agents/$agentId': typeof AuthAgentsAgentIdRoute
+  '/_auth/agents/': typeof AuthAgentsIndexRoute
+  '/_auth/dashboards/': typeof AuthDashboardsIndexRoute
+  '/_auth/agents/processes/$processId': typeof AuthAgentsProcessesProcessIdRoute
+  '/_auth/dashboards/agents/': typeof AuthDashboardsAgentsIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | ''
+    | '/about'
     | '/agents'
     | '/dashboards'
-    | '/about'
+    | '/login'
     | '/agents/$agentId'
     | '/agents/'
     | '/dashboards/'
@@ -229,7 +278,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | ''
     | '/about'
+    | '/login'
     | '/agents/$agentId'
     | '/agents'
     | '/dashboards'
@@ -238,29 +289,31 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/agents'
-    | '/dashboards'
+    | '/_auth'
     | '/about'
-    | '/agents/$agentId'
-    | '/agents/'
-    | '/dashboards/'
-    | '/agents/processes/$processId'
-    | '/dashboards/agents/'
+    | '/_auth/agents'
+    | '/_auth/dashboards'
+    | '/(auth)/login'
+    | '/_auth/agents/$agentId'
+    | '/_auth/agents/'
+    | '/_auth/dashboards/'
+    | '/_auth/agents/processes/$processId'
+    | '/_auth/dashboards/agents/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AgentsRouteRoute: typeof AgentsRouteRouteWithChildren
-  DashboardsRouteRoute: typeof DashboardsRouteRouteWithChildren
+  AuthRouteRoute: typeof AuthRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  authLoginRoute: typeof authLoginRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AgentsRouteRoute: AgentsRouteRouteWithChildren,
-  DashboardsRouteRoute: DashboardsRouteRouteWithChildren,
+  AuthRouteRoute: AuthRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  authLoginRoute: authLoginRoute,
 }
 
 export const routeTree = rootRoute
@@ -274,51 +327,63 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/agents",
-        "/dashboards",
-        "/about"
+        "/_auth",
+        "/about",
+        "/(auth)/login"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/agents": {
-      "filePath": "agents/route.tsx",
+    "/_auth": {
+      "filePath": "_auth/route.tsx",
       "children": [
-        "/agents/$agentId",
-        "/agents/",
-        "/agents/processes/$processId"
-      ]
-    },
-    "/dashboards": {
-      "filePath": "dashboards/route.tsx",
-      "children": [
-        "/dashboards/",
-        "/dashboards/agents/"
+        "/_auth/agents",
+        "/_auth/dashboards"
       ]
     },
     "/about": {
       "filePath": "about.tsx"
     },
-    "/agents/$agentId": {
-      "filePath": "agents/$agentId.tsx",
-      "parent": "/agents"
+    "/_auth/agents": {
+      "filePath": "_auth/agents/route.tsx",
+      "parent": "/_auth",
+      "children": [
+        "/_auth/agents/$agentId",
+        "/_auth/agents/",
+        "/_auth/agents/processes/$processId"
+      ]
     },
-    "/agents/": {
-      "filePath": "agents/index.tsx",
-      "parent": "/agents"
+    "/_auth/dashboards": {
+      "filePath": "_auth/dashboards/route.tsx",
+      "parent": "/_auth",
+      "children": [
+        "/_auth/dashboards/",
+        "/_auth/dashboards/agents/"
+      ]
     },
-    "/dashboards/": {
-      "filePath": "dashboards/index.tsx",
-      "parent": "/dashboards"
+    "/(auth)/login": {
+      "filePath": "(auth)/login.tsx"
     },
-    "/agents/processes/$processId": {
-      "filePath": "agents/processes/$processId.tsx",
-      "parent": "/agents"
+    "/_auth/agents/$agentId": {
+      "filePath": "_auth/agents/$agentId.tsx",
+      "parent": "/_auth/agents"
     },
-    "/dashboards/agents/": {
-      "filePath": "dashboards/agents/index.tsx",
-      "parent": "/dashboards"
+    "/_auth/agents/": {
+      "filePath": "_auth/agents/index.tsx",
+      "parent": "/_auth/agents"
+    },
+    "/_auth/dashboards/": {
+      "filePath": "_auth/dashboards/index.tsx",
+      "parent": "/_auth/dashboards"
+    },
+    "/_auth/agents/processes/$processId": {
+      "filePath": "_auth/agents/processes/$processId.tsx",
+      "parent": "/_auth/agents"
+    },
+    "/_auth/dashboards/agents/": {
+      "filePath": "_auth/dashboards/agents/index.tsx",
+      "parent": "/_auth/dashboards"
     }
   }
 }

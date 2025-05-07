@@ -5,7 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { getRouteApi, Link } from "@tanstack/react-router";
 import { LayoutGrid, PlusCircle, RefreshCw, Search, Server, Settings } from "lucide-react";
 
-const routeApi = getRouteApi("/agents/");
+const routeApi = getRouteApi("/_auth/agents/");
 
 export function AgentHeader() {
   const { filter } = routeApi.useSearch();
@@ -15,7 +15,7 @@ export function AgentHeader() {
   const onSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (value === "") {
-      navigate({ to: ".", search: {} });
+      navigate({ to: "." });
       return;
     }
 

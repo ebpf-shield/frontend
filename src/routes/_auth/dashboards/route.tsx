@@ -1,7 +1,7 @@
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/dashboards")({
+export const Route = createFileRoute("/_auth/dashboards")({
   component: DashboardComponent,
   loader: () => ({
     crumb: "Dashboard",
