@@ -1,11 +1,13 @@
 import { processService } from "@/services/process.service";
 import { ObjectId } from "bson";
 
+const PREFIX = "process" as const;
+
 class ProcessQuery {
   keys = {
-    getByAgentId: (agentId: ObjectId) => ["process", "agent", agentId],
-    getById: (processId: ObjectId) => ["process", processId],
-    getByIdWithRules: (processId: ObjectId) => ["process", processId, "rules"],
+    getByAgentId: (agentId: ObjectId) => [PREFIX, "agent", agentId],
+    getById: (processId: ObjectId) => [PREFIX, processId],
+    getByIdWithRules: (processId: ObjectId) => [PREFIX, processId, "rules"],
   };
 
   getByAgentIdQueryOptions = (agentId: ObjectId) => {

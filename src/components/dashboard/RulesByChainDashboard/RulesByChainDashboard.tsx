@@ -1,7 +1,7 @@
-import { dashboardService } from "@/services/dashboard.service";
+import { dashboardQuery } from "@/queries/dashboard.query";
 import { useQuery } from "@tanstack/react-query";
 import { Pie, PieChart } from "recharts";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card";
 import {
   ChartConfig,
   ChartContainer,
@@ -9,7 +9,7 @@ import {
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from "../ui/chart";
+} from "../../ui/chart";
 
 const chartConfig = {
   OUTPUT: {
@@ -24,13 +24,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export const RulesByChainDashboard = () => {
-  const rulesByChain = useQuery({
-    queryKey: ["dashboard", "rules-by-chain"],
-    queryFn: () => {
-      return dashboardService.rulesByChain();
-    },
-    refetchInterval: 1000 * 5, // 5 seconds
-  });
+  const rulesByChain = useQuery(dashboardQuery.rulesByChainQueryOptions());
 
   if (rulesByChain.isPending) {
     return <p>Loading...</p>;
@@ -57,7 +51,7 @@ export const RulesByChainDashboard = () => {
       </CardHeader>
       <CardContent>
         <section className="flex flex-col justify-center items-center gap-4">
-          <ChartContainer className="min-h-[250px] w-[70%]" config={chartConfig}>
+          <ChartContainer className="min-h-[250px]" config={chartConfig}>
             <PieChart accessibilityLayer>
               <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
               <Pie nameKey="_id" dataKey="count" data={data}></Pie>
