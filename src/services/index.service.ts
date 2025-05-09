@@ -2,13 +2,14 @@ import axios from "axios";
 import { env } from "../utils/env.util.ts";
 
 const { VITE_BACKEND_URL: BACKEND_URL } = env;
+const API_PREFIX = "/api/ui" as const;
 
 export const axiosInstance = axios.create({
-  baseURL: `${BACKEND_URL}/api/ui`,
+  baseURL: `${BACKEND_URL}${API_PREFIX}`,
 });
 
 export const authenticatedInstance = axios.create({
-  baseURL: `${BACKEND_URL}/api`,
+  baseURL: `${BACKEND_URL}${API_PREFIX}`,
   withCredentials: true,
 });
 

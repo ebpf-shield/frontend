@@ -7,19 +7,19 @@ import { debugLog } from "@/utils/log.util";
 import { getRouteApi } from "@tanstack/react-router";
 import { FormEventHandler } from "react";
 import { FormProvider } from "react-hook-form";
-import { useFirewallRuleForm } from "../FirewallRuleFormTabs/useFirewallRuleForm";
+import { useFirewallRuleForm } from "../useFirewallRuleForm";
 import { useFirewallRuleFormDialogContext } from "@/contexts/FirewallRuleFormDialog/useProvider";
 
 const routeApi = getRouteApi("/_auth/agents/processes/$processId");
 
-export const OutputFirewallRuleForm = () => {
+export const InputFirewallRuleForm = () => {
   const { processId } = routeApi.useParams();
 
-  const { isEdit } = useFirewallRuleFormDialogContext();
-
-  const { outputRuleFormMethods: methods, outputOnSubmit: onSubmit } = useFirewallRuleForm({
+  const { inputRuleFormMethods: methods, inputOnSubmit: onSubmit } = useFirewallRuleForm({
     processId: processId,
   });
+
+  const { isEdit } = useFirewallRuleFormDialogContext();
 
   const { isValid, errors } = methods.formState;
 
@@ -42,27 +42,27 @@ export const OutputFirewallRuleForm = () => {
         <div className={gridRowClasses}>
           <div className="grid gap-2">
             <FormInput
-              name="daddr"
+              name="saddr"
               labelProps={{
-                children: "Destination Address",
+                children: "Source Address",
                 className: labelClasses,
               }}
               inputProps={{
                 className: inputClasses,
-                placeholder: "e.g. 10.0.0.1",
+                placeholder: "e.g. 192.168.1.1",
               }}
             />
           </div>
           <div className="grid gap-2">
             <FormInputNumber
-              name="dport"
+              name="sport"
               labelProps={{
-                children: "Destination Port",
+                children: "Source Port",
                 className: labelClasses,
               }}
               inputProps={{
                 className: inputClasses,
-                placeholder: "e.g. 3000",
+                placeholder: "e.g. 433",
                 min: RULE_MIN_PORT_RANGE,
                 max: RULE_MAX_PORT_RANGE,
               }}

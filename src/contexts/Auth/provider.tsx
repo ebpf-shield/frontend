@@ -1,4 +1,4 @@
-import { TokenUser, userSchema } from "@/models/user.model";
+import { TokenUser, tokenUserSchema } from "@/models/user.model";
 import { PropsWithChildren, useState } from "react";
 import { useLocalStorage } from "react-use";
 import { AuthContext } from "./context";
@@ -6,7 +6,7 @@ import { AuthContext } from "./context";
 const parseJwt = (token: string) => {
   try {
     const user = JSON.parse(Buffer.from(token.split(".")[1], "base64").toString());
-    return userSchema.parse(user);
+    return tokenUserSchema.parse(user);
   } catch (_error: unknown) {
     return null;
   }
@@ -17,10 +17,15 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<TokenUser | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const handleLogin = async () => {
-    console.log("handleLogin");
-    const token = "1.1.1";
-    parseJwt(token);
+  const handleLogin = async (token: string) => {
+    const user = parseJwt(token);
+    if (user) {
+      setToken(token);
+      setUser(user);
+      setIsAuthenticated(true);
+    } else {
+      throw new Error("Invalid token");
+    }
   };
 
   const handleLogout = async () => {

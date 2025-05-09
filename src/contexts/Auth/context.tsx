@@ -9,7 +9,7 @@ import { createContext } from "react";
 
 export interface AuthContextProps {
   isAuthenticated: boolean;
-  handleLogin: () => Promise<void>;
+  handleLogin: (token: string) => Promise<void>;
   handleLogout: () => Promise<void>;
   token: string | undefined;
   user: TokenUser | null;

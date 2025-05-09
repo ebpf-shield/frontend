@@ -7,19 +7,19 @@ import { debugLog } from "@/utils/log.util";
 import { getRouteApi } from "@tanstack/react-router";
 import { FormEventHandler } from "react";
 import { FormProvider } from "react-hook-form";
-import { useFirewallRuleForm } from "../FirewallRuleFormTabs/useFirewallRuleForm";
+import { useFirewallRuleForm } from "../useFirewallRuleForm";
 import { useFirewallRuleFormDialogContext } from "@/contexts/FirewallRuleFormDialog/useProvider";
 
 const routeApi = getRouteApi("/_auth/agents/processes/$processId");
 
-export const InputFirewallRuleForm = () => {
+export const OutputFirewallRuleForm = () => {
   const { processId } = routeApi.useParams();
 
-  const { inputRuleFormMethods: methods, inputOnSubmit: onSubmit } = useFirewallRuleForm({
+  const { isEdit } = useFirewallRuleFormDialogContext();
+
+  const { outputRuleFormMethods: methods, outputOnSubmit: onSubmit } = useFirewallRuleForm({
     processId: processId,
   });
-
-  const { isEdit } = useFirewallRuleFormDialogContext();
 
   const { isValid, errors } = methods.formState;
 
@@ -42,27 +42,27 @@ export const InputFirewallRuleForm = () => {
         <div className={gridRowClasses}>
           <div className="grid gap-2">
             <FormInput
-              name="saddr"
+              name="daddr"
               labelProps={{
-                children: "Source Address",
+                children: "Destination Address",
                 className: labelClasses,
               }}
               inputProps={{
                 className: inputClasses,
-                placeholder: "e.g. 192.168.1.1",
+                placeholder: "e.g. 10.0.0.1",
               }}
             />
           </div>
           <div className="grid gap-2">
             <FormInputNumber
-              name="sport"
+              name="dport"
               labelProps={{
-                children: "Source Port",
+                children: "Destination Port",
                 className: labelClasses,
               }}
               inputProps={{
                 className: inputClasses,
-                placeholder: "e.g. 433",
+                placeholder: "e.g. 3000",
                 min: RULE_MIN_PORT_RANGE,
                 max: RULE_MAX_PORT_RANGE,
               }}

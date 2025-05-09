@@ -5,6 +5,7 @@ export const Route = createFileRoute("/_auth/agents")({
 });
 
 function AgentLayoutComponent() {
+  console.log("AgentLayoutComponent");
   return (
     <>
       <div className="flex flex-col items-center justify-start size-full">
