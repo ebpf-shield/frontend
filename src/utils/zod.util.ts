@@ -3,27 +3,26 @@ import validator from "validator";
 import { TransformEffect, z, ZodErrorMap } from "zod";
 
 export const errorMessages = {
-  url: "כתובת ה-URL מכילה נתיב לא חוקי",
-  mongoId: "צריך להיות מזהה יחודי תקין",
-  date: "פורמט תאריך לא תקין",
-  minNumber: "חייב להיות מעל או שווה ל",
-  maxNumber: "חייב להיות עד",
-  numberString: "חייב להיות מספר חיובי/שלילי/שלם/עשרוני",
-  fixedNumber: "חייב להיות מספר שלם",
-  phone: "מספר טלפון לא תקין",
-  positive: "חייב להיות מספר חיובי",
-  idNumber: "תעודת זהות לא תקינה",
-  required: "חובה להזין ערך בשדה זה",
-  enumOption: "יש לבחור ערך מהרשימה",
-  alphabet: "צריך להיות אותיות באנגלית או בעברית בלבד",
-  english: "צריך להיות אותיות באנגלית בלבד",
-  israeliID: "מספר תעודת זהות אינו תקין",
-  localPhone: "מספר טלפון אינו תקין",
-  email: "האימייל אינו תקין",
-  alphanumericHebEn: "חייב להיות טקסט בעברית או אנגלית, יכול להכיל גם מספרים",
-  text: "חייב להיות טקסט תקין, ללא סימנים מיוחדים (@,#,%,&,$,*,^,+,=,<,>,~,`,|,',/,_)",
+  url: "The URL contains an invalid path",
+  mongoId: "Must be a valid unique identifier",
+  date: "Invalid date format",
+  minNumber: "Must be greater than or equal to",
+  maxNumber: "Must be up to",
+  numberString: "Must be a positive/negative/whole/decimal number",
+  fixedNumber: "Must be a whole number",
+  phone: "Invalid phone number",
+  positive: "Must be a positive number",
+  idNumber: "Invalid ID number",
+  required: "This field is required",
+  enumOption: "You must choose a value from the list",
+  alphabet: "Must contain only Hebrew or English letters",
+  english: "Must contain only English letters",
+  israeliID: "Invalid Israeli ID number",
+  localPhone: "Invalid local phone number",
+  email: "Invalid email address",
+  alphanumericHebEn: "Must be text in Hebrew or English, may include numbers",
+  text: "Must be valid text without special characters (@,#,%,&,$,*,^,+,=,<,>,~,`,|,',/,_)",
 };
-
 export class ValidationError extends Error {
   public name = "ValidationError";
 
@@ -57,7 +56,7 @@ export const customValidation = {
       }
       return value.replace("{", "").replace("}", "");
     },
-    z.string({ description: "חובה" }).uuid()
+    z.string({ description: "fiels is must" }).uuid()
   ),
 
   url: z.string().trim().url({ message: errorMessages.url }).max(1000),
@@ -128,7 +127,7 @@ const CustomErrorMap: ZodErrorMap = (error, ctx) => {
     case z.ZodIssueCode.invalid_type:
       if (error.received !== "undefined") {
         return {
-          message: `סוג הערך שגוי, הסוג הרצוי הוא ${error.expected}`,
+          message: `Invalid type, expected ${error.expected}`,
         };
       } else {
         return { message: errorMessages.required };
