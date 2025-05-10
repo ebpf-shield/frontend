@@ -3,7 +3,7 @@ import { loginFormSchema, LoginFormSchema } from "./auth.model";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export const useLoginForm = () => {
-  const form = useForm<LoginFormSchema>({
+  const methods = useForm<LoginFormSchema>({
     defaultValues: {
       email: "",
       password: "",
@@ -13,7 +13,7 @@ export const useLoginForm = () => {
     resolver: zodResolver(loginFormSchema),
   });
 
-  const handleSubmit = async () => {};
+  const onSubmit = async () => {};
 
-  return { form, handleSubmit };
+  return { methods, onSubmit };
 };
