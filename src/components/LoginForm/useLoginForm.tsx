@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { loginFallbackRoute, loginFormSchema, LoginFormSchema } from "./auth.model";
+import { loginFallbackRoute, loginFormSchema, LoginFormSchema } from "./login.model";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { authService } from "@/services/auth.service";

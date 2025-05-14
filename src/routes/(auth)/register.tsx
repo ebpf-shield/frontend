@@ -1,9 +1,16 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { RegisterForm } from "@/components/RegisterForm";
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/(auth)/register')({
+export const Route = createFileRoute("/(auth)/register")({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
-  return <div>Hello "/(auth)/register"!</div>
+  return (
+    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+      <div className="w-full max-w-sm">
+        <RegisterForm />
+      </div>
+    </div>
+  );
 }

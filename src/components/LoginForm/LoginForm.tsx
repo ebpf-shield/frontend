@@ -1,10 +1,11 @@
 import { cn } from "@/lib/utils";
 import { FormProvider } from "react-hook-form";
-import { FormInput } from "../form/FormInput";
+import { FormInput, FormInputPassword } from "../form/FormInput";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Label } from "../ui/label";
 import { useLoginForm } from "./useLoginForm";
+import { Link } from "@tanstack/react-router";
 
 export const LoginForm = () => {
   const { methods, onSubmit } = useLoginForm();
@@ -43,11 +44,9 @@ export const LoginForm = () => {
                       Forgot your password?
                     </a>
                   </div>
-                  <FormInput
+                  <FormInputPassword
                     name="password"
-                    enableLabel={false}
                     inputProps={{
-                      type: "password",
                       placeholder: "My Very Secret Password",
                     }}
                   />
@@ -55,15 +54,12 @@ export const LoginForm = () => {
                 <Button type="submit" className="w-full">
                   Login
                 </Button>
-                <Button variant="outline" className="w-full">
-                  Login with Google
-                </Button>
               </div>
               <div className="mt-4 text-center text-sm">
                 Don&apos;t have an account?
-                <a href="#" className="underline underline-offset-4">
+                <Link to="/register" className="underline underline-offset-4">
                   Sign up
-                </a>
+                </Link>
               </div>
             </form>
           </FormProvider>

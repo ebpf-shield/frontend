@@ -1,5 +1,5 @@
 import { LoginForm } from "@/components/LoginForm";
-import { loginFallbackRoute } from "@/components/LoginForm/auth.model";
+import { loginFallbackRoute } from "@/components/LoginForm/login.model";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { z } from "zod";
 
