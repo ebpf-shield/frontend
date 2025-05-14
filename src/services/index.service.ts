@@ -33,3 +33,18 @@ authenticatedInstance.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+authenticatedInstance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    console.log("Error response", error);
+    // https://dev.to/zeeshanali0704/authentication-in-react-with-jwts-access-refresh-tokens-569i
+    if (error.response.status === 401 || error.response.status === 403) {
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
