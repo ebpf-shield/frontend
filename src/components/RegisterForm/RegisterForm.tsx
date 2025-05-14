@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { FormCheckbox } from "../form/FormCheckbox";
 import { FormInput, FormInputPassword } from "../form/FormInput";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
@@ -82,16 +81,12 @@ export const RegisterForm = () => {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <FormCheckbox
-                    name={"createOrganization"}
-                    labelProps={{
-                      children: "Create an organization",
-                    }}
-                    description="Check this box if you want to create an organization"
-                  />
+                  <p className="text-sm text-muted-foreground">
+                    You'll be able to create an organization after you register
+                  </p>
                 </div>
                 <Button type="submit" className="w-full">
-                  Login
+                  Register
                 </Button>
                 <div className="mt-4 text-center text-sm">
                   Already have an account?

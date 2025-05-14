@@ -1,7 +1,8 @@
 import { userSchema } from "@/models/user.model";
-import { customValidation } from "@/utils/zod.util";
 import { z } from "zod";
 
+// TODO? We could have created an organization while registering.
+// TODO? We decided to do it after registration.
 export const registerFormSchema = userSchema
   .pick({
     email: true,
@@ -10,8 +11,6 @@ export const registerFormSchema = userSchema
   })
   .extend({
     confirmPassword: userSchema.shape.password,
-    organizationId: customValidation.ObjectId.optional(),
-    createOrganization: z.boolean().optional(),
   })
   .refine(
     (data) => {

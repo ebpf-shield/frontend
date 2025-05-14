@@ -15,8 +15,6 @@ export const useRegisterForm = () => {
       email: "",
       name: "",
       password: "",
-      organizationId: undefined,
-      createOrganization: false,
     },
     resolver: zodResolver(registerFormSchema),
   });
