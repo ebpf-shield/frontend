@@ -1,4 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { LoginForm } from "@/components/LoginForm";
+import { loginFallbackRoute } from "@/components/LoginForm/auth.model";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { z } from "zod";
 
 export const Route = createFileRoute("/(auth)/login")({
@@ -6,17 +8,19 @@ export const Route = createFileRoute("/(auth)/login")({
   validateSearch: z.object({
     redirect: z.string().optional().catch(""),
   }),
+  beforeLoad: ({ context, search }) => {
+    if (context.auth.isAuthenticated) {
+      throw redirect({ to: search.redirect || loginFallbackRoute });
+    }
+  },
 });
 
 function RouteComponent() {
   return (
-    <main className="container size-full">
-      <section>
-        <header className="text-right">
-          <h2 className="text-xl font-semibold">כניסה</h2>
-          <p className="text-gray-500">אנא הכנס את האימייל והסיסמא על מנת להתחבר לחשבון</p>
-        </header>
-      </section>
-    </main>
+    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+      <div className="w-full max-w-sm">
+        <LoginForm />
+      </div>
+    </div>
   );
 }

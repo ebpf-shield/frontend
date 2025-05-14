@@ -4,7 +4,9 @@
  * without being authenticated.
  * */
 
-import { TokenUser } from "@/models/user.model";
+// We may use *clerk*
+
+import { TokenUser } from "@/models/auth.model";
 import { createContext } from "react";
 
 export interface AuthContextProps {

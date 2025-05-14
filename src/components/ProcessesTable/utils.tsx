@@ -1,8 +1,8 @@
+import { cn } from "@/lib/utils";
 import { Process, ProcessStatus } from "@/models/process.model";
 import { rankItem } from "@tanstack/match-sorter-utils";
 import { Link } from "@tanstack/react-router";
 import { createColumnHelper, FilterFn } from "@tanstack/react-table";
-import clsx from "clsx";
 import { Badge } from "../ui/badge";
 
 export const processFuzzyFilter: FilterFn<Process> = (row, columnId, value, addMeta) => {
@@ -35,7 +35,7 @@ export const columns = [
   columnHelper.accessor("status", {
     cell: (info) => {
       return (
-        <Badge className={clsx(`border-none`, getStatusColor(info.getValue()))}>
+        <Badge className={cn(`border-none`, getStatusColor(info.getValue()))}>
           {info.getValue()}
         </Badge>
       );

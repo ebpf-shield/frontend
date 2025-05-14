@@ -1,7 +1,8 @@
-import { TokenUser, tokenUserSchema } from "@/models/user.model";
-import { PropsWithChildren, useState } from "react";
+import { TokenUser, tokenUserSchema } from "@/models/auth.model";
+import { PropsWithChildren, useEffect, useState } from "react";
 import { useLocalStorage } from "react-use";
 import { AuthContext } from "./context";
+import { Buffer } from "buffer";
 
 const parseJwt = (token: string) => {
   try {
@@ -16,6 +17,17 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [token, setToken] = useLocalStorage<string>("token", "");
   const [user, setUser] = useState<TokenUser | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    if (token && !isAuthenticated) {
+      console.log("Token changed", token);
+      const user = parseJwt(token);
+      if (user) {
+        setUser(user);
+        setIsAuthenticated(true);
+      }
+    }
+  }, [token, isAuthenticated]);
 
   const handleLogin = async (token: string) => {
     const user = parseJwt(token);

@@ -1,17 +1,18 @@
 import { FormErrorHelperText } from "@/components/form/FormErrorHelperText";
 import { Input, InputProps } from "@/components/ui/input";
 import { Label, LabelProps } from "@/components/ui/label";
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 import { ChangeEventHandler } from "react";
 import { useController, useFormContext } from "react-hook-form";
 
 export interface FormInputProps {
   name: string;
+  enableLabel?: boolean;
   labelProps?: LabelProps;
   inputProps?: InputProps;
 }
 
-export const FormInput = ({ name, labelProps, inputProps }: FormInputProps) => {
+export const FormInput = ({ name, labelProps, inputProps, enableLabel = true }: FormInputProps) => {
   const {
     formState: { isSubmitting, defaultValues },
   } = useFormContext();
@@ -38,15 +39,19 @@ export const FormInput = ({ name, labelProps, inputProps }: FormInputProps) => {
   };
 
   const errorStyles = "";
-  const classes = clsx(inputProps?.className, {
+  const classes = cn(inputProps?.className, {
     [errorStyles]: invalid,
   });
 
+  const label = (
+    <Label {...labelProps} htmlFor={name}>
+      {labelProps?.children}
+    </Label>
+  );
+
   return (
     <>
-      <Label {...labelProps} htmlFor={name}>
-        {labelProps?.children}
-      </Label>
+      {enableLabel && labelProps?.children && label}
       <Input
         {...field}
         onChange={handleChange}
