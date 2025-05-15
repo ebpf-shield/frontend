@@ -14,6 +14,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as AboutImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/_auth/route'
 import { Route as IndexImport } from './routes/index'
+import { Route as AuthHomeImport } from './routes/_auth/home'
 import { Route as authRegisterImport } from './routes/(auth)/register'
 import { Route as authLoginImport } from './routes/(auth)/login'
 import { Route as AuthDashboardsRouteImport } from './routes/_auth/dashboards/route'
@@ -41,6 +42,12 @@ const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const AuthHomeRoute = AuthHomeImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 
 const authRegisterRoute = authRegisterImport.update({
@@ -151,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authRegisterImport
       parentRoute: typeof rootRoute
     }
+    '/_auth/home': {
+      id: '/_auth/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof AuthHomeImport
+      parentRoute: typeof AuthRouteImport
+    }
     '/_auth/agents/$agentId': {
       id: '/_auth/agents/$agentId'
       path: '/$agentId'
@@ -223,11 +237,13 @@ const AuthDashboardsRouteRouteWithChildren =
 interface AuthRouteRouteChildren {
   AuthAgentsRouteRoute: typeof AuthAgentsRouteRouteWithChildren
   AuthDashboardsRouteRoute: typeof AuthDashboardsRouteRouteWithChildren
+  AuthHomeRoute: typeof AuthHomeRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
   AuthAgentsRouteRoute: AuthAgentsRouteRouteWithChildren,
   AuthDashboardsRouteRoute: AuthDashboardsRouteRouteWithChildren,
+  AuthHomeRoute: AuthHomeRoute,
 }
 
 const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
@@ -242,6 +258,7 @@ export interface FileRoutesByFullPath {
   '/dashboards': typeof AuthDashboardsRouteRouteWithChildren
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
+  '/home': typeof AuthHomeRoute
   '/agents/$agentId': typeof AuthAgentsAgentIdRoute
   '/agents/': typeof AuthAgentsIndexRoute
   '/dashboards/': typeof AuthDashboardsIndexRoute
@@ -255,6 +272,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
+  '/home': typeof AuthHomeRoute
   '/agents/$agentId': typeof AuthAgentsAgentIdRoute
   '/agents': typeof AuthAgentsIndexRoute
   '/dashboards': typeof AuthDashboardsIndexRoute
@@ -271,6 +289,7 @@ export interface FileRoutesById {
   '/_auth/dashboards': typeof AuthDashboardsRouteRouteWithChildren
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/register': typeof authRegisterRoute
+  '/_auth/home': typeof AuthHomeRoute
   '/_auth/agents/$agentId': typeof AuthAgentsAgentIdRoute
   '/_auth/agents/': typeof AuthAgentsIndexRoute
   '/_auth/dashboards/': typeof AuthDashboardsIndexRoute
@@ -288,6 +307,7 @@ export interface FileRouteTypes {
     | '/dashboards'
     | '/login'
     | '/register'
+    | '/home'
     | '/agents/$agentId'
     | '/agents/'
     | '/dashboards/'
@@ -300,6 +320,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/login'
     | '/register'
+    | '/home'
     | '/agents/$agentId'
     | '/agents'
     | '/dashboards'
@@ -314,6 +335,7 @@ export interface FileRouteTypes {
     | '/_auth/dashboards'
     | '/(auth)/login'
     | '/(auth)/register'
+    | '/_auth/home'
     | '/_auth/agents/$agentId'
     | '/_auth/agents/'
     | '/_auth/dashboards/'
@@ -362,7 +384,8 @@ export const routeTree = rootRoute
       "filePath": "_auth/route.tsx",
       "children": [
         "/_auth/agents",
-        "/_auth/dashboards"
+        "/_auth/dashboards",
+        "/_auth/home"
       ]
     },
     "/about": {
@@ -390,6 +413,10 @@ export const routeTree = rootRoute
     },
     "/(auth)/register": {
       "filePath": "(auth)/register.tsx"
+    },
+    "/_auth/home": {
+      "filePath": "_auth/home.tsx",
+      "parent": "/_auth"
     },
     "/_auth/agents/$agentId": {
       "filePath": "_auth/agents/$agentId.tsx",

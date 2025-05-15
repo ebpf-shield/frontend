@@ -29,7 +29,7 @@ export const useRegisterForm = () => {
     },
     onSuccess: async (data) => {
       auth.handleLogin(data.access_token);
-      await navigate({ to: "/agents" });
+      await navigate({ to: "/home" });
     },
   });
 
