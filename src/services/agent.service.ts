@@ -1,6 +1,8 @@
 import { ObjectId } from "bson";
 import { agentSchema, agentWithProcessesSchema } from "../models/agent.model";
 import { authenticatedInstance } from "./index.service";
+import axios from "axios";
+import { ZodError } from "zod";
 
 const PREFIX = "agent" as const;
 
@@ -15,7 +17,17 @@ export class AgentService {
 
       return agentSchema.array().parse(res.data);
     } catch (error) {
-      console.error(error);
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error:", error.response?.data);
+        console.log(error.message);
+        throw error;
+      }
+
+      if (error instanceof ZodError) {
+        console.error("Zod error:", error.errors);
+        throw new Error("Failed to parse agents");
+      }
+
       throw new Error("Failed to parse agents");
     }
   }
@@ -26,7 +38,14 @@ export class AgentService {
 
       return agentWithProcessesSchema.array().parse(res.data);
     } catch (error) {
-      console.error(error);
+      if (axios.isAxiosError(error)) {
+        throw error;
+      }
+
+      if (error instanceof ZodError) {
+        throw new Error("Failed to parse agents with processes");
+      }
+
       throw new Error("Failed to parse agents with processes");
     }
   }
@@ -43,8 +62,18 @@ export class AgentService {
 
       return agentSchema.parse(res.data);
     } catch (error) {
-      console.error(error);
-      throw new Error("Failed to parse agent with processes");
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error:", error.response?.data);
+        console.log(error.message);
+        throw error;
+      }
+
+      if (error instanceof ZodError) {
+        console.error("Zod error:", error.errors);
+        throw new Error("Failed to parse agent with id " + id.toString());
+      }
+
+      throw new Error(`Failed to parse agent with id ${id.toString()}`);
     }
   }
 
@@ -55,8 +84,18 @@ export class AgentService {
       );
       return agentWithProcessesSchema.parse(res.data);
     } catch (error) {
-      console.error(error);
-      throw new Error("Failed to parse agent with processes");
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error:", error.response?.data);
+        console.log(error.message);
+        throw error;
+      }
+
+      if (error instanceof ZodError) {
+        console.error("Zod error:", error.errors);
+        throw new Error(`Failed to parse agent with processes with id ${id.toString()}`);
+      }
+
+      throw new Error(`Failed to parse agent with processes with id ${id.toString()}`);
     }
   }
 }

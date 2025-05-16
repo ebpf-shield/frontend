@@ -41,7 +41,7 @@ authenticatedInstance.interceptors.response.use(
   async (error) => {
     console.log("Error response", error);
     // https://dev.to/zeeshanali0704/authentication-in-react-with-jwts-access-refresh-tokens-569i
-    if (error.response.status === 401 || error.response.status === 403) {
+    if (error.response.status === 401) {
       localStorage.removeItem("token");
       window.location.href = "/login";
     }

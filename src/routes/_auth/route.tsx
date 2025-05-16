@@ -1,4 +1,5 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { createFileRoute, Navigate, Outlet, redirect } from "@tanstack/react-router";
+import axios from "axios";
 
 export const Route = createFileRoute("/_auth")({
   component: AuthLayout,
@@ -12,6 +13,19 @@ export const Route = createFileRoute("/_auth")({
         },
       });
     }
+
+    throw redirect({
+      to: "/home",
+    });
+  },
+  errorComponent: ({ error }) => {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 403) {
+        return <Navigate to="/home" />;
+      }
+    }
+
+    return "hello";
   },
 });
 

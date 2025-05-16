@@ -20,7 +20,6 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
   useEffect(() => {
     if (token && !isAuthenticated) {
-      console.log("Token changed", token);
       const user = parseJwt(token);
       if (user) {
         setUser(user);
