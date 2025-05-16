@@ -115,6 +115,8 @@ export const customValidation = {
     z.instanceof(ObjectId),
     { invalid_type_error: errorMessages.mongoId }
   ),
+
+  password: stringSchema.min(8).max(255).regex(validRegex, errorMessages.text),
 };
 
 const CustomErrorMap: ZodErrorMap = (error, ctx) => {

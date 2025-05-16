@@ -1,3 +1,5 @@
+import { UserWithOrgHome } from "@/components/UserWithOrgHome";
+import { UserWithoutOrgHome } from "@/components/UserWithoutOrgHome";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_auth/home")({
@@ -5,5 +7,11 @@ export const Route = createFileRoute("/_auth/home")({
 });
 
 function HomeComponent() {
-  return <div>Hello "/_auth/home"!</div>;
+  const { auth } = Route.useRouteContext();
+
+  if (auth.user.organizationId) {
+    return <UserWithOrgHome user={{ ...auth.user, organizationId: auth.user.organizationId }} />;
+  }
+
+  return <UserWithoutOrgHome user={auth.user} />;
 }

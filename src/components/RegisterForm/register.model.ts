@@ -1,4 +1,6 @@
 import { userSchema } from "@/models/user.model";
+import { FileRouteTypes } from "@/routeTree.gen";
+import { customValidation } from "@/utils/zod.util";
 import { z } from "zod";
 
 // TODO? We could have created an organization while registering.
@@ -7,10 +9,11 @@ export const registerFormSchema = userSchema
   .pick({
     email: true,
     name: true,
-    password: true,
   })
   .extend({
-    confirmPassword: userSchema.shape.password,
+    password: customValidation.password,
+
+    confirmPassword: customValidation.password,
   })
   .refine(
     (data) => {
@@ -25,3 +28,5 @@ export const registerFormSchema = userSchema
 export type RegisterFormSchema = z.infer<typeof registerFormSchema>;
 
 export type RegisterFormRouteSchema = Omit<RegisterFormSchema, "confirmPassword">;
+
+export const registerFallbackRoute: FileRouteTypes["to"] = "/home" as const;

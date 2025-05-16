@@ -1,6 +1,6 @@
 import { getRouteApi } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
-import { registerFormSchema, RegisterFormSchema } from "./register.model";
+import { registerFallbackRoute, registerFormSchema, RegisterFormSchema } from "./register.model";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useAuthContext } from "@/contexts/Auth/useProvider";
@@ -29,7 +29,7 @@ export const useRegisterForm = () => {
     },
     onSuccess: async (data) => {
       auth.handleLogin(data.access_token);
-      await navigate({ to: "/home" });
+      await navigate({ to: registerFallbackRoute });
     },
   });
 
