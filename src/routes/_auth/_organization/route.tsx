@@ -25,5 +25,6 @@ export const Route = createFileRoute("/_auth/_organization")({
 });
 
 function OrganizationalLayout() {
+  // TODO: We can create an organization context.
   return <Outlet />;
 }

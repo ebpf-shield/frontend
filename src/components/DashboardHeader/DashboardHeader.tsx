@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Bot, LayoutGrid, RefreshCw, Settings } from "lucide-react";
+import { Bot, Home, LayoutGrid, RefreshCw, Settings } from "lucide-react";
 import { Button } from "../ui/button";
 
 export const DashboardHeader = () => {
@@ -17,6 +17,7 @@ export const DashboardHeader = () => {
               variant="outline"
               size="sm"
               className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
+              // TODO: Implement refresh functionality
               // onClick={handleRefresh}
             >
               <RefreshCw className="h-4 w-4" />
@@ -31,6 +32,17 @@ export const DashboardHeader = () => {
               >
                 <Bot className="h-4 w-4" />
                 <span className="hidden sm:inline">Agents</span>
+              </Button>
+            </Link>
+
+            <Link to="/home">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
+              >
+                <Home className="h-4 w-4" />
+                <span className="hidden sm:inline">Home</span>
               </Button>
             </Link>
 
