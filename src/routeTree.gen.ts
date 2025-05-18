@@ -17,13 +17,14 @@ import { Route as IndexImport } from './routes/index'
 import { Route as AuthHomeImport } from './routes/_auth/home'
 import { Route as authRegisterImport } from './routes/(auth)/register'
 import { Route as authLoginImport } from './routes/(auth)/login'
-import { Route as AuthDashboardsRouteImport } from './routes/_auth/dashboards/route'
-import { Route as AuthAgentsRouteImport } from './routes/_auth/agents/route'
-import { Route as AuthDashboardsIndexImport } from './routes/_auth/dashboards/index'
-import { Route as AuthAgentsIndexImport } from './routes/_auth/agents/index'
-import { Route as AuthAgentsAgentIdImport } from './routes/_auth/agents/$agentId'
-import { Route as AuthDashboardsAgentsIndexImport } from './routes/_auth/dashboards/agents/index'
-import { Route as AuthAgentsProcessesProcessIdImport } from './routes/_auth/agents/processes/$processId'
+import { Route as AuthOrganizationRouteImport } from './routes/_auth/_organization/route'
+import { Route as AuthOrganizationDashboardsRouteImport } from './routes/_auth/_organization/dashboards/route'
+import { Route as AuthOrganizationAgentsRouteImport } from './routes/_auth/_organization/agents/route'
+import { Route as AuthOrganizationDashboardsIndexImport } from './routes/_auth/_organization/dashboards/index'
+import { Route as AuthOrganizationAgentsIndexImport } from './routes/_auth/_organization/agents/index'
+import { Route as AuthOrganizationAgentsAgentIdImport } from './routes/_auth/_organization/agents/$agentId'
+import { Route as AuthOrganizationDashboardsAgentsIndexImport } from './routes/_auth/_organization/dashboards/agents/index'
+import { Route as AuthOrganizationAgentsProcessesProcessIdImport } from './routes/_auth/_organization/agents/processes/$processId'
 
 // Create/Update Routes
 
@@ -62,47 +63,58 @@ const authLoginRoute = authLoginImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthDashboardsRouteRoute = AuthDashboardsRouteImport.update({
-  id: '/dashboards',
-  path: '/dashboards',
+const AuthOrganizationRouteRoute = AuthOrganizationRouteImport.update({
+  id: '/_organization',
   getParentRoute: () => AuthRouteRoute,
 } as any)
 
-const AuthAgentsRouteRoute = AuthAgentsRouteImport.update({
-  id: '/agents',
-  path: '/agents',
-  getParentRoute: () => AuthRouteRoute,
-} as any)
+const AuthOrganizationDashboardsRouteRoute =
+  AuthOrganizationDashboardsRouteImport.update({
+    id: '/dashboards',
+    path: '/dashboards',
+    getParentRoute: () => AuthOrganizationRouteRoute,
+  } as any)
 
-const AuthDashboardsIndexRoute = AuthDashboardsIndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthDashboardsRouteRoute,
-} as any)
+const AuthOrganizationAgentsRouteRoute =
+  AuthOrganizationAgentsRouteImport.update({
+    id: '/agents',
+    path: '/agents',
+    getParentRoute: () => AuthOrganizationRouteRoute,
+  } as any)
 
-const AuthAgentsIndexRoute = AuthAgentsIndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthAgentsRouteRoute,
-} as any)
+const AuthOrganizationDashboardsIndexRoute =
+  AuthOrganizationDashboardsIndexImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthOrganizationDashboardsRouteRoute,
+  } as any)
 
-const AuthAgentsAgentIdRoute = AuthAgentsAgentIdImport.update({
-  id: '/$agentId',
-  path: '/$agentId',
-  getParentRoute: () => AuthAgentsRouteRoute,
-} as any)
+const AuthOrganizationAgentsIndexRoute =
+  AuthOrganizationAgentsIndexImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthOrganizationAgentsRouteRoute,
+  } as any)
 
-const AuthDashboardsAgentsIndexRoute = AuthDashboardsAgentsIndexImport.update({
-  id: '/agents/',
-  path: '/agents/',
-  getParentRoute: () => AuthDashboardsRouteRoute,
-} as any)
+const AuthOrganizationAgentsAgentIdRoute =
+  AuthOrganizationAgentsAgentIdImport.update({
+    id: '/$agentId',
+    path: '/$agentId',
+    getParentRoute: () => AuthOrganizationAgentsRouteRoute,
+  } as any)
 
-const AuthAgentsProcessesProcessIdRoute =
-  AuthAgentsProcessesProcessIdImport.update({
+const AuthOrganizationDashboardsAgentsIndexRoute =
+  AuthOrganizationDashboardsAgentsIndexImport.update({
+    id: '/agents/',
+    path: '/agents/',
+    getParentRoute: () => AuthOrganizationDashboardsRouteRoute,
+  } as any)
+
+const AuthOrganizationAgentsProcessesProcessIdRoute =
+  AuthOrganizationAgentsProcessesProcessIdImport.update({
     id: '/processes/$processId',
     path: '/processes/$processId',
-    getParentRoute: () => AuthAgentsRouteRoute,
+    getParentRoute: () => AuthOrganizationAgentsRouteRoute,
   } as any)
 
 // Populate the FileRoutesByPath interface
@@ -130,18 +142,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
-    '/_auth/agents': {
-      id: '/_auth/agents'
-      path: '/agents'
-      fullPath: '/agents'
-      preLoaderRoute: typeof AuthAgentsRouteImport
-      parentRoute: typeof AuthRouteImport
-    }
-    '/_auth/dashboards': {
-      id: '/_auth/dashboards'
-      path: '/dashboards'
-      fullPath: '/dashboards'
-      preLoaderRoute: typeof AuthDashboardsRouteImport
+    '/_auth/_organization': {
+      id: '/_auth/_organization'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthOrganizationRouteImport
       parentRoute: typeof AuthRouteImport
     }
     '/(auth)/login': {
@@ -165,84 +170,120 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthHomeImport
       parentRoute: typeof AuthRouteImport
     }
-    '/_auth/agents/$agentId': {
-      id: '/_auth/agents/$agentId'
+    '/_auth/_organization/agents': {
+      id: '/_auth/_organization/agents'
+      path: '/agents'
+      fullPath: '/agents'
+      preLoaderRoute: typeof AuthOrganizationAgentsRouteImport
+      parentRoute: typeof AuthOrganizationRouteImport
+    }
+    '/_auth/_organization/dashboards': {
+      id: '/_auth/_organization/dashboards'
+      path: '/dashboards'
+      fullPath: '/dashboards'
+      preLoaderRoute: typeof AuthOrganizationDashboardsRouteImport
+      parentRoute: typeof AuthOrganizationRouteImport
+    }
+    '/_auth/_organization/agents/$agentId': {
+      id: '/_auth/_organization/agents/$agentId'
       path: '/$agentId'
       fullPath: '/agents/$agentId'
-      preLoaderRoute: typeof AuthAgentsAgentIdImport
-      parentRoute: typeof AuthAgentsRouteImport
+      preLoaderRoute: typeof AuthOrganizationAgentsAgentIdImport
+      parentRoute: typeof AuthOrganizationAgentsRouteImport
     }
-    '/_auth/agents/': {
-      id: '/_auth/agents/'
+    '/_auth/_organization/agents/': {
+      id: '/_auth/_organization/agents/'
       path: '/'
       fullPath: '/agents/'
-      preLoaderRoute: typeof AuthAgentsIndexImport
-      parentRoute: typeof AuthAgentsRouteImport
+      preLoaderRoute: typeof AuthOrganizationAgentsIndexImport
+      parentRoute: typeof AuthOrganizationAgentsRouteImport
     }
-    '/_auth/dashboards/': {
-      id: '/_auth/dashboards/'
+    '/_auth/_organization/dashboards/': {
+      id: '/_auth/_organization/dashboards/'
       path: '/'
       fullPath: '/dashboards/'
-      preLoaderRoute: typeof AuthDashboardsIndexImport
-      parentRoute: typeof AuthDashboardsRouteImport
+      preLoaderRoute: typeof AuthOrganizationDashboardsIndexImport
+      parentRoute: typeof AuthOrganizationDashboardsRouteImport
     }
-    '/_auth/agents/processes/$processId': {
-      id: '/_auth/agents/processes/$processId'
+    '/_auth/_organization/agents/processes/$processId': {
+      id: '/_auth/_organization/agents/processes/$processId'
       path: '/processes/$processId'
       fullPath: '/agents/processes/$processId'
-      preLoaderRoute: typeof AuthAgentsProcessesProcessIdImport
-      parentRoute: typeof AuthAgentsRouteImport
+      preLoaderRoute: typeof AuthOrganizationAgentsProcessesProcessIdImport
+      parentRoute: typeof AuthOrganizationAgentsRouteImport
     }
-    '/_auth/dashboards/agents/': {
-      id: '/_auth/dashboards/agents/'
+    '/_auth/_organization/dashboards/agents/': {
+      id: '/_auth/_organization/dashboards/agents/'
       path: '/agents'
       fullPath: '/dashboards/agents'
-      preLoaderRoute: typeof AuthDashboardsAgentsIndexImport
-      parentRoute: typeof AuthDashboardsRouteImport
+      preLoaderRoute: typeof AuthOrganizationDashboardsAgentsIndexImport
+      parentRoute: typeof AuthOrganizationDashboardsRouteImport
     }
   }
 }
 
 // Create and export the route tree
 
-interface AuthAgentsRouteRouteChildren {
-  AuthAgentsAgentIdRoute: typeof AuthAgentsAgentIdRoute
-  AuthAgentsIndexRoute: typeof AuthAgentsIndexRoute
-  AuthAgentsProcessesProcessIdRoute: typeof AuthAgentsProcessesProcessIdRoute
+interface AuthOrganizationAgentsRouteRouteChildren {
+  AuthOrganizationAgentsAgentIdRoute: typeof AuthOrganizationAgentsAgentIdRoute
+  AuthOrganizationAgentsIndexRoute: typeof AuthOrganizationAgentsIndexRoute
+  AuthOrganizationAgentsProcessesProcessIdRoute: typeof AuthOrganizationAgentsProcessesProcessIdRoute
 }
 
-const AuthAgentsRouteRouteChildren: AuthAgentsRouteRouteChildren = {
-  AuthAgentsAgentIdRoute: AuthAgentsAgentIdRoute,
-  AuthAgentsIndexRoute: AuthAgentsIndexRoute,
-  AuthAgentsProcessesProcessIdRoute: AuthAgentsProcessesProcessIdRoute,
+const AuthOrganizationAgentsRouteRouteChildren: AuthOrganizationAgentsRouteRouteChildren =
+  {
+    AuthOrganizationAgentsAgentIdRoute: AuthOrganizationAgentsAgentIdRoute,
+    AuthOrganizationAgentsIndexRoute: AuthOrganizationAgentsIndexRoute,
+    AuthOrganizationAgentsProcessesProcessIdRoute:
+      AuthOrganizationAgentsProcessesProcessIdRoute,
+  }
+
+const AuthOrganizationAgentsRouteRouteWithChildren =
+  AuthOrganizationAgentsRouteRoute._addFileChildren(
+    AuthOrganizationAgentsRouteRouteChildren,
+  )
+
+interface AuthOrganizationDashboardsRouteRouteChildren {
+  AuthOrganizationDashboardsIndexRoute: typeof AuthOrganizationDashboardsIndexRoute
+  AuthOrganizationDashboardsAgentsIndexRoute: typeof AuthOrganizationDashboardsAgentsIndexRoute
 }
 
-const AuthAgentsRouteRouteWithChildren = AuthAgentsRouteRoute._addFileChildren(
-  AuthAgentsRouteRouteChildren,
-)
+const AuthOrganizationDashboardsRouteRouteChildren: AuthOrganizationDashboardsRouteRouteChildren =
+  {
+    AuthOrganizationDashboardsIndexRoute: AuthOrganizationDashboardsIndexRoute,
+    AuthOrganizationDashboardsAgentsIndexRoute:
+      AuthOrganizationDashboardsAgentsIndexRoute,
+  }
 
-interface AuthDashboardsRouteRouteChildren {
-  AuthDashboardsIndexRoute: typeof AuthDashboardsIndexRoute
-  AuthDashboardsAgentsIndexRoute: typeof AuthDashboardsAgentsIndexRoute
+const AuthOrganizationDashboardsRouteRouteWithChildren =
+  AuthOrganizationDashboardsRouteRoute._addFileChildren(
+    AuthOrganizationDashboardsRouteRouteChildren,
+  )
+
+interface AuthOrganizationRouteRouteChildren {
+  AuthOrganizationAgentsRouteRoute: typeof AuthOrganizationAgentsRouteRouteWithChildren
+  AuthOrganizationDashboardsRouteRoute: typeof AuthOrganizationDashboardsRouteRouteWithChildren
 }
 
-const AuthDashboardsRouteRouteChildren: AuthDashboardsRouteRouteChildren = {
-  AuthDashboardsIndexRoute: AuthDashboardsIndexRoute,
-  AuthDashboardsAgentsIndexRoute: AuthDashboardsAgentsIndexRoute,
+const AuthOrganizationRouteRouteChildren: AuthOrganizationRouteRouteChildren = {
+  AuthOrganizationAgentsRouteRoute:
+    AuthOrganizationAgentsRouteRouteWithChildren,
+  AuthOrganizationDashboardsRouteRoute:
+    AuthOrganizationDashboardsRouteRouteWithChildren,
 }
 
-const AuthDashboardsRouteRouteWithChildren =
-  AuthDashboardsRouteRoute._addFileChildren(AuthDashboardsRouteRouteChildren)
+const AuthOrganizationRouteRouteWithChildren =
+  AuthOrganizationRouteRoute._addFileChildren(
+    AuthOrganizationRouteRouteChildren,
+  )
 
 interface AuthRouteRouteChildren {
-  AuthAgentsRouteRoute: typeof AuthAgentsRouteRouteWithChildren
-  AuthDashboardsRouteRoute: typeof AuthDashboardsRouteRouteWithChildren
+  AuthOrganizationRouteRoute: typeof AuthOrganizationRouteRouteWithChildren
   AuthHomeRoute: typeof AuthHomeRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
-  AuthAgentsRouteRoute: AuthAgentsRouteRouteWithChildren,
-  AuthDashboardsRouteRoute: AuthDashboardsRouteRouteWithChildren,
+  AuthOrganizationRouteRoute: AuthOrganizationRouteRouteWithChildren,
   AuthHomeRoute: AuthHomeRoute,
 }
 
@@ -252,32 +293,32 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '': typeof AuthRouteRouteWithChildren
+  '': typeof AuthOrganizationRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/agents': typeof AuthAgentsRouteRouteWithChildren
-  '/dashboards': typeof AuthDashboardsRouteRouteWithChildren
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/home': typeof AuthHomeRoute
-  '/agents/$agentId': typeof AuthAgentsAgentIdRoute
-  '/agents/': typeof AuthAgentsIndexRoute
-  '/dashboards/': typeof AuthDashboardsIndexRoute
-  '/agents/processes/$processId': typeof AuthAgentsProcessesProcessIdRoute
-  '/dashboards/agents': typeof AuthDashboardsAgentsIndexRoute
+  '/agents': typeof AuthOrganizationAgentsRouteRouteWithChildren
+  '/dashboards': typeof AuthOrganizationDashboardsRouteRouteWithChildren
+  '/agents/$agentId': typeof AuthOrganizationAgentsAgentIdRoute
+  '/agents/': typeof AuthOrganizationAgentsIndexRoute
+  '/dashboards/': typeof AuthOrganizationDashboardsIndexRoute
+  '/agents/processes/$processId': typeof AuthOrganizationAgentsProcessesProcessIdRoute
+  '/dashboards/agents': typeof AuthOrganizationDashboardsAgentsIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '': typeof AuthRouteRouteWithChildren
+  '': typeof AuthOrganizationRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/home': typeof AuthHomeRoute
-  '/agents/$agentId': typeof AuthAgentsAgentIdRoute
-  '/agents': typeof AuthAgentsIndexRoute
-  '/dashboards': typeof AuthDashboardsIndexRoute
-  '/agents/processes/$processId': typeof AuthAgentsProcessesProcessIdRoute
-  '/dashboards/agents': typeof AuthDashboardsAgentsIndexRoute
+  '/agents/$agentId': typeof AuthOrganizationAgentsAgentIdRoute
+  '/agents': typeof AuthOrganizationAgentsIndexRoute
+  '/dashboards': typeof AuthOrganizationDashboardsIndexRoute
+  '/agents/processes/$processId': typeof AuthOrganizationAgentsProcessesProcessIdRoute
+  '/dashboards/agents': typeof AuthOrganizationDashboardsAgentsIndexRoute
 }
 
 export interface FileRoutesById {
@@ -285,16 +326,17 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/_auth/agents': typeof AuthAgentsRouteRouteWithChildren
-  '/_auth/dashboards': typeof AuthDashboardsRouteRouteWithChildren
+  '/_auth/_organization': typeof AuthOrganizationRouteRouteWithChildren
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/register': typeof authRegisterRoute
   '/_auth/home': typeof AuthHomeRoute
-  '/_auth/agents/$agentId': typeof AuthAgentsAgentIdRoute
-  '/_auth/agents/': typeof AuthAgentsIndexRoute
-  '/_auth/dashboards/': typeof AuthDashboardsIndexRoute
-  '/_auth/agents/processes/$processId': typeof AuthAgentsProcessesProcessIdRoute
-  '/_auth/dashboards/agents/': typeof AuthDashboardsAgentsIndexRoute
+  '/_auth/_organization/agents': typeof AuthOrganizationAgentsRouteRouteWithChildren
+  '/_auth/_organization/dashboards': typeof AuthOrganizationDashboardsRouteRouteWithChildren
+  '/_auth/_organization/agents/$agentId': typeof AuthOrganizationAgentsAgentIdRoute
+  '/_auth/_organization/agents/': typeof AuthOrganizationAgentsIndexRoute
+  '/_auth/_organization/dashboards/': typeof AuthOrganizationDashboardsIndexRoute
+  '/_auth/_organization/agents/processes/$processId': typeof AuthOrganizationAgentsProcessesProcessIdRoute
+  '/_auth/_organization/dashboards/agents/': typeof AuthOrganizationDashboardsAgentsIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -303,11 +345,11 @@ export interface FileRouteTypes {
     | '/'
     | ''
     | '/about'
-    | '/agents'
-    | '/dashboards'
     | '/login'
     | '/register'
     | '/home'
+    | '/agents'
+    | '/dashboards'
     | '/agents/$agentId'
     | '/agents/'
     | '/dashboards/'
@@ -331,16 +373,17 @@ export interface FileRouteTypes {
     | '/'
     | '/_auth'
     | '/about'
-    | '/_auth/agents'
-    | '/_auth/dashboards'
+    | '/_auth/_organization'
     | '/(auth)/login'
     | '/(auth)/register'
     | '/_auth/home'
-    | '/_auth/agents/$agentId'
-    | '/_auth/agents/'
-    | '/_auth/dashboards/'
-    | '/_auth/agents/processes/$processId'
-    | '/_auth/dashboards/agents/'
+    | '/_auth/_organization/agents'
+    | '/_auth/_organization/dashboards'
+    | '/_auth/_organization/agents/$agentId'
+    | '/_auth/_organization/agents/'
+    | '/_auth/_organization/dashboards/'
+    | '/_auth/_organization/agents/processes/$processId'
+    | '/_auth/_organization/dashboards/agents/'
   fileRoutesById: FileRoutesById
 }
 
@@ -383,29 +426,19 @@ export const routeTree = rootRoute
     "/_auth": {
       "filePath": "_auth/route.tsx",
       "children": [
-        "/_auth/agents",
-        "/_auth/dashboards",
+        "/_auth/_organization",
         "/_auth/home"
       ]
     },
     "/about": {
       "filePath": "about.tsx"
     },
-    "/_auth/agents": {
-      "filePath": "_auth/agents/route.tsx",
+    "/_auth/_organization": {
+      "filePath": "_auth/_organization/route.tsx",
       "parent": "/_auth",
       "children": [
-        "/_auth/agents/$agentId",
-        "/_auth/agents/",
-        "/_auth/agents/processes/$processId"
-      ]
-    },
-    "/_auth/dashboards": {
-      "filePath": "_auth/dashboards/route.tsx",
-      "parent": "/_auth",
-      "children": [
-        "/_auth/dashboards/",
-        "/_auth/dashboards/agents/"
+        "/_auth/_organization/agents",
+        "/_auth/_organization/dashboards"
       ]
     },
     "/(auth)/login": {
@@ -418,25 +451,42 @@ export const routeTree = rootRoute
       "filePath": "_auth/home.tsx",
       "parent": "/_auth"
     },
-    "/_auth/agents/$agentId": {
-      "filePath": "_auth/agents/$agentId.tsx",
-      "parent": "/_auth/agents"
+    "/_auth/_organization/agents": {
+      "filePath": "_auth/_organization/agents/route.tsx",
+      "parent": "/_auth/_organization",
+      "children": [
+        "/_auth/_organization/agents/$agentId",
+        "/_auth/_organization/agents/",
+        "/_auth/_organization/agents/processes/$processId"
+      ]
     },
-    "/_auth/agents/": {
-      "filePath": "_auth/agents/index.tsx",
-      "parent": "/_auth/agents"
+    "/_auth/_organization/dashboards": {
+      "filePath": "_auth/_organization/dashboards/route.tsx",
+      "parent": "/_auth/_organization",
+      "children": [
+        "/_auth/_organization/dashboards/",
+        "/_auth/_organization/dashboards/agents/"
+      ]
     },
-    "/_auth/dashboards/": {
-      "filePath": "_auth/dashboards/index.tsx",
-      "parent": "/_auth/dashboards"
+    "/_auth/_organization/agents/$agentId": {
+      "filePath": "_auth/_organization/agents/$agentId.tsx",
+      "parent": "/_auth/_organization/agents"
     },
-    "/_auth/agents/processes/$processId": {
-      "filePath": "_auth/agents/processes/$processId.tsx",
-      "parent": "/_auth/agents"
+    "/_auth/_organization/agents/": {
+      "filePath": "_auth/_organization/agents/index.tsx",
+      "parent": "/_auth/_organization/agents"
     },
-    "/_auth/dashboards/agents/": {
-      "filePath": "_auth/dashboards/agents/index.tsx",
-      "parent": "/_auth/dashboards"
+    "/_auth/_organization/dashboards/": {
+      "filePath": "_auth/_organization/dashboards/index.tsx",
+      "parent": "/_auth/_organization/dashboards"
+    },
+    "/_auth/_organization/agents/processes/$processId": {
+      "filePath": "_auth/_organization/agents/processes/$processId.tsx",
+      "parent": "/_auth/_organization/agents"
+    },
+    "/_auth/_organization/dashboards/agents/": {
+      "filePath": "_auth/_organization/dashboards/agents/index.tsx",
+      "parent": "/_auth/_organization/dashboards"
     }
   }
 }

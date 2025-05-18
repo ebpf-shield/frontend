@@ -12,7 +12,6 @@ import { useFormContext } from "react-hook-form";
 
 export interface FormCheckboxProps {
   name: string;
-  enableLabel?: boolean;
   description?: string;
   labelProps?: LabelProps;
   checkboxProps?: CheckboxProps;

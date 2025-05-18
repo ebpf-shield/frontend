@@ -1,5 +1,5 @@
 import { LoginFormSchema } from "@/components/LoginForm/login.model";
-import { axiosInstance } from "./index.service";
+import { authenticatedInstance, axiosInstance, errorHelper } from "./index.service";
 import { tokenResponseSchema } from "@/models/auth.model";
 import { RegisterFormRouteSchema } from "@/components/RegisterForm/register.model";
 
@@ -23,6 +23,16 @@ export const authService = {
     } catch (error) {
       console.error(error);
       throw new Error("Failed to register");
+    }
+  },
+
+  async token() {
+    try {
+      const res = await authenticatedInstance.get(`${PREFIX}/token`);
+      return tokenResponseSchema.parse(res.data);
+    } catch (error) {
+      console.error(error);
+      throw errorHelper(error);
     }
   },
 } as const;

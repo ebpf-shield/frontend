@@ -11,7 +11,7 @@ import { createContext } from "react";
 
 export interface AuthContextProps {
   isAuthenticated: boolean;
-  handleLogin: (token: string) => Promise<void>;
+  handleLogin: (token: string) => TokenUser;
   handleLogout: () => Promise<void>;
   token: string | undefined;
   user: TokenUser | null;
@@ -19,7 +19,7 @@ export interface AuthContextProps {
 
 export const AuthContext = createContext<AuthContextProps>({
   isAuthenticated: false,
-  handleLogin: async () => {},
+  handleLogin: () => ({}) as TokenUser,
   handleLogout: async () => {},
   token: undefined,
   user: null,

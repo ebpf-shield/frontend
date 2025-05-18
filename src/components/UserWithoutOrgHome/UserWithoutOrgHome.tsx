@@ -1,10 +1,8 @@
 import { TokenUserWithoutOrgSchema } from "@/models/auth.model";
-import { ArrowLeft } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
+import { OrganizationForm } from "./OrganizationForm";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
-import { OrganizationForm } from "../OrganizationForm";
-
 export interface UserWithoutOrgHomeProps {
   user: TokenUserWithoutOrgSchema;
 }
@@ -17,7 +15,7 @@ export const UserWithoutOrgHome = ({ user }: UserWithoutOrgHomeProps) => {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
+    <div className="flex items-center justify-center min-h-screen w-full bg-background">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader>
           <CardTitle className="text-2xl font-semibold text-center">Welcome {user.name}!</CardTitle>
@@ -45,31 +43,25 @@ export const UserWithoutOrgHome = ({ user }: UserWithoutOrgHomeProps) => {
 };
 
 const OrganizationShell = ({ setShowForm }: { setShowForm: Dispatch<SetStateAction<boolean>> }) => {
-  const handleCancelCreateOrganization = () => {
+  const handleCancel = () => {
     setShowForm(false);
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background p-4">
+    <div className="flex items-center justify-center min-h-screen bg-background p-4 w-full">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader>
-          <div className="flex items-center justify-center mb-4">
-            <CardTitle className="text-2xl font-semibold">Create New Organization</CardTitle>
-          </div>
+          <CardTitle className="text-2xl font-semibold text-center">
+            Create New Organization
+          </CardTitle>
 
           <CardDescription>
             Fill in the details below to set up your new organization.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <OrganizationForm />
+          <OrganizationForm cancelCreateOrganization={handleCancel} />
         </CardContent>
-        <CardFooter className="flex flex-col items-center">
-          <Button onClick={handleCancelCreateOrganization} variant="outline" className="w-full">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Cancel creating organization
-          </Button>
-        </CardFooter>
       </Card>
     </div>
   );

@@ -1,6 +1,13 @@
 // TODO: Use shadcn ui form
-
 import { FormErrorHelperText } from "@/components/form/FormErrorHelperText";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input, InputProps } from "@/components/ui/input";
 import { Label, LabelProps } from "@/components/ui/label";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
@@ -11,55 +18,56 @@ export interface FormInputProps {
   name: string;
   labelProps?: LabelProps;
   inputProps?: InputProps;
+  description?: string;
 }
 
-export const FormInput = ({ name, labelProps, inputProps }: FormInputProps) => {
-  const {
-    formState: { isSubmitting, defaultValues },
-  } = useFormContext();
+// export const FormInput = ({ name, labelProps, inputProps }: FormInputProps) => {
+//   const {
+//     formState: { isSubmitting, defaultValues },
+//   } = useFormContext();
 
-  const {
-    fieldState: { error, invalid },
-    field,
-  } = useController({
-    name,
-  });
+//   const {
+//     fieldState: { error, invalid },
+//     field,
+//   } = useController({
+//     name,
+//   });
 
-  const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-    if (!e.target.value) {
-      if (defaultValues) {
-        field.onChange(defaultValues[name]);
-        return;
-      }
+//   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+//     if (!e.target.value) {
+//       if (defaultValues) {
+//         field.onChange(defaultValues[name]);
+//         return;
+//       }
 
-      field.onChange("");
-      return;
-    }
+//       field.onChange("");
+//       return;
+//     }
 
-    field.onChange(e.target.value);
-  };
+//     field.onChange(e.target.value);
+//   };
 
-  const label = (
-    <Label {...labelProps} htmlFor={name}>
-      {labelProps?.children}
-    </Label>
-  );
+//   const label = (
+//     <Label {...labelProps} htmlFor={name}>
+//       {labelProps?.children}
+//     </Label>
+//   );
 
-  return (
-    <>
-      {labelProps?.children && label}
-      <Input
-        {...field}
-        onChange={handleChange}
-        disabled={isSubmitting}
-        aria-errormessage={error?.message}
-        id={name}
-        {...inputProps}
-      />
-      <FormErrorHelperText error={invalid} message={error?.message} />
-    </>
-  );
-};
+//   return (
+//     <>
+//       {labelProps?.children && label}
+//       <Input
+//         {...field}
+//         onChange={handleChange}
+//         disabled={isSubmitting}
+//         aria-errormessage={error?.message}
+//         id={name}
+//         {...inputProps}
+//       />
+//       <FormErrorHelperText error={invalid} message={error?.message} />
+//     </>
+//   );
+// };
 
 export const FormInputNumber = ({ name, labelProps, inputProps }: FormInputProps) => {
   const {
@@ -170,5 +178,48 @@ export const FormInputPassword = ({ name, labelProps, inputProps }: FormInputPro
       </div>
       <FormErrorHelperText error={invalid} message={error?.message} />
     </>
+  );
+};
+
+export const FormInput = ({ name, labelProps, inputProps, description }: FormInputProps) => {
+  const { control } = useFormContext();
+
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field, formState: { isSubmitting, defaultValues } }) => {
+        const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+          if (!e.target.value) {
+            if (defaultValues) {
+              field.onChange(defaultValues[name]);
+              return;
+            }
+
+            field.onChange("");
+            return;
+          }
+
+          field.onChange(e.target.value);
+        };
+
+        return (
+          <FormItem>
+            {labelProps?.children && <FormLabel {...labelProps} />}
+            <FormControl>
+              <Input
+                {...field}
+                onChange={handleChange}
+                disabled={isSubmitting}
+                id={name}
+                {...inputProps}
+              />
+            </FormControl>
+            {description && <FormDescription>{description}</FormDescription>}
+            <FormMessage />
+          </FormItem>
+        );
+      }}
+    />
   );
 };

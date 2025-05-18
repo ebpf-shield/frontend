@@ -8,7 +8,6 @@ export const Route = createFileRoute("/_auth/home")({
 
 function HomeComponent() {
   const { auth } = Route.useRouteContext();
-
   if (auth.user.organizationId) {
     return <UserWithOrgHome user={{ ...auth.user, organizationId: auth.user.organizationId }} />;
   }

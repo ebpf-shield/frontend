@@ -23,6 +23,7 @@ export const useLoginForm = () => {
   const auth = useAuthContext();
 
   const mutation = useMutation({
+    mutationKey: ["login"],
     mutationFn: async (data: LoginFormSchema) => {
       return await authService.login(data);
     },

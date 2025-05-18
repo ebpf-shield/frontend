@@ -1,7 +1,7 @@
 import { DashboardTabs } from "@/components/DashboardTabs";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_auth/dashboards/agents/")({
+export const Route = createFileRoute("/_auth/_organization/dashboards/agents/")({
   component: DashboardAgentsIndexComponent,
 });
 

@@ -11,7 +11,7 @@ const agentSearchParams = z.object({
   filter: z.string().optional(),
 });
 
-export const Route = createFileRoute("/_auth/agents/")({
+export const Route = createFileRoute("/_auth/_organization/agents/")({
   component: AgentsIndexComponent,
   // Please make sure you read the docs for the `validateSearch` function
   validateSearch: zodValidator(agentSearchParams),

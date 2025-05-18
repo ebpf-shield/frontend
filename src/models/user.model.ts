@@ -9,3 +9,9 @@ export const userSchema = z.object({
 });
 
 export type User = z.infer<typeof userSchema>;
+
+export const userWithOrgSchema = userSchema.extend({
+  organizationId: customValidation.ObjectId,
+});
+
+export type UserWithOrg = z.infer<typeof userWithOrgSchema>;

@@ -1,8 +1,8 @@
 import { TokenUser, tokenUserSchema } from "@/models/auth.model";
+import { Buffer } from "buffer";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { useLocalStorage } from "react-use";
 import { AuthContext } from "./context";
-import { Buffer } from "buffer";
 
 const parseJwt = (token: string) => {
   try {
@@ -28,12 +28,14 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     }
   }, [token, isAuthenticated]);
 
-  const handleLogin = async (token: string) => {
+  const handleLogin = (token: string) => {
     const user = parseJwt(token);
     if (user) {
       setToken(token);
       setUser(user);
       setIsAuthenticated(true);
+
+      return user;
     } else {
       throw new Error("Invalid token");
     }

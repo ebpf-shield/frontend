@@ -7,7 +7,7 @@ import { customValidation } from "@/utils/zod.util";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_auth/agents/processes/$processId")({
+export const Route = createFileRoute("/_auth/_organization/agents/processes/$processId")({
   params: {
     parse: (params) => {
       const parsed = customValidation.ObjectId.safeParse(params.processId);

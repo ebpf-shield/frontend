@@ -25,7 +25,7 @@ export class AgentService {
 
       if (error instanceof ZodError) {
         console.error("Zod error:", error.errors);
-        throw new Error("Failed to parse agents");
+        throw error;
       }
 
       throw new Error("Failed to parse agents");

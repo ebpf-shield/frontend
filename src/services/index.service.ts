@@ -1,5 +1,6 @@
 import axios from "axios";
 import { env } from "../utils/env.util.ts";
+import { ZodError } from "zod";
 
 const { VITE_BACKEND_URL: BACKEND_URL } = env;
 const API_PREFIX = "/api/ui" as const;
@@ -48,3 +49,15 @@ authenticatedInstance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export const errorHelper = (error: unknown, uncatchedMessage?: string) => {
+  if (axios.isAxiosError(error)) {
+    return error;
+  }
+
+  if (error instanceof ZodError) {
+    return error;
+  }
+
+  return new Error(uncatchedMessage);
+};

@@ -1,4 +1,5 @@
 import { TokenUserWithOrgSchema } from "@/models/auth.model";
+import { Link } from "@tanstack/react-router";
 
 export interface UserWithOrgHomeProps {
   user: TokenUserWithOrgSchema;
@@ -6,5 +7,9 @@ export interface UserWithOrgHomeProps {
 
 export const UserWithOrgHome = ({ user }: UserWithOrgHomeProps) => {
   console.log("UserWithOrgHome", user);
-  return <div></div>;
+  return (
+    <div>
+      <Link to="/agents">agents</Link>;
+    </div>
+  );
 };

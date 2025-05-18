@@ -5,7 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { getRouteApi, Link } from "@tanstack/react-router";
 import { LayoutGrid, PlusCircle, RefreshCw, Search, Server, Settings } from "lucide-react";
 
-const routeApi = getRouteApi("/_auth/agents/");
+const routeApi = getRouteApi("/_auth/_organization/agents/");
 
 export function AgentHeader() {
   const { filter } = routeApi.useSearch();
