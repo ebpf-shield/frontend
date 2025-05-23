@@ -15,7 +15,7 @@ export const OrganizationForm = ({ cancelCreateOrganization }: OrganizationFormP
       <form className="space-y-6" onSubmit={methods.handleSubmit(onSubmit)}>
         <FormInput
           name={"name"}
-          inputProps={{ placeholder: "The Hemi Boy's" }}
+          inputProps={{ placeholder: "Organization Name" }}
           labelProps={{
             children: "Organization name",
           }}
@@ -26,7 +26,7 @@ export const OrganizationForm = ({ cancelCreateOrganization }: OrganizationFormP
             children: "A description of your organization",
           }}
           inputProps={{
-            placeholder: "We are a group of people who love Hemi",
+            placeholder: "A really cool organization",
           }}
         />
         <section className="flex items-center justify-around gap-3">

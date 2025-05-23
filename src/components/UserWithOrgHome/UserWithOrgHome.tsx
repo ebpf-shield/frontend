@@ -26,9 +26,7 @@ export const UserWithOrgHome = ({ user }: UserWithOrgHomeProps) => {
           <Separator className="my-4" />
 
           <div className="p-6 max-w-4xl mx-auto">
-            <h2 className="text-lg font-medium text-white mb-4">
-              Those are your organization dashboards
-            </h2>
+            <h2 className="text-3xl font-medium text-white mb-4">Organizational Dashboards</h2>
 
             <div className="p-4 flex flex-col gap-4">
               <RulesByChainDashboard />
