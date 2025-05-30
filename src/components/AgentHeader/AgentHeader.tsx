@@ -4,7 +4,7 @@ import { agentQuery } from "@/queries/agent.query";
 import { useQueryClient } from "@tanstack/react-query";
 import { getRouteApi, Link } from "@tanstack/react-router";
 import { Home, LayoutGrid, PlusCircle, RefreshCw, Search, Server } from "lucide-react";
-import { SettingsButton } from "../SettingsButton";
+import { SettingsDropdownMenu } from "../SettingsDropdownMenu";
 
 const routeApi = getRouteApi("/_auth/_organization/agents/");
 
@@ -84,7 +84,7 @@ export function AgentHeader() {
               </Button>
             </Link>
 
-            <SettingsButton />
+            <SettingsDropdownMenu />
 
             <Button
               size="sm"
