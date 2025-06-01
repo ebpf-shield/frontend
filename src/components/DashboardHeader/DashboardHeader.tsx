@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Bot, Home, LayoutGrid, RefreshCw, Settings } from "lucide-react";
+import { Bot, Home, LayoutGrid, RefreshCw } from "lucide-react";
+import { SettingsDropdownMenu } from "../SettingsDropdownMenu";
 import { Button } from "../ui/button";
 
 export const DashboardHeader = () => {
@@ -46,14 +47,7 @@ export const DashboardHeader = () => {
               </Button>
             </Link>
 
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
-            >
-              <Settings className="h-4 w-4" />
-              <span className="hidden sm:inline">Settings</span>
-            </Button>
+            <SettingsDropdownMenu />
           </div>
         </section>
       </div>
