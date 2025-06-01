@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { axiosInstance } from "./index.service";
+import { authenticatedInstance } from "./index.service";
 import { stringSchema } from "@/utils/zod.util";
 
 const PREFIX = "dashboard";
@@ -12,7 +12,7 @@ export class DashboardService {
     });
 
     try {
-      const res = await axiosInstance.get(`${PREFIX}/common-processes`);
+      const res = await authenticatedInstance.get(`${PREFIX}/common-processes`);
       const parsedData = z.array(commonProcessSchema).parse(res.data);
       return parsedData;
     } catch (error) {
@@ -28,7 +28,7 @@ export class DashboardService {
     });
 
     try {
-      const res = await axiosInstance.get(`${PREFIX}/processes-with-most-rules`);
+      const res = await authenticatedInstance.get(`${PREFIX}/processes-with-most-rules`);
       const parsedData = z.array(processWithMostRulesSchema).parse(res.data);
       return parsedData;
     } catch (error) {
@@ -44,7 +44,7 @@ export class DashboardService {
     });
 
     try {
-      const res = await axiosInstance.get(`${PREFIX}/rules-by-chain`);
+      const res = await authenticatedInstance.get(`${PREFIX}/rules-by-chain`);
       const parsedData = z.array(rulesByChainSchema).parse(res.data);
       return parsedData;
     } catch (error) {

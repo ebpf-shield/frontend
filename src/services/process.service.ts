@@ -1,5 +1,5 @@
 import { ObjectId } from "bson";
-import { axiosInstance } from "./index.service";
+import { authenticatedInstance } from "./index.service";
 import { processSchema, processWithRulesSchema } from "@/models/process.model";
 
 const PREFIX = "process" as const;
@@ -7,7 +7,7 @@ const PREFIX = "process" as const;
 class ProcessService {
   async getByAgentId(agentId: ObjectId) {
     try {
-      const res = await axiosInstance.get(`${PREFIX}/agent/${agentId.toString()}`);
+      const res = await authenticatedInstance.get(`${PREFIX}/agent/${agentId.toString()}`);
       return processSchema.array().parse(res.data);
     } catch (error) {
       console.error(error);
@@ -17,7 +17,7 @@ class ProcessService {
 
   async getById(processId: ObjectId) {
     try {
-      const res = await axiosInstance.get(`${PREFIX}/${processId.toString()}`);
+      const res = await authenticatedInstance.get(`${PREFIX}/${processId.toString()}`);
       return processSchema.parse(res.data);
     } catch (error) {
       console.error(error);
@@ -27,7 +27,9 @@ class ProcessService {
 
   async getByIdWithRules(processId: ObjectId) {
     try {
-      const res = await axiosInstance.get(`${PREFIX}/${processId.toString()}?embed_rules=true`);
+      const res = await authenticatedInstance.get(
+        `${PREFIX}/${processId.toString()}?embed_rules=true`
+      );
       return processWithRulesSchema.parse(res.data);
     } catch (error) {
       console.error(error);

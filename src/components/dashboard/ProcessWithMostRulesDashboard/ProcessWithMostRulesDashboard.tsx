@@ -12,7 +12,7 @@ import {
 } from "../../ui/chart";
 
 const chartConfig = {
-  count: {
+  rulesCount: {
     label: "Count",
     color: "var(--chart-1)",
   },
@@ -51,7 +51,7 @@ export const ProcessesWithMostRulesDashboard = () => {
               />
               <ChartTooltip content={<ChartTooltipContent />} />
               <ChartLegend content={<ChartLegendContent />} />
-              <Bar dataKey="rulesCount" fill="var(--color-count)" radius={4} />
+              <Bar dataKey="rulesCount" fill="var(--color-rulesCount)" radius={4} />
             </BarChart>
           </ChartContainer>
         </section>

@@ -1,14 +1,14 @@
 import { RuleFormSchemaWithoutId } from "@/components/FirewallRuleDialog/FirewallRuleFormTabs/firewallRule.model";
 import { ruleSchema } from "@/models/rule.model";
 import { ObjectId } from "bson";
-import { axiosInstance } from "./index.service";
+import { authenticatedInstance } from "./index.service";
 
 const PREFIX = "rule" as const;
 
 export class RuleService {
   async create(rule: RuleFormSchemaWithoutId) {
     try {
-      const res = await axiosInstance.post(`${PREFIX}`, rule);
+      const res = await authenticatedInstance.post(`${PREFIX}`, rule);
       return ruleSchema.parse(res.data);
     } catch (error) {
       console.error(error);
@@ -18,7 +18,7 @@ export class RuleService {
 
   async delete(ruleId: ObjectId) {
     try {
-      const res = await axiosInstance.delete(`${PREFIX}/${ruleId.toString()}`);
+      const res = await authenticatedInstance.delete(`${PREFIX}/${ruleId.toString()}`);
       return res;
     } catch (error) {
       console.error(error);
@@ -28,7 +28,7 @@ export class RuleService {
 
   async update(ruleId: ObjectId, rule: RuleFormSchemaWithoutId) {
     try {
-      const res = await axiosInstance.patch(`${PREFIX}/${ruleId.toString()}`, rule);
+      const res = await authenticatedInstance.patch(`${PREFIX}/${ruleId.toString()}`, rule);
       return res;
     } catch (error) {
       console.error(error);

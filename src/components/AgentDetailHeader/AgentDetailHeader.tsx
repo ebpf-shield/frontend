@@ -1,3 +1,7 @@
+import { cn } from "@/lib/utils";
+import { AgentWithProcesses } from "@/models/agent.model";
+import { agentQuery } from "@/queries/agent.query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
   ArrowLeft,
@@ -6,15 +10,11 @@ import {
   Power,
   RefreshCw,
   Server,
-  Settings,
   Terminal,
   Trash2,
   Upload,
 } from "lucide-react";
-import { Badge } from "../ui/badge";
-import { AgentWithProcesses } from "@/models/agent.model";
-import clsx from "clsx";
-import { Button } from "../ui/button";
+import { SettingsDropdownMenu } from "../SettingsDropdownMenu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,6 +26,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,8 +36,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { useQueryClient } from "@tanstack/react-query";
-import { agentQuery } from "@/queries/agent.query";
 
 export interface AgentDetailHeaderProps {
   agent: AgentWithProcesses;
@@ -57,7 +57,7 @@ export const AgentDetailHeader = ({ agent }: AgentDetailHeaderProps) => {
                 <Server className="h-5 w-5 text-purple-400" />
                 <h1 className="text-xl font-bold text-white">{agent.name}</h1>
                 <Badge
-                  className={clsx(
+                  className={cn(
                     `ml-2 text-white border-none ${
                       agent.online
                         ? "bg-gradient-to-r from-green-500 to-emerald-500"
@@ -99,17 +99,7 @@ export const AgentDetailHeader = ({ agent }: AgentDetailHeaderProps) => {
               </div>
             </Button>
 
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
-              asChild
-            >
-              <div>
-                <Settings className="h-4 w-4" />
-                <span className="hidden sm:inline">Settings</span>
-              </div>
-            </Button>
+            <SettingsDropdownMenu />
 
             <Button
               size="sm"

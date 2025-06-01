@@ -1,6 +1,6 @@
 import { useFirewallRuleFormDialogContext } from "@/contexts/FirewallRuleFormDialog/useProvider";
-import { OutputFirewallRuleForm } from "../OutputFirewallRuleForm";
-import { InputFirewallRuleForm } from "../InputFirewallRuleForm";
+import { OutputFirewallRuleForm } from "../FirewallRuleFormTabs/OutputFirewallRuleForm";
+import { InputFirewallRuleForm } from "../FirewallRuleFormTabs/InputFirewallRuleForm";
 
 export const FirewallRuleEditForm = () => {
   const { defaultRule: rule } = useFirewallRuleFormDialogContext();
