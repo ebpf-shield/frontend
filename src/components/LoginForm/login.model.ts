@@ -13,4 +13,4 @@ export const loginFormSchema = userSchema
 
 export type LoginFormSchema = z.infer<typeof loginFormSchema>;
 
-export const loginFallbackRoute: FileRouteTypes["to"] = "/home" as const;
+export const loginFallbackRoute: FileRouteTypes["to"] = "/home-without-org" as const;

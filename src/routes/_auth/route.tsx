@@ -36,7 +36,7 @@ export const Route = createFileRoute("/_auth")({
   errorComponent: ({ error }) => {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 403) {
-        return <Navigate to="/home" />;
+        return <Navigate to="/home-without-org" />;
       }
     }
 
