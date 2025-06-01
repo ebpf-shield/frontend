@@ -6,7 +6,7 @@ export const Route = createFileRoute("/_auth/_organization")({
     if (!ctx.context.auth.user.organizationId) {
       // https://tanstack.com/router/latest/docs/framework/react/guide/authenticated-routes#redirecting
       throw redirect({
-        to: "/home",
+        to: "/home-without-org",
         search: {
           redirect: location.pathname,
         },

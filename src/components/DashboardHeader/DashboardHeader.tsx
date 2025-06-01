@@ -35,7 +35,7 @@ export const DashboardHeader = () => {
               </Button>
             </Link>
 
-            <Link to="/home">
+            <Link to="/home-with-org">
               <Button
                 variant="outline"
                 size="sm"

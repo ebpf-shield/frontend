@@ -29,4 +29,4 @@ export type RegisterFormSchema = z.infer<typeof registerFormSchema>;
 
 export type RegisterFormRouteSchema = Omit<RegisterFormSchema, "confirmPassword">;
 
-export const registerFallbackRoute: FileRouteTypes["to"] = "/home" as const;
+export const registerFallbackRoute: FileRouteTypes["to"] = "/home-without-org" as const;

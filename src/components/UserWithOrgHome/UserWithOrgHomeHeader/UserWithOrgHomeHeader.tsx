@@ -1,6 +1,7 @@
+import { SettingsDropdownMenu } from "@/components/SettingsDropdownMenu";
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
-import { Bot, Home, LayoutGrid, Settings } from "lucide-react";
+import { Bot, Home, LayoutGrid } from "lucide-react";
 
 export function UserWithOrgHomeHeader() {
   return (
@@ -35,14 +36,7 @@ export function UserWithOrgHomeHeader() {
               </Button>
             </Link>
 
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
-            >
-              <Settings className="h-4 w-4" />
-              <span className="hidden sm:inline">Settings</span>
-            </Button>
+            <SettingsDropdownMenu />
           </div>
         </div>
       </div>

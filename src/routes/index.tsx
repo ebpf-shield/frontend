@@ -5,5 +5,5 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  return <Navigate to="/home" />;
+  return <Navigate to="/home-without-org" />;
 }

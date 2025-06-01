@@ -14,10 +14,11 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as AboutImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/_auth/route'
 import { Route as IndexImport } from './routes/index'
-import { Route as AuthHomeImport } from './routes/_auth/home'
+import { Route as AuthHomeWithoutOrgImport } from './routes/_auth/home-without-org'
 import { Route as authRegisterImport } from './routes/(auth)/register'
 import { Route as authLoginImport } from './routes/(auth)/login'
 import { Route as AuthOrganizationRouteImport } from './routes/_auth/_organization/route'
+import { Route as AuthOrganizationHomeWithOrgImport } from './routes/_auth/_organization/home-with-org'
 import { Route as AuthOrganizationDashboardsRouteImport } from './routes/_auth/_organization/dashboards/route'
 import { Route as AuthOrganizationAgentsRouteImport } from './routes/_auth/_organization/agents/route'
 import { Route as AuthOrganizationDashboardsIndexImport } from './routes/_auth/_organization/dashboards/index'
@@ -45,9 +46,9 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthHomeRoute = AuthHomeImport.update({
-  id: '/home',
-  path: '/home',
+const AuthHomeWithoutOrgRoute = AuthHomeWithoutOrgImport.update({
+  id: '/home-without-org',
+  path: '/home-without-org',
   getParentRoute: () => AuthRouteRoute,
 } as any)
 
@@ -67,6 +68,13 @@ const AuthOrganizationRouteRoute = AuthOrganizationRouteImport.update({
   id: '/_organization',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+
+const AuthOrganizationHomeWithOrgRoute =
+  AuthOrganizationHomeWithOrgImport.update({
+    id: '/home-with-org',
+    path: '/home-with-org',
+    getParentRoute: () => AuthOrganizationRouteRoute,
+  } as any)
 
 const AuthOrganizationDashboardsRouteRoute =
   AuthOrganizationDashboardsRouteImport.update({
@@ -163,11 +171,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authRegisterImport
       parentRoute: typeof rootRoute
     }
-    '/_auth/home': {
-      id: '/_auth/home'
-      path: '/home'
-      fullPath: '/home'
-      preLoaderRoute: typeof AuthHomeImport
+    '/_auth/home-without-org': {
+      id: '/_auth/home-without-org'
+      path: '/home-without-org'
+      fullPath: '/home-without-org'
+      preLoaderRoute: typeof AuthHomeWithoutOrgImport
       parentRoute: typeof AuthRouteImport
     }
     '/_auth/_organization/agents': {
@@ -182,6 +190,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboards'
       fullPath: '/dashboards'
       preLoaderRoute: typeof AuthOrganizationDashboardsRouteImport
+      parentRoute: typeof AuthOrganizationRouteImport
+    }
+    '/_auth/_organization/home-with-org': {
+      id: '/_auth/_organization/home-with-org'
+      path: '/home-with-org'
+      fullPath: '/home-with-org'
+      preLoaderRoute: typeof AuthOrganizationHomeWithOrgImport
       parentRoute: typeof AuthOrganizationRouteImport
     }
     '/_auth/_organization/agents/$agentId': {
@@ -263,6 +278,7 @@ const AuthOrganizationDashboardsRouteRouteWithChildren =
 interface AuthOrganizationRouteRouteChildren {
   AuthOrganizationAgentsRouteRoute: typeof AuthOrganizationAgentsRouteRouteWithChildren
   AuthOrganizationDashboardsRouteRoute: typeof AuthOrganizationDashboardsRouteRouteWithChildren
+  AuthOrganizationHomeWithOrgRoute: typeof AuthOrganizationHomeWithOrgRoute
 }
 
 const AuthOrganizationRouteRouteChildren: AuthOrganizationRouteRouteChildren = {
@@ -270,6 +286,7 @@ const AuthOrganizationRouteRouteChildren: AuthOrganizationRouteRouteChildren = {
     AuthOrganizationAgentsRouteRouteWithChildren,
   AuthOrganizationDashboardsRouteRoute:
     AuthOrganizationDashboardsRouteRouteWithChildren,
+  AuthOrganizationHomeWithOrgRoute: AuthOrganizationHomeWithOrgRoute,
 }
 
 const AuthOrganizationRouteRouteWithChildren =
@@ -279,12 +296,12 @@ const AuthOrganizationRouteRouteWithChildren =
 
 interface AuthRouteRouteChildren {
   AuthOrganizationRouteRoute: typeof AuthOrganizationRouteRouteWithChildren
-  AuthHomeRoute: typeof AuthHomeRoute
+  AuthHomeWithoutOrgRoute: typeof AuthHomeWithoutOrgRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
   AuthOrganizationRouteRoute: AuthOrganizationRouteRouteWithChildren,
-  AuthHomeRoute: AuthHomeRoute,
+  AuthHomeWithoutOrgRoute: AuthHomeWithoutOrgRoute,
 }
 
 const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
@@ -297,9 +314,10 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
-  '/home': typeof AuthHomeRoute
+  '/home-without-org': typeof AuthHomeWithoutOrgRoute
   '/agents': typeof AuthOrganizationAgentsRouteRouteWithChildren
   '/dashboards': typeof AuthOrganizationDashboardsRouteRouteWithChildren
+  '/home-with-org': typeof AuthOrganizationHomeWithOrgRoute
   '/agents/$agentId': typeof AuthOrganizationAgentsAgentIdRoute
   '/agents/': typeof AuthOrganizationAgentsIndexRoute
   '/dashboards/': typeof AuthOrganizationDashboardsIndexRoute
@@ -313,7 +331,8 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
-  '/home': typeof AuthHomeRoute
+  '/home-without-org': typeof AuthHomeWithoutOrgRoute
+  '/home-with-org': typeof AuthOrganizationHomeWithOrgRoute
   '/agents/$agentId': typeof AuthOrganizationAgentsAgentIdRoute
   '/agents': typeof AuthOrganizationAgentsIndexRoute
   '/dashboards': typeof AuthOrganizationDashboardsIndexRoute
@@ -329,9 +348,10 @@ export interface FileRoutesById {
   '/_auth/_organization': typeof AuthOrganizationRouteRouteWithChildren
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/register': typeof authRegisterRoute
-  '/_auth/home': typeof AuthHomeRoute
+  '/_auth/home-without-org': typeof AuthHomeWithoutOrgRoute
   '/_auth/_organization/agents': typeof AuthOrganizationAgentsRouteRouteWithChildren
   '/_auth/_organization/dashboards': typeof AuthOrganizationDashboardsRouteRouteWithChildren
+  '/_auth/_organization/home-with-org': typeof AuthOrganizationHomeWithOrgRoute
   '/_auth/_organization/agents/$agentId': typeof AuthOrganizationAgentsAgentIdRoute
   '/_auth/_organization/agents/': typeof AuthOrganizationAgentsIndexRoute
   '/_auth/_organization/dashboards/': typeof AuthOrganizationDashboardsIndexRoute
@@ -347,9 +367,10 @@ export interface FileRouteTypes {
     | '/about'
     | '/login'
     | '/register'
-    | '/home'
+    | '/home-without-org'
     | '/agents'
     | '/dashboards'
+    | '/home-with-org'
     | '/agents/$agentId'
     | '/agents/'
     | '/dashboards/'
@@ -362,7 +383,8 @@ export interface FileRouteTypes {
     | '/about'
     | '/login'
     | '/register'
-    | '/home'
+    | '/home-without-org'
+    | '/home-with-org'
     | '/agents/$agentId'
     | '/agents'
     | '/dashboards'
@@ -376,9 +398,10 @@ export interface FileRouteTypes {
     | '/_auth/_organization'
     | '/(auth)/login'
     | '/(auth)/register'
-    | '/_auth/home'
+    | '/_auth/home-without-org'
     | '/_auth/_organization/agents'
     | '/_auth/_organization/dashboards'
+    | '/_auth/_organization/home-with-org'
     | '/_auth/_organization/agents/$agentId'
     | '/_auth/_organization/agents/'
     | '/_auth/_organization/dashboards/'
@@ -427,7 +450,7 @@ export const routeTree = rootRoute
       "filePath": "_auth/route.tsx",
       "children": [
         "/_auth/_organization",
-        "/_auth/home"
+        "/_auth/home-without-org"
       ]
     },
     "/about": {
@@ -438,7 +461,8 @@ export const routeTree = rootRoute
       "parent": "/_auth",
       "children": [
         "/_auth/_organization/agents",
-        "/_auth/_organization/dashboards"
+        "/_auth/_organization/dashboards",
+        "/_auth/_organization/home-with-org"
       ]
     },
     "/(auth)/login": {
@@ -447,8 +471,8 @@ export const routeTree = rootRoute
     "/(auth)/register": {
       "filePath": "(auth)/register.tsx"
     },
-    "/_auth/home": {
-      "filePath": "_auth/home.tsx",
+    "/_auth/home-without-org": {
+      "filePath": "_auth/home-without-org.tsx",
       "parent": "/_auth"
     },
     "/_auth/_organization/agents": {
@@ -467,6 +491,10 @@ export const routeTree = rootRoute
         "/_auth/_organization/dashboards/",
         "/_auth/_organization/dashboards/agents/"
       ]
+    },
+    "/_auth/_organization/home-with-org": {
+      "filePath": "_auth/_organization/home-with-org.tsx",
+      "parent": "/_auth/_organization"
     },
     "/_auth/_organization/agents/$agentId": {
       "filePath": "_auth/_organization/agents/$agentId.tsx",
