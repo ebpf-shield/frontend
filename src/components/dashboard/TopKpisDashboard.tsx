@@ -1,6 +1,6 @@
-// src/components/dashboard/TopKpisDashboard.tsx
+// frontend/src/components/dashboard/TopKpisDashboard.tsx
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { dashboardService } from "@/services/dashboard.service";
 import {
@@ -18,55 +18,60 @@ import {
   Legend,
   Tooltip as RechartsTooltip,
 } from "recharts";
+import { MapContainer, TileLayer, useMap } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import "leaflet.heat/dist/leaflet-heat.js"; // ensure this plugin is available
+import L from "leaflet";
 import { dashboardQuery } from "../../queries/dashboard.query";
 
-const COLORS = ["#4CAF50", "#F44336", "#2196F3", "#FFC107"]; // green, red, blue, amber
+const COLORS = ["#4CAF50", "#F44336", "#2196F3", "#FFC107"];
 
-// 1) Agents KPI shape (contains total, online, offline)
 interface AgentsKpi {
   total: number;
   online: number;
   offline: number;
 }
-
-// 2) Users KPI shape (contains total, active, inactive)
 interface UsersKpi {
   total: number;
   active: number;
   inactive: number;
 }
-
-// 3) Processes KPI shape (contains running, stopped)
 interface ProcessesKpi {
   running: number;
   stopped: number;
 }
-
-// 4) Rules KPI shape (contains drop and allow counts)
 interface RulesKpi {
   drop: number;
   allow: number;
 }
 
-// A small wrapper card component for a numeric KPI
-const KpiCard: React.FC<{ title: string; value: number; description?: string }> = ({
-  title,
-  value,
-  description,
-}) => (
-  <Card className="w-[200px] m-2">
-    <CardHeader>
-      <CardTitle className="text-sm">{title}</CardTitle>
-      {description && <CardDescription className="text-xs">{description}</CardDescription>}
-    </CardHeader>
-    <CardContent>
-      <div className="text-3xl font-bold text-center">{value}</div>
-    </CardContent>
-  </Card>
-);
+// LeafletHeat component: adds heat layer to map whenever `points` changes
+const LeafletHeat: React.FC<{ points: [number, number, number][] }> = ({ points }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (!map || points.length === 0) return;
+    // Remove existing heat layers:
+    map.eachLayer((layer: any) => {
+      if (layer instanceof (L as any).HeatLayer) {
+        map.removeLayer(layer);
+      }
+    });
+    // Create new heat layer with intensity 0.5 for each point
+    const heatLayer = (L as any).heatLayer(points, {
+      radius: 15,
+      blur: 15,
+      maxZoom: 10,
+    });
+    heatLayer.addTo(map);
+    return () => {
+      map.removeLayer(heatLayer);
+    };
+  }, [map, points]);
+  return null;
+};
 
 export const TopKpisDashboard: React.FC = () => {
-  // 1) Fetch AgentsKpi (total/online/offline)
+  // 1. Fetch Agents KPI
   const agentsQuery = useQuery<AgentsKpi>({
     queryKey: dashboardQuery.keys.totalAgents,
     queryFn: () => dashboardService.totalAgents(),
@@ -74,7 +79,7 @@ export const TopKpisDashboard: React.FC = () => {
     refetchInterval: 5_000,
   });
 
-  // 2) Fetch UsersKpi (total/active/inactive)
+  // 2. Fetch Users KPI
   const usersQuery = useQuery<UsersKpi>({
     queryKey: dashboardQuery.keys.totalUsers,
     queryFn: () => dashboardService.totalUsers(),
@@ -82,7 +87,7 @@ export const TopKpisDashboard: React.FC = () => {
     refetchInterval: 5_000,
   });
 
-  // 3) Fetch ProcessesKpi (running/stopped)
+  // 3. Fetch Processes KPI
   const processesQuery = useQuery<ProcessesKpi>({
     queryKey: dashboardQuery.keys.totalProcesses,
     queryFn: () => dashboardService.totalProcesses(),
@@ -90,7 +95,7 @@ export const TopKpisDashboard: React.FC = () => {
     refetchInterval: 5_000,
   });
 
-  // 4) Fetch RulesKpi (drop/allow)
+  // 4. Fetch Rules KPI
   const rulesQuery = useQuery<RulesKpi>({
     queryKey: dashboardQuery.keys.totalRules,
     queryFn: () => dashboardService.totalRules(),
@@ -98,7 +103,58 @@ export const TopKpisDashboard: React.FC = () => {
     refetchInterval: 5_000,
   });
 
-  // Show loading state if any of the four queries is still loading
+  // 5. Fetch list of agent IPs
+  const ipsQuery = useQuery<string[]>({
+    queryKey: dashboardQuery.keys.agentIps,
+    queryFn: () => dashboardService.agentRemoteIps(),
+    staleTime: 30_000,
+    refetchInterval: 5_000,
+  });
+
+  // Local state to hold geo-located points ([lat, lon, intensity])
+  const [heatPoints, setHeatPoints] = useState<[number, number, number][]>([]);
+  // Track last updated time
+  const [lastUpdated, setLastUpdated] = useState<string>("");
+
+  // Once IPs load, geolocate each via ip-api.com
+  useEffect(() => {
+    if (ipsQuery.data == null) return;
+    const resolveIPs = async () => {
+      const resolved: [number, number, number][] = [];
+      for (const ip of ipsQuery.data!) {
+        try {
+          const resp = await fetch(`http://ip-api.com/json/${ip}`);
+          const js = await resp.json();
+          if (js.status === "success" && typeof js.lat === "number" && typeof js.lon === "number") {
+            resolved.push([js.lat, js.lon, 50]);
+          }
+        } catch {
+          // ignore errors (e.g. rate‐limit)
+        }
+      }
+      setHeatPoints(resolved);
+    };
+    resolveIPs();
+  }, [ipsQuery.data]);
+
+  // Update lastUpdated whenever any KPI query succeeds:
+  useEffect(() => {
+    if (
+      agentsQuery.isSuccess &&
+      usersQuery.isSuccess &&
+      processesQuery.isSuccess &&
+      rulesQuery.isSuccess
+    ) {
+      setLastUpdated(new Date().toLocaleTimeString());
+    }
+  }, [
+    agentsQuery.data,
+    usersQuery.data,
+    processesQuery.data,
+    rulesQuery.data,
+  ]);
+
+  // Show loading if any KPI is still loading
   if (
     agentsQuery.isLoading ||
     usersQuery.isLoading ||
@@ -107,7 +163,7 @@ export const TopKpisDashboard: React.FC = () => {
   ) {
     return <p>Loading KPIs…</p>;
   }
-  // Show error if any query fails
+  // Show error if any KPI failed
   if (
     agentsQuery.isError ||
     usersQuery.isError ||
@@ -117,13 +173,13 @@ export const TopKpisDashboard: React.FC = () => {
     return <p>Error loading KPIs.</p>;
   }
 
-  // Extract each shape’s data
+  // Destructure KPI data
   const { total: totalAgents, online, offline } = agentsQuery.data!;
   const { total: totalUsers, active, inactive } = usersQuery.data!;
   const { running, stopped } = processesQuery.data!;
   const { drop, allow } = rulesQuery.data!;
 
-  // Prepare Pie chart data for each category
+  // Pie chart slices:
   const agentPie = [
     { name: "Online", value: online },
     { name: "Offline", value: offline },
@@ -147,19 +203,51 @@ export const TopKpisDashboard: React.FC = () => {
 
       {/* Numeric KPI cards */}
       <div className="flex flex-wrap justify-between">
-        <KpiCard title="Total Agents" value={totalAgents} />
-        <KpiCard title="Total Users" value={totalUsers} />
-        <KpiCard
-          title="Total Processes"
-          value={running + stopped}
-        />
-        <KpiCard title="Total Rules" value={drop + allow} />
+        <Card className="w-[200px] m-2">
+          <CardHeader>
+            <CardTitle className="text-sm">Total Agents</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-center">{totalAgents}</div>
+          </CardContent>
+        </Card>
+
+        <Card className="w-[200px] m-2">
+          <CardHeader>
+            <CardTitle className="text-sm">Total Users</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-center">{totalUsers}</div>
+          </CardContent>
+        </Card>
+
+        <Card className="w-[200px] m-2">
+          <CardHeader>
+            <CardTitle className="text-sm">Total Processes</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-center">
+              {running + stopped}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="w-[200px] m-2">
+          <CardHeader>
+            <CardTitle className="text-sm">Total Rules</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-center">{drop + allow}</div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Four pie charts */}
-      <div className="mt-8 grid grid-cols-2 gap-8">
+      {/* Pie Charts section with vertical spacing */}
+      <div className="my-8 grid grid-cols-2 gap-8">
         <div className="w-full h-[300px]">
-          <h3 className="text-lg font-medium mb-2">Agents Online vs. Offline</h3>
+          <h3 className="text-lg font-medium text-center mb-0">
+            Agents Online vs. Offline
+          </h3>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -169,8 +257,8 @@ export const TopKpisDashboard: React.FC = () => {
                 outerRadius={100}
                 label
               >
-                {agentPie.map((entry, index) => (
-                  <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />
+                {agentPie.map((entry, idx) => (
+                  <Cell key={entry.name} fill={COLORS[idx % COLORS.length]} />
                 ))}
               </Pie>
               <Legend verticalAlign="bottom" height={36} />
@@ -180,7 +268,9 @@ export const TopKpisDashboard: React.FC = () => {
         </div>
 
         <div className="w-full h-[300px]">
-          <h3 className="text-lg font-medium mb-2">Users Active vs. Inactive</h3>
+          <h3 className="text-lg font-medium text-center mb-0">
+            Users Active vs. Inactive
+          </h3>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -190,8 +280,8 @@ export const TopKpisDashboard: React.FC = () => {
                 outerRadius={100}
                 label
               >
-                {usersPie.map((entry, index) => (
-                  <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />
+                {usersPie.map((entry, idx) => (
+                  <Cell key={entry.name} fill={COLORS[idx % COLORS.length]} />
                 ))}
               </Pie>
               <Legend verticalAlign="bottom" height={36} />
@@ -201,7 +291,9 @@ export const TopKpisDashboard: React.FC = () => {
         </div>
 
         <div className="w-full h-[300px]">
-          <h3 className="text-lg font-medium mb-2">Processes by Status</h3>
+          <h3 className="text-lg font-medium text-center mt-5">
+            Processes by Status
+          </h3>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -211,8 +303,8 @@ export const TopKpisDashboard: React.FC = () => {
                 outerRadius={100}
                 label
               >
-                {procsPie.map((entry, index) => (
-                  <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />
+                {procsPie.map((entry, idx) => (
+                  <Cell key={entry.name} fill={COLORS[idx % COLORS.length]} />
                 ))}
               </Pie>
               <Legend verticalAlign="bottom" height={36} />
@@ -222,7 +314,9 @@ export const TopKpisDashboard: React.FC = () => {
         </div>
 
         <div className="w-full h-[300px]">
-          <h3 className="text-lg font-medium mb-2">Firewall Rules Drop vs. Allow</h3>
+          <h3 className="text-lg font-medium text-center mt-5">
+            Firewall Rules Drop vs. Allow
+          </h3>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -232,8 +326,8 @@ export const TopKpisDashboard: React.FC = () => {
                 outerRadius={100}
                 label
               >
-                {rulesPie.map((entry, index) => (
-                  <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />
+                {rulesPie.map((entry, idx) => (
+                  <Cell key={entry.name} fill={COLORS[idx % COLORS.length]} />
                 ))}
               </Pie>
               <Legend verticalAlign="bottom" height={36} />
@@ -241,6 +335,34 @@ export const TopKpisDashboard: React.FC = () => {
             </PieChart>
           </ResponsiveContainer>
         </div>
+      </div>
+
+      {/* ──────────────────────────────────────────────────────────────────────────── */}
+      {/* (6) Geomap Heatmap of agent locations, under all charts                */}
+      {/* ──────────────────────────────────────────────────────────────────────────── */}
+      <div className="mt-8">
+        <h3 className="text-lg font-medium mt-15">Agent Locations (Heatmap)</h3>
+        <div className="w-full h-[400px] rounded-lg overflow-hidden">
+          <MapContainer
+            center={[20, 0]}
+            zoom={2}
+            style={{ height: "100%", width: "100%" }}
+            scrollWheelZoom={false}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://carto.com/">CartoDB</a>'
+              url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            />
+            <LeafletHeat points={heatPoints} />
+          </MapContainer>
+        </div>
+      </div>
+
+      {/* ──────────────────────────────────────────────────────────────────────────── */}
+      {/* (7) “Last updated” timestamp and live‐feel footer                      */}
+      {/* ──────────────────────────────────────────────────────────────────────────── */}
+      <div className="mt-4 text-right text-xs italic text-gray-600">
+        Last updated: {lastUpdated}
       </div>
     </div>
   );

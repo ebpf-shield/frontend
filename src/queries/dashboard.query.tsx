@@ -19,6 +19,9 @@ export const dashboardQuery = {
     // New Agent-Overview:
     agentsOsDistribution: [PREFIX, "agents-os-distribution"] as const,
     agentsTimeseries: [PREFIX, "agents-timeseries"] as const,
+
+    // New key for agent IP list:
+    agentIps: [PREFIX, "agent-ips"] as const,
   },
 
   // ───────────────────────────────────────────────────────────────────────────────
@@ -94,5 +97,13 @@ export const dashboardQuery = {
       queryKey: dashboardQuery.keys.agentsTimeseries,
       queryFn: () => dashboardService.agentsTimeseries(),
       refetchInterval: 1000 * 5,
+    }),
+
+  // Fetch agent remote IPs
+  agentIpsQueryOptions: () =>
+    queryOptions({
+      queryKey: dashboardQuery.keys.agentIps,
+      queryFn: () => dashboardService.agentRemoteIps(),
+      refetchInterval: 60_000, // update IP list every 60s (IPs rarely change)
     }),
 } as const;

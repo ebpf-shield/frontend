@@ -120,6 +120,12 @@ export class DashboardService {
       throw new Error("Failed to fetch agents timeseries");
     }
   }
+
+  // New: fetch a list of all agent remote IPs
+  async agentRemoteIps(): Promise<string[]> {
+    const res = await authenticatedInstance.get(`${PREFIX}/agent-ips`);
+    return res.data;
+  }
 }
 
 export const dashboardService = new DashboardService();

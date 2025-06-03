@@ -1,6 +1,5 @@
 // src/components/DashboardTabs/DashboardTabs.tsx
 
-import React from "react";
 import { CommonProcessesDashboard } from "../dashboard/CommonProcessesDashboard";
 import { ProcessesWithMostRulesDashboard } from "../dashboard/ProcessWithMostRulesDashboard";
 import { RulesByChainDashboard } from "../dashboard/RulesByChainDashboard";
