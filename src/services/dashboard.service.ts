@@ -52,6 +52,74 @@ export class DashboardService {
       throw new Error("Failed to parse rules by chain");
     }
   }
+
+  // ───────────────────────────────────────────────────────────────────────────────
+  // New “Top-KPIs” methods
+  // ───────────────────────────────────────────────────────────────────────────────
+
+  async totalAgents(): Promise<{ total: number; online: number; offline: number }> {
+    try {
+      const res = await authenticatedInstance.get(`${PREFIX}/total-agents`);
+      return res.data; // expects { total, online, offline }
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to fetch total agents");
+    }
+  }
+
+  async totalUsers(): Promise<{ total: number; active: number; inactive: number }> {
+    try {
+      const res = await authenticatedInstance.get(`${PREFIX}/total-users`);
+      return res.data; // expects { total, active, inactive }
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to fetch total users");
+    }
+  }
+
+  async totalProcesses(): Promise<{ running: number; stopped: number }> {
+    try {
+      const res = await authenticatedInstance.get(`${PREFIX}/total-processes`);
+      return res.data; // expects { running, stopped }
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to fetch total processes");
+    }
+  }
+
+  async totalRules(): Promise<{ drop: number; allow: number }> {
+    try {
+      const res = await authenticatedInstance.get(`${PREFIX}/total-rules`);
+      return res.data; // expects { drop, allow }
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to fetch total rules");
+    }
+  }
+
+  // ───────────────────────────────────────────────────────────────────────────────
+  // New “Agent-Overview” methods
+  // ───────────────────────────────────────────────────────────────────────────────
+
+  async agentsOsDistribution(): Promise<{ os: string; count: number }[]> {
+    try {
+      const res = await authenticatedInstance.get(`${PREFIX}/agents-os-distribution`);
+      return res.data; // expects [{ os, count }, …]
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to fetch agents OS distribution");
+    }
+  }
+
+  async agentsTimeseries(): Promise<{ timestamp: string; online: number; offline: number }[]> {
+    try {
+      const res = await authenticatedInstance.get(`${PREFIX}/agents-timeseries`);
+      return res.data; // expects [{ timestamp, online, offline }, …]
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to fetch agents timeseries");
+    }
+  }
 }
 
 export const dashboardService = new DashboardService();
