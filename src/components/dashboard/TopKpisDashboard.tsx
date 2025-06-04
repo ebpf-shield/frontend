@@ -7,7 +7,6 @@ import {
   Card,
   CardHeader,
   CardTitle,
-  CardDescription,
   CardContent,
 } from "../ui/card";
 import {
@@ -18,13 +17,9 @@ import {
   Legend,
   Tooltip as RechartsTooltip,
 } from "recharts";
-import { MapContainer, TileLayer, useMap } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import "leaflet.heat/dist/leaflet-heat.js"; // ensure this plugin is available
-import L from "leaflet";
 import { dashboardQuery } from "../../queries/dashboard.query";
 
-const COLORS = ["#4CAF50", "#F44336", "#2196F3", "#FFC107"];
+const COLORS = ["#4CAF50", "#F44336", "#2196F3"]; // reused for various charts
 
 interface AgentsKpi {
   total: number;
@@ -44,31 +39,6 @@ interface RulesKpi {
   drop: number;
   allow: number;
 }
-
-// LeafletHeat component: adds heat layer to map whenever `points` changes
-const LeafletHeat: React.FC<{ points: [number, number, number][] }> = ({ points }) => {
-  const map = useMap();
-  useEffect(() => {
-    if (!map || points.length === 0) return;
-    // Remove existing heat layers:
-    map.eachLayer((layer: any) => {
-      if (layer instanceof (L as any).HeatLayer) {
-        map.removeLayer(layer);
-      }
-    });
-    // Create new heat layer with intensity 0.5 for each point
-    const heatLayer = (L as any).heatLayer(points, {
-      radius: 15,
-      blur: 15,
-      maxZoom: 10,
-    });
-    heatLayer.addTo(map);
-    return () => {
-      map.removeLayer(heatLayer);
-    };
-  }, [map, points]);
-  return null;
-};
 
 export const TopKpisDashboard: React.FC = () => {
   // 1. Fetch Agents KPI
@@ -103,55 +73,39 @@ export const TopKpisDashboard: React.FC = () => {
     refetchInterval: 5_000,
   });
 
-  // 5. Fetch list of agent IPs
-  const ipsQuery = useQuery<string[]>({
-    queryKey: dashboardQuery.keys.agentIps,
-    queryFn: () => dashboardService.agentRemoteIps(),
-    staleTime: 30_000,
-    refetchInterval: 5_000,
-  });
-
-  // Local state to hold geo-located points ([lat, lon, intensity])
-  const [heatPoints, setHeatPoints] = useState<[number, number, number][]>([]);
-  // Track last updated time
+  // (A) “Last updated” timestamp state + flash toggle
   const [lastUpdated, setLastUpdated] = useState<string>("");
+  const [flash, setFlash] = useState<boolean>(false);
 
-  // Once IPs load, geolocate each via ip-api.com
   useEffect(() => {
-    if (ipsQuery.data == null) return;
-    const resolveIPs = async () => {
-      const resolved: [number, number, number][] = [];
-      for (const ip of ipsQuery.data!) {
-        try {
-          const resp = await fetch(`http://ip-api.com/json/${ip}`);
-          const js = await resp.json();
-          if (js.status === "success" && typeof js.lat === "number" && typeof js.lon === "number") {
-            resolved.push([js.lat, js.lon, 50]);
-          }
-        } catch {
-          // ignore errors (e.g. rate‐limit)
-        }
-      }
-      setHeatPoints(resolved);
-    };
-    resolveIPs();
-  }, [ipsQuery.data]);
-
-  // Update lastUpdated whenever any KPI query succeeds:
-  useEffect(() => {
+    // Only update timestamp once all queries have succeeded
     if (
       agentsQuery.isSuccess &&
       usersQuery.isSuccess &&
       processesQuery.isSuccess &&
       rulesQuery.isSuccess
     ) {
-      setLastUpdated(new Date().toLocaleTimeString());
+      // Format as HH:MM:SS (zero‐padded)
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, "0");
+      const mm = String(now.getMinutes()).padStart(2, "0");
+      const ss = String(now.getSeconds()).padStart(2, "0");
+      setLastUpdated(`${hh}:${mm}:${ss}`);
+
+      // Trigger flash effect on the text
+      setFlash(true);
+      const timeout = window.setTimeout(() => setFlash(false), 800);
+      return () => window.clearTimeout(timeout);
     }
   }, [
-    agentsQuery.data,
-    usersQuery.data,
-    processesQuery.data,
-    rulesQuery.data,
+    agentsQuery.dataUpdatedAt,
+    usersQuery.dataUpdatedAt,
+    processesQuery.dataUpdatedAt,
+    rulesQuery.dataUpdatedAt,
+    agentsQuery.isSuccess,
+    usersQuery.isSuccess,
+    processesQuery.isSuccess,
+    rulesQuery.isSuccess,
   ]);
 
   // Show loading if any KPI is still loading
@@ -193,8 +147,8 @@ export const TopKpisDashboard: React.FC = () => {
     { name: "Stopped", value: stopped },
   ];
   const rulesPie = [
+    { name: "Drop", value: drop },
     { name: "Allow", value: allow },
-    { name: "Drop", value: drop }
   ];
 
   return (
@@ -242,7 +196,7 @@ export const TopKpisDashboard: React.FC = () => {
         </Card>
       </div>
 
-      {/* Pie Charts section with vertical spacing */}
+      {/* Pie Charts with vertical spacing */}
       <div className="my-8 grid grid-cols-2 gap-8">
         <div className="w-full h-[300px]">
           <h3 className="text-lg font-medium text-center mb-0">
@@ -291,7 +245,7 @@ export const TopKpisDashboard: React.FC = () => {
         </div>
 
         <div className="w-full h-[300px]">
-          <h3 className="text-lg font-medium text-center mt-5">
+          <h3 className="text-lg font-medium text-center mb-0">
             Processes by Status
           </h3>
           <ResponsiveContainer width="100%" height="100%">
@@ -314,7 +268,7 @@ export const TopKpisDashboard: React.FC = () => {
         </div>
 
         <div className="w-full h-[300px]">
-          <h3 className="text-lg font-medium text-center mt-5">
+          <h3 className="text-lg font-medium text-center mb-0">
             Firewall Rules Drop vs. Allow
           </h3>
           <ResponsiveContainer width="100%" height="100%">
@@ -326,9 +280,10 @@ export const TopKpisDashboard: React.FC = () => {
                 outerRadius={100}
                 label
               >
-                {rulesPie.map((entry, idx) => (
-                  <Cell key={entry.name} fill={COLORS[idx % COLORS.length]} />
-                ))}
+                {rulesPie.map((entry) => {
+                  const fillColor = entry.name === "Allow" ? "#4CAF50" : "#F44336";
+                  return <Cell key={entry.name} fill={fillColor} />;
+                })}
               </Pie>
               <Legend verticalAlign="bottom" height={36} />
               <RechartsTooltip />
@@ -337,32 +292,17 @@ export const TopKpisDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* ──────────────────────────────────────────────────────────────────────────── */}
-      {/* (6) Geomap Heatmap of agent locations, under all charts                */}
-      {/* ──────────────────────────────────────────────────────────────────────────── */}
-      <div className="mt-8">
-        <h3 className="text-lg font-medium mt-15">Agent Locations (Heatmap)</h3>
-        <div className="w-full h-[400px] rounded-lg overflow-hidden">
-          <MapContainer
-            center={[20, 0]}
-            zoom={2}
-            style={{ height: "100%", width: "100%" }}
-            scrollWheelZoom={false}
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://carto.com/">CartoDB</a>'
-              url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-            />
-            <LeafletHeat points={heatPoints} />
-          </MapContainer>
-        </div>
-      </div>
-
-      {/* ──────────────────────────────────────────────────────────────────────────── */}
-      {/* (7) “Last updated” timestamp and live‐feel footer                      */}
-      {/* ──────────────────────────────────────────────────────────────────────────── */}
-      <div className="mt-4 text-right text-xs italic text-gray-600">
-        Last updated: {lastUpdated}
+      {/* “Last updated” timestamp with text-only flash */}
+      <div className="mt-4 text-right text-xs italic">
+        <span
+          className={`inline-block ${
+            flash
+              ? "text-green-500 transition-colors duration-800"
+              : "text-gray-600 transition-colors duration-800"
+          }`}
+        >
+          Last updated: {lastUpdated}
+        </span>
       </div>
     </div>
   );
