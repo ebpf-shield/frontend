@@ -3,8 +3,9 @@ import { Input } from "@/components/ui/input";
 import { agentQuery } from "@/queries/agent.query";
 import { useQueryClient } from "@tanstack/react-query";
 import { getRouteApi, Link } from "@tanstack/react-router";
-import { Home, LayoutGrid, PlusCircle, RefreshCw, Search, Server } from "lucide-react";
+import { Home, LayoutGrid, RefreshCw, Search, Server } from "lucide-react";
 import { SettingsDropdownMenu } from "../SettingsDropdownMenu";
+import { NewAgentDialog } from "./NewAgentDialog";
 
 const routeApi = getRouteApi("/_auth/_organization/agents/");
 
@@ -86,13 +87,7 @@ export function AgentHeader() {
 
             <SettingsDropdownMenu />
 
-            <Button
-              size="sm"
-              className="h-9 gap-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
-            >
-              <PlusCircle className="h-4 w-4" />
-              <span>New Agent</span>
-            </Button>
+            <NewAgentDialog />
           </div>
         </div>
       </div>

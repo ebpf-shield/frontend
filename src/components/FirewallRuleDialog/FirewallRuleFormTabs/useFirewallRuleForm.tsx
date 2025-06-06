@@ -16,9 +16,10 @@ import { toast } from "sonner";
 
 interface UseFirewallRuleProps {
   processId: ObjectId;
+  organizationId: ObjectId;
 }
 
-export const useFirewallRuleForm = ({ processId }: UseFirewallRuleProps) => {
+export const useFirewallRuleForm = ({ processId, organizationId }: UseFirewallRuleProps) => {
   const queryClient = useQueryClient();
   const { isEdit, defaultRule: rule, setIsDialogOpen } = useFirewallRuleFormDialogContext();
 
@@ -46,6 +47,7 @@ export const useFirewallRuleForm = ({ processId }: UseFirewallRuleProps) => {
     comment: "",
     processId: processId,
     priority: 0,
+    organizationId: organizationId,
   } as const;
 
   const outputRuleFormMethods = useForm<OutputRuleFormSchemaWithoutId>({
@@ -62,6 +64,7 @@ export const useFirewallRuleForm = ({ processId }: UseFirewallRuleProps) => {
     comment: "",
     processId: processId,
     priority: 0,
+    organizationId: organizationId,
   } as const;
 
   const inputRuleFormMethods = useForm<InputRuleFormSchemaWithoutId>({
