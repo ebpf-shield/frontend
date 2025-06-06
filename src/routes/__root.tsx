@@ -20,14 +20,15 @@ export const Route = createRootRouteWithContext<RootContext>()({
     </>
   ),
   errorComponent: ({ error }) => (
-    <div className="flex flex-col items-center justify-center h-full">Error: {error.message}</div>
+    <div className="flex flex-col items-center justify-center h-full">
+      Error: {error.message}
+    </div>
   ),
-  notFoundComponent: () => {
-    return (
-      <div>
-        <p>This is the notFoundComponent configured on root route</p>
-        <Link to="/">Start Over</Link>
-      </div>
-    );
-  },
+  notFoundComponent: () => (
+    <div className="flex flex-col items-center justify-center h-full gap-4 text-center p-6">
+      <img src="/404.png" alt="404 Not Found" className="max-w-xl" />
+      <Link to="/" className="text-blue-500 hover:underline">Go Home</Link>
+    </div>
+  ),
 });
+
