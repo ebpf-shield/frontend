@@ -19,8 +19,8 @@ export const RULE_MAX_PORT_RANGE = 65535;
 
 export const baseRuleSchema = z.object({
   _id: customValidation.ObjectId,
-  saddr: stringSchema.ip(),
-  daddr: stringSchema.ip(),
+  saddr: stringSchema.cidr().or(stringSchema.ip()),
+  daddr: stringSchema.cidr().or(stringSchema.ip()),
   sport: z.number().int().min(RULE_MIN_PORT_RANGE).max(RULE_MAX_PORT_RANGE),
   dport: z.number().int().min(RULE_MIN_PORT_RANGE).max(RULE_MAX_PORT_RANGE),
   protocol: z.enum(RULE_PROTOCOL),
@@ -31,6 +31,7 @@ export const baseRuleSchema = z.object({
   createdAt: customValidation.dateLikeToDate.optional(),
   updatedAt: customValidation.dateLikeToDate.optional(),
   processId: customValidation.ObjectId,
+  organizationId: customValidation.ObjectId,
 });
 
 export type BaseRuleSchema = z.infer<typeof baseRuleSchema>;
@@ -47,6 +48,7 @@ export const outputRuleSchema = baseRuleSchema
     createdAt: true,
     updatedAt: true,
     processId: true,
+    organizationId: true,
   })
   .extend({
     chain: z.literal(RULE_CHAIN.OUTPUT), // OUTPUT
@@ -66,6 +68,7 @@ export const inputRuleSchema = baseRuleSchema
     createdAt: true,
     updatedAt: true,
     processId: true,
+    organizationId: true,
   })
   .extend({
     chain: z.literal(RULE_CHAIN.INPUT), // INPUT
