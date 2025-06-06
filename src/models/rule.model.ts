@@ -19,8 +19,8 @@ export const RULE_MAX_PORT_RANGE = 65535;
 
 export const baseRuleSchema = z.object({
   _id: customValidation.ObjectId,
-  saddr: stringSchema.ip(),
-  daddr: stringSchema.ip(),
+  saddr: stringSchema.cidr().or(stringSchema.ip()),
+  daddr: stringSchema.cidr().or(stringSchema.ip()),
   sport: z.number().int().min(RULE_MIN_PORT_RANGE).max(RULE_MAX_PORT_RANGE),
   dport: z.number().int().min(RULE_MIN_PORT_RANGE).max(RULE_MAX_PORT_RANGE),
   protocol: z.enum(RULE_PROTOCOL),
