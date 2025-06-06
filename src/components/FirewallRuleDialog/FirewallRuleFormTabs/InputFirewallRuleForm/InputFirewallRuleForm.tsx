@@ -13,10 +13,17 @@ import { useFirewallRuleFormDialogContext } from "@/contexts/FirewallRuleFormDia
 const routeApi = getRouteApi("/_auth/_organization/agents/processes/$processId");
 
 export const InputFirewallRuleForm = () => {
+  const {
+    auth: {
+      user: { organizationId },
+    },
+  } = routeApi.useRouteContext();
+
   const { processId } = routeApi.useParams();
 
   const { inputRuleFormMethods: methods, inputOnSubmit: onSubmit } = useFirewallRuleForm({
     processId: processId,
+    organizationId: organizationId,
   });
 
   const { isEdit } = useFirewallRuleFormDialogContext();

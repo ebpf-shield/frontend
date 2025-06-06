@@ -14,11 +14,17 @@ const routeApi = getRouteApi("/_auth/_organization/agents/processes/$processId")
 
 export const OutputFirewallRuleForm = () => {
   const { processId } = routeApi.useParams();
+  const {
+    auth: {
+      user: { organizationId },
+    },
+  } = routeApi.useRouteContext();
 
   const { isEdit } = useFirewallRuleFormDialogContext();
 
   const { outputRuleFormMethods: methods, outputOnSubmit: onSubmit } = useFirewallRuleForm({
     processId: processId,
+    organizationId: organizationId,
   });
 
   const { isValid, errors } = methods.formState;
