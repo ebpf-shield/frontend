@@ -2,10 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { agentQuery } from "@/queries/agent.query";
 import { useQueryClient } from "@tanstack/react-query";
-import { getRouteApi } from "@tanstack/react-router";
-import { LayoutGrid, PlusCircle, RefreshCw, Search, Server, Settings } from "lucide-react";
+import { getRouteApi, Link } from "@tanstack/react-router";
+import { Home, LayoutGrid, RefreshCw, Search, Server } from "lucide-react";
+import { SettingsDropdownMenu } from "../SettingsDropdownMenu";
+import { NewAgentDialog } from "./NewAgentDialog";
 
-const routeApi = getRouteApi("/agents/");
+const routeApi = getRouteApi("/_auth/_organization/agents/");
 
 export function AgentHeader() {
   const { filter } = routeApi.useSearch();
@@ -15,7 +17,7 @@ export function AgentHeader() {
   const onSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (value === "") {
-      navigate({ to: ".", search: {} });
+      navigate({ to: "." });
       return;
     }
 
@@ -54,38 +56,38 @@ export function AgentHeader() {
             <Button
               variant="outline"
               size="sm"
-              className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
+              className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
               onClick={handleRefresh}
             >
               <RefreshCw className="h-4 w-4" />
               <span className="hidden sm:inline">Refresh</span>
             </Button>
 
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
-            >
-              <LayoutGrid className="h-4 w-4" />
-              <span className="hidden sm:inline">Dashboard</span>
-            </Button>
+            <Link to="/dashboards/agents">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
+              >
+                <LayoutGrid className="h-4 w-4" />
+                <span className="hidden sm:inline">Dashboard</span>
+              </Button>
+            </Link>
 
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
-            >
-              <Settings className="h-4 w-4" />
-              <span className="hidden sm:inline">Settings</span>
-            </Button>
+            <Link to="/home-with-org">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-9 gap-1 border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
+              >
+                <Home className="h-4 w-4" />
+                <span className="hidden sm:inline">Home</span>
+              </Button>
+            </Link>
 
-            <Button
-              size="sm"
-              className="h-9 gap-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
-            >
-              <PlusCircle className="h-4 w-4" />
-              <span>New Agent</span>
-            </Button>
+            <SettingsDropdownMenu />
+
+            <NewAgentDialog />
           </div>
         </div>
       </div>

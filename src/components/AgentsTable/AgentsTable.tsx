@@ -1,8 +1,8 @@
+import { cn } from "@/lib/utils";
 import { Agent } from "@/models/agent.model";
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import clsx from "clsx";
-import { columns } from "./util";
 import { ScrollArea } from "../ui/scroll-area";
+import { columns } from "./util";
 
 interface AgentsTableProps {
   data: Agent[];
@@ -24,7 +24,7 @@ export const AgentsTable = ({ data }: AgentsTableProps) => {
               {headerGroup.headers.map((header) => (
                 <th
                   key={header.id}
-                  className={clsx("px-4 py-2 text-left font-medium border-b", {
+                  className={cn("px-4 py-2 text-left font-medium border-b", {
                     "border-r": !header.column.getIsLastColumn(),
                   })}
                 >
@@ -42,7 +42,7 @@ export const AgentsTable = ({ data }: AgentsTableProps) => {
               {row.getVisibleCells().map((cell) => (
                 <td
                   key={cell.id}
-                  className={clsx("px-4 py-2 border-b", {
+                  className={cn("px-4 py-2 border-b", {
                     "border-r": !cell.column.getIsLastColumn(),
                   })}
                 >

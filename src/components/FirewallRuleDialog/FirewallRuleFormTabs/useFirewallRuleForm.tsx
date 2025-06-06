@@ -12,12 +12,14 @@ import {
   outputRuleFormSchemaWithoutId,
   RuleFormSchemaWithoutId,
 } from "./firewallRule.model";
+import { toast } from "sonner";
 
 interface UseFirewallRuleProps {
   processId: ObjectId;
+  organizationId: ObjectId;
 }
 
-export const useFirewallRuleForm = ({ processId }: UseFirewallRuleProps) => {
+export const useFirewallRuleForm = ({ processId, organizationId }: UseFirewallRuleProps) => {
   const queryClient = useQueryClient();
   const { isEdit, defaultRule: rule, setIsDialogOpen } = useFirewallRuleFormDialogContext();
 
@@ -45,6 +47,7 @@ export const useFirewallRuleForm = ({ processId }: UseFirewallRuleProps) => {
     comment: "",
     processId: processId,
     priority: 0,
+    organizationId: organizationId,
   } as const;
 
   const outputRuleFormMethods = useForm<OutputRuleFormSchemaWithoutId>({
@@ -61,6 +64,7 @@ export const useFirewallRuleForm = ({ processId }: UseFirewallRuleProps) => {
     comment: "",
     processId: processId,
     priority: 0,
+    organizationId: organizationId,
   } as const;
 
   const inputRuleFormMethods = useForm<InputRuleFormSchemaWithoutId>({
@@ -74,15 +78,26 @@ export const useFirewallRuleForm = ({ processId }: UseFirewallRuleProps) => {
       return res;
     },
 
-    onSuccess: async () => {
+    onSuccess: async (data) => {
+      toast.success("Rule created successfully", {
+        description: `Successfully created ${data.chain.toLocaleLowerCase()} rule`,
+      });
+
       // Invalidate and refetch
       outputRuleFormMethods.reset();
       inputRuleFormMethods.reset();
+      setIsDialogOpen(false);
+    },
+    onSettled() {
       queryClient.invalidateQueries({
         exact: true,
         queryKey: processQuery.keys.getByIdWithRules(processId),
       });
-      setIsDialogOpen(false);
+    },
+    onError(_error, variables) {
+      toast.error("Error creating rule", {
+        description: `An error occurred while creating ${variables.chain.toLocaleLowerCase()} rule`,
+      });
     },
   });
 
@@ -92,10 +107,18 @@ export const useFirewallRuleForm = ({ processId }: UseFirewallRuleProps) => {
       return res;
     },
     async onSuccess() {
+      toast.success("Rule updated successfully", {
+        description: `Successfully updated ${rule?.chain.toLocaleLowerCase()} rule`,
+      });
       setIsDialogOpen(false);
       await queryClient.invalidateQueries({
         exact: true,
         queryKey: processQuery.keys.getByIdWithRules(processId),
+      });
+    },
+    onError(_error, variables) {
+      toast.error("Error updating rule", {
+        description: `An error occurred while updating ${variables.rule.chain.toLocaleLowerCase()} rule`,
       });
     },
   });

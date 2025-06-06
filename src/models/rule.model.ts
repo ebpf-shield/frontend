@@ -31,6 +31,7 @@ export const baseRuleSchema = z.object({
   createdAt: customValidation.dateLikeToDate.optional(),
   updatedAt: customValidation.dateLikeToDate.optional(),
   processId: customValidation.ObjectId,
+  organizationId: customValidation.ObjectId,
 });
 
 export type BaseRuleSchema = z.infer<typeof baseRuleSchema>;
@@ -47,6 +48,7 @@ export const outputRuleSchema = baseRuleSchema
     createdAt: true,
     updatedAt: true,
     processId: true,
+    organizationId: true,
   })
   .extend({
     chain: z.literal(RULE_CHAIN.OUTPUT), // OUTPUT
@@ -66,6 +68,7 @@ export const inputRuleSchema = baseRuleSchema
     createdAt: true,
     updatedAt: true,
     processId: true,
+    organizationId: true,
   })
   .extend({
     chain: z.literal(RULE_CHAIN.INPUT), // INPUT

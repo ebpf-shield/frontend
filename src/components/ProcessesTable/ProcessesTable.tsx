@@ -1,12 +1,12 @@
+import { cn } from "@/lib/utils";
 import { Process } from "@/models/process.model";
 import { flexRender } from "@tanstack/react-table";
-import clsx from "clsx";
 import { Search } from "lucide-react";
+import { DebounceInput } from "../DebounceInput";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { useProcessTable } from "./useProcessTable";
-import { DebounceInput } from "../DebounceInput";
 
 export interface ProcessesTableProps {
   data: Process[];
@@ -42,7 +42,7 @@ export const ProcessesTable = ({ data }: ProcessesTableProps) => {
               {headerGroup.headers.map((header) => (
                 <th
                   key={header.id}
-                  className={clsx("px-4 py-2 text-left font-medium border-b", {
+                  className={cn("px-4 py-2 text-left font-medium border-b", {
                     "border-r": !header.column.getIsLastColumn(),
                   })}
                 >
@@ -60,7 +60,7 @@ export const ProcessesTable = ({ data }: ProcessesTableProps) => {
               {row.getVisibleCells().map((cell) => (
                 <td
                   key={cell.id}
-                  className={clsx("px-4 py-2 border-b", {
+                  className={cn("px-4 py-2 border-b", {
                     "border-r": !cell.column.getIsLastColumn(),
                   })}
                 >

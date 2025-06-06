@@ -1,11 +1,11 @@
 import { DATE_LOCALS } from "@/constants/date.constants";
+import { cn } from "@/lib/utils";
 import { AgentWithProcesses } from "@/models/agent.model";
 import { Link } from "@tanstack/react-router";
-import clsx from "clsx";
 import { Activity, Clock, Server, SquareArrowOutUpRight } from "lucide-react";
+import { ProcessesTable } from "../ProcessesTable";
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
-import { ProcessesTable } from "../ProcessesTable";
 
 export interface AgentCardProps {
   agent: AgentWithProcesses;
@@ -32,7 +32,7 @@ export const AgentCard = ({ agent }: AgentCardProps) => {
           </div>
           <Badge
             variant={agent.online ? "default" : "destructive"}
-            className={clsx({
+            className={cn({
               "bg-gradient-to-r from-green-500 to-emerald-500": agent.online,
               "bg-gradient-to-r from-red-500 to-rose-500": !agent.online,
             })}

@@ -15,6 +15,7 @@ import {
 } from "../ui/alert-dialog";
 import { Button } from "../ui/button";
 import { processQuery } from "@/queries/process.query";
+import { toast } from "sonner";
 
 interface DeleteFirewallRuleDialogProps {
   ruleId: ObjectId;
@@ -30,6 +31,14 @@ export const DeleteFirewallRuleDialog = ({ ruleId, processId }: DeleteFirewallRu
     onSettled() {
       queryClient.invalidateQueries({
         queryKey: processQuery.keys.getByIdWithRules(processId),
+      });
+    },
+    onSuccess() {
+      toast.success("Rule deleted successfully");
+    },
+    onError() {
+      toast.error("Error deleting rule", {
+        description: "An error occurred while deleting the rule",
       });
     },
   });

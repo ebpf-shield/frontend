@@ -84,6 +84,7 @@ export const columns = [
   columnHelper.display({
     id: "actions",
     header: "Actions",
+    // TODO: Might be a good call to move this to the separate component we have.
     cell: function CellComponent({ row }) {
       const rowData = row.original;
       const { handleOpenEditModal, setDefaultRule: setRule } = useFirewallRuleFormDialogContext();

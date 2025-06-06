@@ -1,8 +1,8 @@
+import { cn } from "@/lib/utils";
 import { RuleSchema } from "@/models/rule.model";
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { columns } from "./utils";
-import clsx from "clsx";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
+import { columns } from "./utils";
 
 export interface RulesTableProps {
   data: RuleSchema[];
@@ -22,10 +22,7 @@ export const RulesTable = ({ data }: RulesTableProps) => {
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  className={clsx("px-4 py-2 text-left font-medium border-b", {})}
-                >
+                <th key={header.id} className={cn("px-2 py-2 text-left font-medium border-b", {})}>
                   {header.isPlaceholder
                     ? null
                     : flexRender(header.column.columnDef.header, header.getContext())}
@@ -38,10 +35,10 @@ export const RulesTable = ({ data }: RulesTableProps) => {
           {table.getRowModel().rows.map((row) => (
             <tr
               key={row.id}
-              className="even:bg-muted/40 transition-colors hover:bg-gray-700/20 overflow-auto"
+              className="even:bg-muted/40 transition-colors hover:bg-gray-700/20 overflow-auto text-left"
             >
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className={clsx("px-2 py-2 border-b", {})}>
+                <td key={cell.id} className={cn("px-2 py-2 border-b", {})}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}

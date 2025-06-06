@@ -115,6 +115,8 @@ export const customValidation = {
     z.instanceof(ObjectId),
     { invalid_type_error: errorMessages.mongoId }
   ),
+
+  password: stringSchema.min(8).max(255).regex(validRegex, errorMessages.text),
 };
 
 const CustomErrorMap: ZodErrorMap = (error, ctx) => {
@@ -127,7 +129,6 @@ const CustomErrorMap: ZodErrorMap = (error, ctx) => {
     case z.ZodIssueCode.invalid_type:
       if (error.received !== "undefined") {
         return {
-          // convert to english
           message: `Invalid type, expected ${error.expected}`,
         };
       } else {

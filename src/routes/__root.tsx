@@ -1,15 +1,19 @@
+import { Toaster } from "@/components/ui/sonner";
+import { AuthContextProps } from "@/contexts/Auth/context";
 import { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Link, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 interface RootContext {
   queryClient: QueryClient;
+  auth: AuthContextProps;
 }
 
 export const Route = createRootRouteWithContext<RootContext>()({
   component: () => (
     <>
       <div className="flex flex-col items-center justify-center size-full">
+        <Toaster expand />
         <Outlet />
       </div>
       <TanStackRouterDevtools />
