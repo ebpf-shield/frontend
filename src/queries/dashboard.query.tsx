@@ -74,13 +74,6 @@ export const dashboardQuery = {
       refetchInterval: 1000 * 5,
     }),
 
-  totalRulesQueryOptions: () =>
-    queryOptions({
-      queryKey: dashboardQuery.keys.totalRules,
-      queryFn: () => dashboardService.totalRules(),
-      refetchInterval: 1000 * 5,
-    }),
-
   // ───────────────────────────────────────────────────────────────────────────────
   // New “Agent-Overview” QueryOptions
   // ───────────────────────────────────────────────────────────────────────────────

@@ -1,31 +1,25 @@
-// frontend/src/components/DashboardTabs/DashboardTabs.tsx
-
-import React from "react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { TopKpisDashboard } from "../dashboard/TopKpisDashboard";
-import { ProcessesWithMostRulesDashboard } from "../dashboard/ProcessWithMostRulesDashboard";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AgentsMapDashboard } from "../dashboard/AgentsMapDashboard";
 import { CommonProcessesDashboard } from "../dashboard/CommonProcessesDashboard";
+import { ProcessesWithMostRulesDashboard } from "../dashboard/ProcessWithMostRulesDashboard";
 import { RulesByChainDashboard } from "../dashboard/RulesByChainDashboard";
-import { AgentsDashboard } from "../dashboard/AgentsDashboard";
+import { TopKpiDashboard } from "../dashboard/TopKpiDashboard";
 
 export const TABS = {
   KPIS: "kpis",
   PROCESSES_WITH_MOST_RULES: "processes-with-most-rules",
   COMMON_PROCESSES: "common-processes",
   RULES_BY_CHAIN: "rules-by-chain",
-  AGENTS: "agents",
+  AGENTS_MAP: "agents-map",
 } as const;
 
-export const DashboardTabs: React.FC = () => {
+export const DashboardTabs = () => {
   return (
-    <div className="flex flex-col items-center justify-start w-full h-full">
+    <div className="flex flex-col items-center justify-start w-full h-full overflow-auto">
       <Tabs defaultValue={TABS.KPIS} className="max-w-5xl mt-4 mx-auto w-full">
-        {/* ──────────────────────────────────────────────────────────────────────────── */}
-        {/* Center the TabsList using justify-center                                */}
-        {/* ──────────────────────────────────────────────────────────────────────────── */}
         <TabsList className="justify-center">
           <TabsTrigger value={TABS.KPIS}>High-Level KPIs</TabsTrigger>
-          <TabsTrigger value={TABS.AGENTS}>Agents</TabsTrigger>
+          <TabsTrigger value={TABS.AGENTS_MAP}>Agents</TabsTrigger>
           <TabsTrigger value={TABS.PROCESSES_WITH_MOST_RULES}>
             Processes with Most Rules
           </TabsTrigger>
@@ -34,7 +28,7 @@ export const DashboardTabs: React.FC = () => {
         </TabsList>
 
         <TabsContent value={TABS.KPIS} className="w-full">
-          <TopKpisDashboard />
+          <TopKpiDashboard />
         </TabsContent>
 
         <TabsContent value={TABS.PROCESSES_WITH_MOST_RULES} className="w-full">
@@ -49,8 +43,8 @@ export const DashboardTabs: React.FC = () => {
           <RulesByChainDashboard />
         </TabsContent>
 
-        <TabsContent value={TABS.AGENTS} className="w-full">
-          <AgentsDashboard />
+        <TabsContent value={TABS.AGENTS_MAP} className="w-full">
+          <AgentsMapDashboard />
         </TabsContent>
       </Tabs>
     </div>

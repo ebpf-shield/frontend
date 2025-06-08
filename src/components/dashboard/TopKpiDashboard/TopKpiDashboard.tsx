@@ -1,23 +1,18 @@
-// frontend/src/components/dashboard/TopKpisDashboard.tsx
-
-import React, { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { dashboardQuery } from "@/queries/dashboard.query";
 import { dashboardService } from "@/services/dashboard.service";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "../ui/card";
-import {
-  ResponsiveContainer,
-  PieChart,
-  Pie,
   Cell,
   Legend,
+  Pie,
+  PieChart,
   Tooltip as RechartsTooltip,
+  ResponsiveContainer,
 } from "recharts";
-import { dashboardQuery } from "../../queries/dashboard.query";
+import { RulesByChainDashboard } from "../RulesByChainDashboard";
+import { z } from "zod";
 
 const COLORS = ["#4CAF50", "#F44336", "#2196F3"]; // reused for various charts
 
@@ -35,41 +30,32 @@ interface ProcessesKpi {
   running: number;
   stopped: number;
 }
-interface RulesKpi {
-  drop: number;
-  allow: number;
-}
 
-export const TopKpisDashboard: React.FC = () => {
-  // 1. Fetch Agents KPI
+export const TopKpiDashboard = () => {
+  const queryClient = useQueryClient();
+
+  const rulesByChainData = queryClient.getQueryData(dashboardQuery.keys.rulesByChain);
+  const parsedRulesByChainData = z
+    .array(dashboardService.rulesByChainSchema)
+    .optional()
+    .parse(rulesByChainData);
+  const numOfRules = parsedRulesByChainData?.reduce((sum, item) => sum + item.count, 0);
+
   const agentsQuery = useQuery<AgentsKpi>({
     queryKey: dashboardQuery.keys.totalAgents,
     queryFn: () => dashboardService.totalAgents(),
-    staleTime: 30_000,
     refetchInterval: 5_000,
   });
 
-  // 2. Fetch Users KPI
   const usersQuery = useQuery<UsersKpi>({
     queryKey: dashboardQuery.keys.totalUsers,
     queryFn: () => dashboardService.totalUsers(),
-    staleTime: 30_000,
     refetchInterval: 5_000,
   });
 
-  // 3. Fetch Processes KPI
   const processesQuery = useQuery<ProcessesKpi>({
     queryKey: dashboardQuery.keys.totalProcesses,
     queryFn: () => dashboardService.totalProcesses(),
-    staleTime: 30_000,
-    refetchInterval: 5_000,
-  });
-
-  // 4. Fetch Rules KPI
-  const rulesQuery = useQuery<RulesKpi>({
-    queryKey: dashboardQuery.keys.totalRules,
-    queryFn: () => dashboardService.totalRules(),
-    staleTime: 30_000,
     refetchInterval: 5_000,
   });
 
@@ -79,12 +65,7 @@ export const TopKpisDashboard: React.FC = () => {
 
   useEffect(() => {
     // Only update timestamp once all queries have succeeded
-    if (
-      agentsQuery.isSuccess &&
-      usersQuery.isSuccess &&
-      processesQuery.isSuccess &&
-      rulesQuery.isSuccess
-    ) {
+    if (agentsQuery.isSuccess && usersQuery.isSuccess && processesQuery.isSuccess) {
       // Format as HH:MM:SS (zero‐padded)
       const now = new Date();
       const hh = String(now.getHours()).padStart(2, "0");
@@ -101,29 +82,17 @@ export const TopKpisDashboard: React.FC = () => {
     agentsQuery.dataUpdatedAt,
     usersQuery.dataUpdatedAt,
     processesQuery.dataUpdatedAt,
-    rulesQuery.dataUpdatedAt,
     agentsQuery.isSuccess,
     usersQuery.isSuccess,
     processesQuery.isSuccess,
-    rulesQuery.isSuccess,
   ]);
 
   // Show loading if any KPI is still loading
-  if (
-    agentsQuery.isLoading ||
-    usersQuery.isLoading ||
-    processesQuery.isLoading ||
-    rulesQuery.isLoading
-  ) {
+  if (agentsQuery.isLoading || usersQuery.isLoading || processesQuery.isLoading) {
     return <p>Loading KPIs…</p>;
   }
   // Show error if any KPI failed
-  if (
-    agentsQuery.isError ||
-    usersQuery.isError ||
-    processesQuery.isError ||
-    rulesQuery.isError
-  ) {
+  if (agentsQuery.isError || usersQuery.isError || processesQuery.isError) {
     return <p>Error loading KPIs.</p>;
   }
 
@@ -131,24 +100,21 @@ export const TopKpisDashboard: React.FC = () => {
   const { total: totalAgents, online, offline } = agentsQuery.data!;
   const { total: totalUsers, active, inactive } = usersQuery.data!;
   const { running, stopped } = processesQuery.data!;
-  const { drop, allow } = rulesQuery.data!;
 
   // Pie chart slices:
   const agentPie = [
     { name: "Online", value: online },
     { name: "Offline", value: offline },
   ];
+
   const usersPie = [
     { name: "Active", value: active },
     { name: "Inactive", value: inactive },
   ];
+
   const procsPie = [
     { name: "Running", value: running },
     { name: "Stopped", value: stopped },
-  ];
-  const rulesPie = [
-    { name: "Drop", value: drop },
-    { name: "Allow", value: allow },
   ];
 
   return (
@@ -180,9 +146,7 @@ export const TopKpisDashboard: React.FC = () => {
             <CardTitle className="text-sm">Total Processes</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-center">
-              {running + stopped}
-            </div>
+            <div className="text-3xl font-bold text-center">{running + stopped}</div>
           </CardContent>
         </Card>
 
@@ -191,7 +155,9 @@ export const TopKpisDashboard: React.FC = () => {
             <CardTitle className="text-sm">Total Rules</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-center">{drop + allow}</div>
+            <div className="text-3xl font-bold text-center">
+              {numOfRules ? numOfRules : "Loading..."}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -199,18 +165,10 @@ export const TopKpisDashboard: React.FC = () => {
       {/* Pie Charts with vertical spacing */}
       <div className="my-8 grid grid-cols-2 gap-8">
         <div className="w-full h-[300px]">
-          <h3 className="text-lg font-medium text-center mb-0">
-            Agents Online vs. Offline
-          </h3>
+          <h3 className="text-lg font-medium text-center mb-0">Agents Online vs. Offline</h3>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <Pie
-                data={agentPie}
-                dataKey="value"
-                nameKey="name"
-                outerRadius={100}
-                label
-              >
+              <Pie data={agentPie} dataKey="value" nameKey="name" outerRadius={100} label>
                 {agentPie.map((entry, idx) => (
                   <Cell key={entry.name} fill={COLORS[idx % COLORS.length]} />
                 ))}
@@ -222,18 +180,10 @@ export const TopKpisDashboard: React.FC = () => {
         </div>
 
         <div className="w-full h-[300px]">
-          <h3 className="text-lg font-medium text-center mb-0">
-            Users Active vs. Inactive
-          </h3>
+          <h3 className="text-lg font-medium text-center mb-0">Users Active vs. Inactive</h3>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <Pie
-                data={usersPie}
-                dataKey="value"
-                nameKey="name"
-                outerRadius={100}
-                label
-              >
+              <Pie data={usersPie} dataKey="value" nameKey="name" outerRadius={100} label>
                 {usersPie.map((entry, idx) => (
                   <Cell key={entry.name} fill={COLORS[idx % COLORS.length]} />
                 ))}
@@ -245,18 +195,10 @@ export const TopKpisDashboard: React.FC = () => {
         </div>
 
         <div className="w-full h-[300px]">
-          <h3 className="text-lg font-medium text-center mb-0">
-            Processes by Status
-          </h3>
+          <h3 className="text-lg font-medium text-center mb-0">Processes by Status</h3>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <Pie
-                data={procsPie}
-                dataKey="value"
-                nameKey="name"
-                outerRadius={100}
-                label
-              >
+              <Pie data={procsPie} dataKey="value" nameKey="name" outerRadius={100} label>
                 {procsPie.map((entry, idx) => (
                   <Cell key={entry.name} fill={COLORS[idx % COLORS.length]} />
                 ))}
@@ -267,32 +209,9 @@ export const TopKpisDashboard: React.FC = () => {
           </ResponsiveContainer>
         </div>
 
-        <div className="w-full h-[300px]">
-          <h3 className="text-lg font-medium text-center mb-0">
-            Firewall Rules Drop vs. Allow
-          </h3>
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={rulesPie}
-                dataKey="value"
-                nameKey="name"
-                outerRadius={100}
-                label
-              >
-                {rulesPie.map((entry) => {
-                  const fillColor = entry.name === "Allow" ? "#4CAF50" : "#F44336";
-                  return <Cell key={entry.name} fill={fillColor} />;
-                })}
-              </Pie>
-              <Legend verticalAlign="bottom" height={36} />
-              <RechartsTooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+        <RulesByChainDashboard />
       </div>
 
-      {/* “Last updated” timestamp with text-only flash */}
       <div className="mt-4 text-right text-xs italic">
         <span
           className={`inline-block ${

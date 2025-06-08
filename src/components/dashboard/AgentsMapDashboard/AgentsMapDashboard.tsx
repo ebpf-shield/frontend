@@ -1,5 +1,3 @@
-// frontend/src/components/dashboard/AgentsDashboard.tsx
-
 import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { dashboardService } from "@/services/dashboard.service";
@@ -7,14 +5,17 @@ import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet.heat/dist/leaflet-heat.js";
 import L from "leaflet";
-import { dashboardQuery } from "../../queries/dashboard.query";
+import { dashboardQuery } from "@/queries/dashboard.query";
 
+interface LeafletHeatProps {
+  points: [number, number, number][]; // [lat, lon, intensity]
+}
 // Local helper: renders the heat layer whenever `points` changes
-const LeafletHeat: React.FC<{ points: [number, number, number][] }> = ({ points }) => {
+const LeafletHeat = ({ points }: LeafletHeatProps) => {
   const map = useMap();
   useEffect(() => {
     if (!map || points.length === 0) return;
-    map.eachLayer((layer: any) => {
+    map.eachLayer((layer) => {
       if (layer instanceof (L as any).HeatLayer) {
         map.removeLayer(layer);
       }
@@ -32,7 +33,7 @@ const LeafletHeat: React.FC<{ points: [number, number, number][] }> = ({ points 
   return null;
 };
 
-export const AgentsDashboard: React.FC = () => {
+export const AgentsMapDashboard: React.FC = () => {
   // Fetch list of agent IPs
   const ipsQuery = useQuery<string[]>({
     queryKey: dashboardQuery.keys.agentIps,
