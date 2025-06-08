@@ -16,7 +16,7 @@ export const TABS = {
 export const DashboardTabs = () => {
   return (
     <div className="flex flex-col items-center justify-start w-full h-full overflow-auto">
-      <Tabs defaultValue={TABS.KPIS} className="max-w-5xl mt-4 mx-auto w-full">
+      <Tabs defaultValue={TABS.KPIS} className="max-w-5xl mt-4 mx-auto w-full items-center">
         <TabsList className="justify-center">
           <TabsTrigger value={TABS.KPIS}>High-Level KPIs</TabsTrigger>
           <TabsTrigger value={TABS.AGENTS_MAP}>Agents</TabsTrigger>
