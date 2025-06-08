@@ -12,45 +12,45 @@ import { useQuery } from "@tanstack/react-query";
 import { Pie, PieChart } from "recharts";
 
 const chartConfig = {
-  ACTIVE: {
-    label: "Active",
+  RUNNING: {
+    label: "Running",
     color: "var(--chart-1)",
   },
-  INACTIVE: {
-    label: "Inactive",
+  STOPPED: {
+    label: "Stopped",
     color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
 
-export const UsersByActiveDashboard = () => {
-  const usersByActive = useQuery(dashboardQuery.totalUsersQueryOptions());
+export const ProcessesByStatusDashboard = () => {
+  const processesByStatus = useQuery(dashboardQuery.totalProcessesQueryOptions());
 
-  if (usersByActive.isPending) {
+  if (processesByStatus.isPending) {
     return <p>Loading...</p>;
   }
 
-  if (usersByActive.isError) {
-    return <p>Error: {usersByActive.error.message}</p>;
+  if (processesByStatus.isError) {
+    return <p>Error: {processesByStatus.error.message}</p>;
   }
 
   const data = [
     {
-      _id: "ACTIVE",
-      value: usersByActive.data.active,
-      fill: chartConfig.ACTIVE.color,
+      _id: "RUNNING",
+      value: processesByStatus.data.running,
+      fill: chartConfig.RUNNING.color,
     },
     {
-      _id: "INACTIVE",
-      value: usersByActive.data.inactive,
-      fill: chartConfig.INACTIVE.color,
+      _id: "STOPPED",
+      value: processesByStatus.data.stopped,
+      fill: chartConfig.STOPPED.color,
     },
   ];
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Users by Active Status</CardTitle>
-        <CardDescription>Number of users by active status</CardDescription>
+        <CardTitle>Processes by Status</CardTitle>
+        <CardDescription>Number of processes by status</CardDescription>
       </CardHeader>
       <CardContent>
         <section className="flex flex-col justify-center items-center gap-4">

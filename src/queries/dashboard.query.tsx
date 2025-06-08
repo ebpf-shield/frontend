@@ -5,28 +5,20 @@ const PREFIX = "dashboard" as const;
 
 export const dashboardQuery = {
   keys: {
-    // Existing tabs:
     commonProcesses: [PREFIX, "common-processes"] as const,
     processesWithMostRules: [PREFIX, "processes-with-most-rules"] as const,
     rulesByChain: [PREFIX, "rules-by-chain"] as const,
 
-    // New Top-KPIs:
     totalAgents: [PREFIX, "total-agents"] as const,
     totalUsers: [PREFIX, "total-users"] as const,
     totalProcesses: [PREFIX, "total-processes"] as const,
     totalRules: [PREFIX, "total-rules"] as const,
 
-    // New Agent-Overview:
     agentsOsDistribution: [PREFIX, "agents-os-distribution"] as const,
     agentsTimeseries: [PREFIX, "agents-timeseries"] as const,
 
-    // New key for agent IP list:
     agentIps: [PREFIX, "agent-ips"] as const,
   },
-
-  // ───────────────────────────────────────────────────────────────────────────────
-  // Existing QueryOptions
-  // ───────────────────────────────────────────────────────────────────────────────
 
   commonProcessQueryOptions: () =>
     queryOptions({
@@ -49,10 +41,6 @@ export const dashboardQuery = {
       refetchInterval: 1000 * 5,
     }),
 
-  // ───────────────────────────────────────────────────────────────────────────────
-  // New “Top-KPIs” QueryOptions
-  // ───────────────────────────────────────────────────────────────────────────────
-
   totalAgentsQueryOptions: () =>
     queryOptions({
       queryKey: dashboardQuery.keys.totalAgents,
@@ -74,10 +62,6 @@ export const dashboardQuery = {
       refetchInterval: 1000 * 5,
     }),
 
-  // ───────────────────────────────────────────────────────────────────────────────
-  // New “Agent-Overview” QueryOptions
-  // ───────────────────────────────────────────────────────────────────────────────
-
   agentsOsDistributionQueryOptions: () =>
     queryOptions({
       queryKey: dashboardQuery.keys.agentsOsDistribution,
@@ -92,7 +76,6 @@ export const dashboardQuery = {
       refetchInterval: 1000 * 5,
     }),
 
-  // Fetch agent remote IPs
   agentIpsQueryOptions: () =>
     queryOptions({
       queryKey: dashboardQuery.keys.agentIps,
