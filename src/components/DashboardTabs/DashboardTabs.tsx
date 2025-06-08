@@ -19,7 +19,7 @@ export const DashboardTabs = () => {
       <Tabs defaultValue={TABS.KPIS} className="max-w-5xl mt-4 mx-auto w-full items-center">
         <TabsList className="justify-center">
           <TabsTrigger value={TABS.KPIS}>High-Level KPIs</TabsTrigger>
-          <TabsTrigger value={TABS.AGENTS_MAP}>Agents</TabsTrigger>
+          <TabsTrigger value={TABS.AGENTS_MAP}>Agents Map</TabsTrigger>
           <TabsTrigger value={TABS.PROCESSES_WITH_MOST_RULES}>
             Processes with Most Rules
           </TabsTrigger>
