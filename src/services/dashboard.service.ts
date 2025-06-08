@@ -53,34 +53,50 @@ export class DashboardService {
     }
   }
 
-  // ───────────────────────────────────────────────────────────────────────────────
-  // New “Top-KPIs” methods
-  // ───────────────────────────────────────────────────────────────────────────────
+  async totalAgents() {
+    const totalAgentsSchema = z.object({
+      total: z.number().int().min(0),
+      online: z.number().int().min(0),
+      offline: z.number().int().min(0),
+    });
 
-  async totalAgents(): Promise<{ total: number; online: number; offline: number }> {
     try {
       const res = await authenticatedInstance.get(`${PREFIX}/total-agents`);
-      return res.data; // expects { total, online, offline }
+      const parsedData = totalAgentsSchema.parse(res.data);
+      return parsedData;
     } catch (error) {
       console.error(error);
       throw new Error("Failed to fetch total agents");
     }
   }
 
-  async totalUsers(): Promise<{ total: number; active: number; inactive: number }> {
+  async totalUsers() {
+    const totalUsersSchema = z.object({
+      total: z.number().int().min(0),
+      active: z.number().int().min(0),
+      inactive: z.number().int().min(0),
+    });
+
     try {
       const res = await authenticatedInstance.get(`${PREFIX}/total-users`);
-      return res.data; // expects { total, active, inactive }
+      const parsedData = totalUsersSchema.parse(res.data);
+      return parsedData;
     } catch (error) {
       console.error(error);
       throw new Error("Failed to fetch total users");
     }
   }
 
-  async totalProcesses(): Promise<{ running: number; stopped: number }> {
+  async totalProcesses() {
+    const totalProcessesSchema = z.object({
+      running: z.number().int().min(0),
+      stopped: z.number().int().min(0),
+    });
+
     try {
       const res = await authenticatedInstance.get(`${PREFIX}/total-processes`);
-      return res.data; // expects { running, stopped }
+      const parsedData = totalProcessesSchema.parse(res.data);
+      return parsedData;
     } catch (error) {
       console.error(error);
       throw new Error("Failed to fetch total processes");
@@ -97,24 +113,33 @@ export class DashboardService {
     }
   }
 
-  // ───────────────────────────────────────────────────────────────────────────────
-  // New “Agent-Overview” methods
-  // ───────────────────────────────────────────────────────────────────────────────
+  async agentsOsDistribution() {
+    const agentsOsDistributionSchema = z.object({
+      os: stringSchema,
+      count: z.number().int().min(0).max(1_000_000),
+    });
 
-  async agentsOsDistribution(): Promise<{ os: string; count: number }[]> {
     try {
       const res = await authenticatedInstance.get(`${PREFIX}/agents-os-distribution`);
-      return res.data; // expects [{ os, count }, …]
+      const parsedData = z.array(agentsOsDistributionSchema).parse(res.data);
+      return parsedData;
     } catch (error) {
       console.error(error);
       throw new Error("Failed to fetch agents OS distribution");
     }
   }
 
-  async agentsTimeseries(): Promise<{ timestamp: string; online: number; offline: number }[]> {
+  async agentsTimeseries() {
+    const agentsTimeseriesSchema = z.object({
+      timestamp: stringSchema,
+      online: z.number().int().min(0),
+      offline: z.number().int().min(0),
+    });
+
     try {
       const res = await authenticatedInstance.get(`${PREFIX}/agents-timeseries`);
-      return res.data; // expects [{ timestamp, online, offline }, …]
+      const parsedData = z.array(agentsTimeseriesSchema).parse(res.data);
+      return parsedData;
     } catch (error) {
       console.error(error);
       throw new Error("Failed to fetch agents timeseries");
@@ -122,9 +147,10 @@ export class DashboardService {
   }
 
   // New: fetch a list of all agent remote IPs
-  async agentRemoteIps(): Promise<string[]> {
+  async agentRemoteIps() {
     const res = await authenticatedInstance.get(`${PREFIX}/agent-ips`);
-    return res.data;
+    const parsedData = z.array(stringSchema).parse(res.data);
+    return parsedData;
   }
 }
 
