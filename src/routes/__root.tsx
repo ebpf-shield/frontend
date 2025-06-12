@@ -16,19 +16,18 @@ export const Route = createRootRouteWithContext<RootContext>()({
         <Toaster expand />
         <Outlet />
       </div>
-      <TanStackRouterDevtools />
+      {import.meta.env.DEV && <TanStackRouterDevtools />}
     </>
   ),
   errorComponent: ({ error }) => (
-    <div className="flex flex-col items-center justify-center h-full">
-      Error: {error.message}
-    </div>
+    <div className="flex flex-col items-center justify-center h-full">Error: {error.message}</div>
   ),
   notFoundComponent: () => (
     <div className="flex flex-col items-center justify-center h-full gap-4 text-center p-6">
       <img src="/404.png" alt="404 Not Found" className="max-w-xl" />
-      <Link to="/" className="text-blue-500 hover:underline">Go Home</Link>
+      <Link to="/" className="text-blue-500 hover:underline">
+        Go Home
+      </Link>
     </div>
   ),
 });
-
