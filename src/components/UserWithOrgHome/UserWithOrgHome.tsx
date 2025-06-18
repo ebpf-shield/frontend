@@ -1,10 +1,8 @@
 import { TokenUserWithOrgSchema } from "@/models/auth.model";
-import { CommonProcessesDashboard } from "../dashboard/CommonProcessesDashboard";
-import { ProcessesWithMostRulesDashboard } from "../dashboard/ProcessWithMostRulesDashboard";
-import { RulesByChainDashboard } from "../dashboard/RulesByChainDashboard";
+import { TopKpiDashboard } from "../dashboard/TopKpiDashboard";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
-import { UserWithOrgHomeHeader } from "./UserWithOrgHomeHeader";
 import { Separator } from "../ui/separator";
+import { UserWithOrgHomeHeader } from "./UserWithOrgHomeHeader";
 
 export interface UserWithOrgHomeProps {
   user: TokenUserWithOrgSchema;
@@ -25,18 +23,11 @@ export const UserWithOrgHome = ({ user }: UserWithOrgHomeProps) => {
 
           <Separator className="my-4" />
 
-          <div className="p-6 max-w-4xl mx-auto">
-            <h2 className="text-3xl font-medium text-white mb-4">Organizational Dashboards</h2>
-
-            <div className="p-4 flex flex-col gap-4">
-              <RulesByChainDashboard />
-              <CommonProcessesDashboard />
-              <ProcessesWithMostRulesDashboard />
-            </div>
-
-            <ScrollBar orientation="vertical" />
+          <div className="max-w-6xl mx-auto">
+            <TopKpiDashboard />
           </div>
         </div>
+        <ScrollBar orientation="vertical" />
       </ScrollArea>
     </main>
   );
