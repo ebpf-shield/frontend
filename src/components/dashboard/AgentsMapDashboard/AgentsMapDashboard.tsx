@@ -6,13 +6,15 @@ import "leaflet/dist/leaflet.css";
 import React, { useEffect, useMemo } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 
+type HeatPoint = [number, number, number]; // [lat, lon, intensity]
+
 interface LeafletHeatProps {
-  points: [number, number, number][]; // [lat, lon, intensity]
+  points: HeatPoint[]; // [lat, lon, intensity]
 }
-// Local helper: renders the heat layer whenever `points` changes
 const LeafletHeat = ({ points }: LeafletHeatProps) => {
   const map = useMap();
 
+  // We can probably do it better but never mind, this works.
   useEffect(() => {
     if (!map || points.length === 0) return;
 
@@ -35,8 +37,6 @@ const LeafletHeat = ({ points }: LeafletHeatProps) => {
   }, [map, points]);
   return null;
 };
-
-type HeatPoint = [number, number, number]; // [lat, lon, intensity]
 
 export const AgentsMapDashboard: React.FC = () => {
   const agentLocations = useSuspenseQuery(dashboardQuery.agentLocationsQueryOptions());
