@@ -136,10 +136,15 @@ export class DashboardService {
     }
   }
 
-  // New: fetch a list of all agent remote IPs
-  async agentRemoteIps() {
-    const res = await authenticatedInstance.get(`${PREFIX}/agent-ips`);
-    const parsedData = z.array(stringSchema).parse(res.data);
+  async agentLocations() {
+    const agentLocationSchema = z.object({
+      ip: stringSchema.ip(),
+      latitude: z.number().min(-90).max(90),
+      longitude: z.number().min(-180).max(180),
+    });
+
+    const res = await authenticatedInstance.get(`${PREFIX}/agent-locations`);
+    const parsedData = z.array(agentLocationSchema).parse(res.data);
     return parsedData;
   }
 }

@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { dashboardService } from "@/services/dashboard.service";
-import { MapContainer, TileLayer, useMap } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import "leaflet.heat/dist/leaflet-heat.js";
-import L from "leaflet";
 import { dashboardQuery } from "@/queries/dashboard.query";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import L from "leaflet";
+import "leaflet.heat/dist/leaflet-heat.js";
+import "leaflet/dist/leaflet.css";
+import React, { useEffect, useMemo } from "react";
+import { MapContainer, TileLayer, useMap } from "react-leaflet";
 
 interface LeafletHeatProps {
   points: [number, number, number][]; // [lat, lon, intensity]
@@ -13,18 +12,22 @@ interface LeafletHeatProps {
 // Local helper: renders the heat layer whenever `points` changes
 const LeafletHeat = ({ points }: LeafletHeatProps) => {
   const map = useMap();
+
   useEffect(() => {
     if (!map || points.length === 0) return;
+
     map.eachLayer((layer) => {
       if (layer instanceof (L as any).HeatLayer) {
         map.removeLayer(layer);
       }
     });
+
     const heatLayer = (L as any).heatLayer(points, {
       radius: 15,
       blur: 15,
       maxZoom: 10,
     });
+
     heatLayer.addTo(map);
     return () => {
       map.removeLayer(heatLayer);
@@ -33,43 +36,23 @@ const LeafletHeat = ({ points }: LeafletHeatProps) => {
   return null;
 };
 
+type HeatPoint = [number, number, number]; // [lat, lon, intensity]
+
 export const AgentsMapDashboard: React.FC = () => {
-  // Fetch list of agent IPs
-  const ipsQuery = useQuery<string[]>({
-    queryKey: dashboardQuery.keys.agentIps,
-    queryFn: () => dashboardService.agentRemoteIps(),
-    staleTime: 30_000,
-    refetchInterval: 5_000,
-  });
+  const agentLocations = useSuspenseQuery(dashboardQuery.agentLocationsQueryOptions());
+  const { data } = agentLocations;
 
-  // Build an array of [lat, lon, intensity]
-  const [heatPoints, setHeatPoints] = useState<[number, number, number][]>([]);
-
-  useEffect(() => {
-    if (!ipsQuery.data) return;
-    const resolveIPs = async () => {
-      const resolved: [number, number, number][] = [];
-      for (const ip of ipsQuery.data!) {
-        try {
-          const resp = await fetch(`http://ip-api.com/json/${ip}`);
-          const js = await resp.json();
-          if (js.status === "success" && typeof js.lat === "number" && typeof js.lon === "number") {
-            resolved.push([js.lat, js.lon, 50]);
-          }
-        } catch {
-          // ignore errors/rate-limit
-        }
-      }
-      setHeatPoints(resolved);
-    };
-    resolveIPs();
-  }, [ipsQuery.data]);
+  const heatPoints: HeatPoint[] = useMemo(() => {
+    return data.map((q) => {
+      return [q.latitude, q.longitude, 50];
+    });
+  }, [data]);
 
   // Loading / error states
-  if (ipsQuery.isLoading) {
+  if (agentLocations.isLoading) {
     return <p>Loading agent locations…</p>;
   }
-  if (ipsQuery.isError) {
+  if (agentLocations.isError) {
     return <p>Error fetching agent IPs.</p>;
   }
 
