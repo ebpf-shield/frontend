@@ -94,7 +94,7 @@ export class DashboardService {
 
   async totalProcesses() {
     try {
-      const res = await authenticatedInstance.get(`${PREFIX}/total-processes`);
+      const res = await authenticatedInstance.get(`${PREFIX}/processes-by-status`);
       const parsedData = this.totalProcessesSchema.parse(res.data);
       return parsedData;
     } catch (error) {
