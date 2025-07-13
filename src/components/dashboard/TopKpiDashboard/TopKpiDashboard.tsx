@@ -1,66 +1,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { dashboardQuery } from "@/queries/dashboard.query";
-import { dashboardService } from "@/services/dashboard.service";
-import { useQueryClient } from "@tanstack/react-query";
-import { z } from "zod";
 import { AgentsByOnlineDashboard } from "../AgentsByOnlineDashboard";
 import { ProcessesByStatusDashboard } from "../ProcessesByStatusDashboard";
 import { RulesByChainDashboard } from "../RulesByChainDashboard";
 import { UsersByActiveDashboard } from "../UsersByActiveDashboard";
-import { useEffect, useState } from "react";
+import { useTotalAgentsCount } from "./queryValueHooks/useTotalAgentsCount";
+import { useTotalProcessesCount } from "./queryValueHooks/useTotalProcessesCount";
+import { useTotalRulesCount } from "./queryValueHooks/useTotalRulesCount";
+import { useTotalUsersCount } from "./queryValueHooks/useTotalUsersCount";
 
 export const TopKpiDashboard = () => {
-  const queryClient = useQueryClient();
-
-  const [numOfRules, setNumOfRules] = useState<number>();
-  const [numOfProcesses, setNumOfProcesses] = useState<number>();
-  const [numOfAgents, setNumOfAgents] = useState<number>();
-  const [numOfUsers, setNumOfUsers] = useState<number>();
-
-  useEffect(() => {
-    queryClient
-      .ensureQueryData({
-        queryKey: dashboardQuery.keys.rulesByChain,
-      })
-      .then((data) => {
-        const res = z.array(dashboardService.rulesByChainSchema).parse(data);
-        const totalRules = res.reduce((sum, item) => sum + item.count, 0);
-        setNumOfRules(totalRules);
-      });
-  }, [queryClient]);
-
-  useEffect(() => {
-    queryClient
-      .ensureQueryData({
-        queryKey: dashboardQuery.keys.totalProcesses,
-      })
-      .then((data) => {
-        const res = dashboardService.totalProcessesSchema.parse(data);
-        setNumOfProcesses(res.running + res.stopped);
-      });
-  }, [queryClient]);
-
-  useEffect(() => {
-    queryClient
-      .ensureQueryData({
-        queryKey: dashboardQuery.keys.totalAgents,
-      })
-      .then((data) => {
-        const res = dashboardService.totalAgentsSchema.parse(data);
-        setNumOfAgents(res.total);
-      });
-  }, [queryClient]);
-
-  useEffect(() => {
-    queryClient
-      .ensureQueryData({
-        queryKey: dashboardQuery.keys.totalUsers,
-      })
-      .then((data) => {
-        const res = dashboardService.totalUsersSchema.parse(data);
-        setNumOfUsers(res.total);
-      });
-  }, [queryClient]);
+  const { numOfRules } = useTotalRulesCount();
+  const { numOfProcesses } = useTotalProcessesCount();
+  const { numOfUsers } = useTotalUsersCount();
+  const { numOfAgents } = useTotalAgentsCount();
 
   return (
     <div className="p-4">
