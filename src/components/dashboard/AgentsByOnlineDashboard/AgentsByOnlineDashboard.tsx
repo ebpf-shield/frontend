@@ -1,0 +1,67 @@
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { dashboardQuery } from "@/queries/dashboard.query";
+import { useQuery } from "@tanstack/react-query";
+import { Pie, PieChart } from "recharts";
+
+const chartConfig = {
+  ONLINE: {
+    label: "Online",
+    color: "var(--chart-1)",
+  },
+  OFFLINE: {
+    label: "Offline",
+    color: "var(--chart-2)",
+  },
+} satisfies ChartConfig;
+
+export const AgentsByOnlineDashboard = () => {
+  const agentsByOnline = useQuery(dashboardQuery.totalAgentsQueryOptions());
+
+  if (agentsByOnline.isPending) {
+    return <p>Loading...</p>;
+  }
+
+  if (agentsByOnline.isError) {
+    return <p>Error: {agentsByOnline.error.message}</p>;
+  }
+
+  const data = [
+    {
+      _id: "ONLINE",
+      value: agentsByOnline.data.online,
+      fill: chartConfig.ONLINE.color,
+    },
+    {
+      _id: "OFFLINE",
+      value: agentsByOnline.data.offline,
+      fill: chartConfig.OFFLINE.color,
+    },
+  ];
+
+  return (
+    <Card>
+      <CardHeader>Agents by Online Status</CardHeader>
+      <CardContent>
+        <section className="flex flex-col justify-center items-center gap-4"></section>
+        <ChartContainer className="min-h-[250px]" config={chartConfig}>
+          <PieChart accessibilityLayer>
+            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+            <Pie nameKey="_id" dataKey="value" data={data} />
+            <ChartLegend
+              content={<ChartLegendContent nameKey="_id" />}
+              className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
+            />
+          </PieChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
+  );
+};
