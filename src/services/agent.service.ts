@@ -3,6 +3,7 @@ import { agentSchema, agentWithProcessesSchema } from "../models/agent.model";
 import { authenticatedInstance } from "./index.service";
 import axios from "axios";
 import { ZodError } from "zod";
+import { debugLog } from "@/utils/log.util";
 
 const PREFIX = "agent" as const;
 
@@ -43,6 +44,7 @@ export class AgentService {
       }
 
       if (error instanceof ZodError) {
+        debugLog("Zod error:", error.errors);
         throw new Error("Failed to parse agents with processes");
       }
 

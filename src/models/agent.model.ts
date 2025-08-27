@@ -17,7 +17,7 @@ export const agentSchema = z.object({
   updatedAt: customValidation.dateLikeToDate,
   online: z.boolean(),
   processesToExclude: z.array(stringSchema).default([]),
-  externalIp: stringSchema.ip().optional(),
+  externalIp: stringSchema.ip().nullish(),
   geoLocationProperties: geoLocationPropertiesSchema.optional(),
 });
 
