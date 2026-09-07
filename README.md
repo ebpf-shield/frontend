@@ -1,56 +1,162 @@
-# React + TypeScript + Vite
+# ebShield Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The ebShield frontend is the browser-based control plane for managing organizations,
+monitoring protected hosts and their processes, viewing operational dashboards, and
+creating firewall rules. It communicates exclusively with the backend's human-facing
+`/api/ui` API; the `/api/host` API is reserved for installed host agents.
 
-Currently, two official plugins are available:
+## Frontend preview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+<!--
+Add a current screenshot at docs/frontend-overview.png, then replace this comment
+with:
 
-## Expanding the ESLint configuration
+![ebShield frontend dashboard](docs/frontend-overview.png)
+-->
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+> Frontend screenshot placeholder — add an image here when the UI is ready to showcase.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
+## Features
+
+- User registration and login with JWT-backed sessions.
+- Organization creation and user invitations.
+- Agent inventory with online state, filtering, host details, and process lists.
+- Process details with firewall-rule creation, editing, and deletion.
+- Dashboards for agent status and location, process status, common processes,
+  rules by chain, and top-level totals.
+- Responsive dark UI with reusable form, dialog, table, chart, and navigation
+  components.
+
+## Technology
+
+- React 19 and TypeScript
+- Vite 6
+- TanStack Router for file-based, type-safe routing
+- TanStack Query for server-state fetching and caching
+- Tailwind CSS 4 and Radix UI primitives
+- React Hook Form and Zod for forms and validation
+- Recharts and React Leaflet for charts and maps
+- Axios for backend requests
+
+## Requirements
+
+- A recent Node.js release with npm
+- The ebShield backend running locally or at another reachable URL
+
+The repository includes `package-lock.json`; use npm to keep dependency resolution
+consistent.
+
+## Configuration
+
+Create `frontend/.env` with the backend origin:
+
+```dotenv
+VITE_BACKEND_URL=http://localhost:8000
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Use only the origin—do not add `/api/ui`. The Axios clients in
+`src/services/index.service.ts` append that prefix automatically.
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+If you start the backend through `backend/scripts/run.sh`, use port `8080` instead:
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    "react-x": reactX,
-    "react-dom": reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs["recommended-typescript"].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-});
+```dotenv
+VITE_BACKEND_URL=http://localhost:8080
 ```
 
-<!-- We all know [Itay Lisaey](https://github.com/ItayLisaey) will hate me for installing `react-use` -->
+Vite exposes `VITE_*` variables to browser code, so never put secrets in this file.
+
+## Local development
+
+From the `frontend` directory:
+
+```bash
+npm install
+npm run dev
+```
+
+Vite normally serves the application at `http://localhost:5173`.
+
+## Available commands
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the Vite development server with hot reload |
+| `npm run build` | Type-check the project and create a production build in `dist` |
+| `npm run lint` | Run ESLint across the project |
+| `npm run preview` | Serve the production build locally for verification |
+
+## Main application routes
+
+| Route | Purpose |
+| --- | --- |
+| `/login` | Authenticate an existing user |
+| `/register` | Create a user account |
+| `/home-without-org` | Onboarding for a user who has not joined an organization |
+| `/home-with-org` | Organization home and navigation |
+| `/agents` | Search and browse registered agents |
+| `/agents/:agentId` | Inspect one agent and its processes |
+| `/agents/processes/:processId` | Inspect a process and manage its firewall rules |
+| `/dashboards/agents` | View operational charts, totals, and the agent map |
+| `/about` | Product overview |
+
+Authenticated routes validate the locally stored JWT through the backend. Routes
+under the organization layout also require the JWT payload to contain an
+`organizationId`.
+
+## Backend integration
+
+The frontend has two Axios clients in `src/services/index.service.ts`:
+
+- A public client for registration and login.
+- An authenticated client that reads the token from local storage and sends it as
+  `Authorization: Bearer <token>`.
+
+Services are separated by domain (`auth`, `agent`, `dashboard`, `organization`,
+`process`, `rule`, and `user`). Responses are validated against Zod schemas before
+the UI consumes them. A `401` response clears the local token and returns the user
+to the login screen.
+
+```text
+Page/component
+    ↓
+TanStack Query or mutation
+    ↓
+Domain service + Axios
+    ↓
+Backend /api/ui
+```
+
+## Project layout
+
+```text
+frontend/
+├── public/                # Static browser assets
+├── src/
+│   ├── components/        # Feature and reusable UI components
+│   ├── contexts/          # Auth, router, query, theme, and dialog providers
+│   ├── hooks/             # Shared React hooks
+│   ├── models/            # Zod-backed frontend domain models
+│   ├── queries/           # TanStack Query definitions
+│   ├── routes/            # TanStack Router file-based pages and layouts
+│   ├── services/          # Backend API clients grouped by domain
+│   ├── utils/             # Environment, logging, and validation helpers
+│   ├── App.tsx
+│   └── main.tsx
+├── package.json
+├── package-lock.json
+└── vite.config.ts
+```
+
+`src/routeTree.gen.ts` is generated by the TanStack Router Vite plugin. Update files
+under `src/routes` rather than editing the generated route tree by hand.
+
+## Production build
+
+```bash
+npm run build
+npm run preview
+```
+
+Deploy the contents of `dist` behind a static web server configured to fall back to
+`index.html` for client-side routes. Set `VITE_BACKEND_URL` before building because
+Vite embeds it into the browser bundle at build time.
